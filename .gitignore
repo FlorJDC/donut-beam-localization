@@ -24,3 +24,6 @@ paper/*.blg
 paper/*.toc
 # large regenerable Monte Carlo arrays
 data/mc/*.npz
+
+# Private notes about the author's unpublished work (read locally by the team, never published)
+docs/private/

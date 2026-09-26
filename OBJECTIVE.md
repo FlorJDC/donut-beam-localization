@@ -33,8 +33,9 @@ páginas, en `docs/literature/`:
   (Balzarotti 2017; Masullo 2022 marco común; Masullo & Stefani 2022; Stefani 2023).
 - `B_donut_optics.md`: dona LG y vectorial, dona 3D, imperfecciones (López 2023; Caprile
   2022 PyFocus; Tarkowski; Gwosch 2020).
-- `C_pminflux_practice.md`: p-MINFLUX, parámetros experimentales, efectos no ideales y el
-  código previo de la doctoranda (p-minflux-main).
+- `docs/private/C_pminflux_practice.md` (LOCAL, no versionado): p-MINFLUX, parámetros
+  experimentales y el trabajo previo no publicado de la autora. Puede orientar prioridades, pero
+  nada de su contenido específico (mediciones, resultados, planes) se copia al repo público.
 
 
 CERCO -- no leer nada más
