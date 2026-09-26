@@ -1,8 +1,7 @@
-# Line endings for the agent-team files only (does not touch the rest of a project):
-# shell scripts break with CRLF; Windows launchers want CRLF.
-*.sh            text eol=lf
-agent-team/**   text=auto eol=lf
-.agent-team/**  text=auto eol=lf
-.claude/**      text=auto eol=lf
-*.cmd           text eol=crlf
-*.ps1           text eol=crlf
+# LF everywhere, so file hashes (the acceptance guard) are identical on every clone/OS.
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.npz binary
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
