@@ -43,5 +43,9 @@ lánzalo como subagente aparte, con el trabajo a revisar pero **sin** el razonam
   en círculo de diámetro L + centro; CRB = sqrt((Σxx+Σyy)/2); semilla 42.
 - Fuentes: PDFs en `C:\Users\BANGHO\Documents\Doctorado\Papers` (NO subirlos); notas en
   `docs/literature/`.
+- Privacidad (repo PÚBLICO): nada del trabajo no publicado de la autora (su repo
+  `p-minflux-main`, sus mediciones, resultados, planes) se copia a archivos versionados. Ese
+  contexto vive solo en `docs/private/` (gitignored) y sirve para fijar prioridades; toda
+  justificación pública sale de la literatura publicada o de nuestras propias simulaciones.
 - No tocar: `tests/test_acceptance.py` (protegido por hash en `equipo/*/state.json`), los PDFs
   de la carpeta de papers, el repo `p-minflux-main` de la autora (solo lectura).
