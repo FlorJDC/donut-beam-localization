@@ -1,0 +1,42 @@
+{
+ "id": "2026-09-26_donut-localization",
+ "type": "feature+derive",
+ "status": "active",
+ "round": 0,
+ "rounds_budget": 5,
+ "worker_count": 3,
+ "team": {
+  "lead": "pi",
+  "workers": [
+   "worker"
+  ],
+  "verifier": "verifier",
+  "reviewer": "code-reviewer",
+  "extra": [
+   "writer"
+  ]
+ },
+ "writer_when": "last",
+ "deliverable": "paper/main.tex",
+ "provenance": "paper/provenance.json",
+ "checks": {
+  "command": "python -m unittest discover -s tests"
+ },
+ "acceptance": {
+  "command": "python -m unittest tests.test_acceptance -v",
+  "guard": [
+   {
+    "path": "tests/test_acceptance.py",
+    "sha256": "7d198853e87c7bd94bb8be07a855651146e1d849310281546cd8089dcf262303"
+   }
+  ]
+ },
+ "base_commit": null,
+ "claims": [],
+ "plan": [],
+ "backlog": [],
+ "history": [],
+ "last_checks": null,
+ "last_acceptance": null,
+ "writer_seen_verified": 0
+}

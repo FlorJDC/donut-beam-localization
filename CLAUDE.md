@@ -31,7 +31,17 @@ lánzalo como subagente aparte, con el trabajo a revisar pero **sin** el razonam
 ## Sobre este proyecto
 <!-- Completa: qué es el proyecto, cómo se corre, cómo se testea, convenciones congeladas,
      límites de datos, qué NO tocar. Esto es lo que ningún test puede expresar. -->
-- Descripción:
-- Cómo correr los tests:
-- Convenciones:
-- No tocar:
+- Descripción: simulación de localización de emisores fluorescentes con haces tipo dona
+  (MINFLUX y variantes). Objetivo completo en `OBJECTIVE.md`; forma final tipo "paper
+  companion" (paquete `src/donutloc`, `scripts/fig_*.py`, `tests/`, `data/paper_numbers.json`,
+  `paper/` con procedencia).
+- Entorno: Windows, Python 3.8 (numpy 1.24, scipy 1.10, matplotlib 3.7, numba opcional). Los
+  scripts con caracteres no ASCII llevan `# -*- coding: utf-8 -*-`. No hay pdflatex local.
+- Cómo correr los tests: `python -m unittest discover -s tests` (desde la raíz; el paquete se
+  importa con `src/` en `sys.path` o `pip install -e .`).
+- Convenciones: unidades en nm; dona LG I = 4e ln2 r²/fwhm² exp(-4 ln2 r²/fwhm²); TCP = 3 donas
+  en círculo de diámetro L + centro; CRB = sqrt((Σxx+Σyy)/2); semilla 42.
+- Fuentes: PDFs en `C:\Users\BANGHO\Documents\Doctorado\Papers` (NO subirlos); notas en
+  `docs/literature/`.
+- No tocar: `tests/test_acceptance.py` (protegido por hash en `equipo/*/state.json`), los PDFs
+  de la carpeta de papers, el repo `p-minflux-main` de la autora (solo lectura).
