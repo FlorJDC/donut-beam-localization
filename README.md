@@ -122,7 +122,7 @@ Code changes are not detected, so the final products are always regenerated with
 | fig2 | `fig_2_vectorial.py` | R1 | Vectorial donut: handedness and linear polarization (zero depth 0 / 0.845 / 0.372), centre CRB vs L against LG beams; the wrong hand raises the centre CRB 16-90x and linear polarization 7-40x (L = 150-50 nm) |
 | fig3 | `fig_3_crb_maps.py` | R2 | CRB maps of the TCP; the discontinuity at the centre (r -> 0 limit vs the Eq. S27 point value) and its removal by background |
 | fig4 | `fig_4_scaling.py` | R2 | Scaling of the centre CRB with L, N and SBR; MINFLUX vs camera (ideal and pixelated) |
-| fig5 | `fig_5_estimators.py` | R3 | MLE, LMS and mLMS bias and sigma/CRB inside and outside the TCP (the linearized estimators fall below the CRB only beyond x0 ~ 15 nm, by compression); background-free MLE superefficiency and bias |
+| fig5 | `fig_5_estimators.py` | R3 | MLE, LMS and mLMS bias and sigma/CRB inside and outside the TCP (off-centre the linearized estimators fall below the CRB by compression - the LMS already a few nm from the centre, the mLMS only beyond x0 ~ 15 nm); background-free MLE superefficiency and bias |
 | fig6 | `fig_6_iterative.py` | R4 | Iterative MINFLUX vs photon budget against the ideal camera; per-iteration precision |
 | fig7 | `fig_7_zero_depth.py` | R5 | Finite zero depth: optimal L, validity of L_opt ~ 0.78 fwhm sqrt(eps), off-centre CRB minimum |
 | fig8 | `fig_8_misalignment.py` | R5 | TCP misalignment: bias and precision of the naive vs the honest MLE; mean naive bias 0.75-0.78 δ at the centre and ~0.80-0.86 δ at (L/4, 0) for δ = 2-10 nm (L = 100 nm, SBR = 10) |

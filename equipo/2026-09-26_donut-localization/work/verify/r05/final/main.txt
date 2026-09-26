@@ -1,0 +1,1764 @@
+=====PAGE 1
+Localization of single emitters with donut beams:
+a reproducible simulation study of MINFLUX-type patterns
+flor-choque∗
+We present a reproducible simulation study of the localization of single fluorescent emitters with
+donut-shaped excitation beams in the triangular coordinate pattern (TCP) of MINFLUX: three
+donut zeros on a circle of diameter L plus a central exposure. Every computed number is produced
+by a script and was reproduced by an independent verifier. (i) At the TCP centre the Cramér–Rao
+bound (CRB) is discontinuous without background: the r →0 limit lies below the point value
+at r = 0 (Balzarotti Eq. S27), with ratio 2/
+√
+5 for a quadratic zero; for L = 50 nm, N = 100
+photons and a donut size parameter fwhm = 300 nm the limit is 1.605 nm against 1.802 nm; any
+finite signal-to-background ratio (SBR) removes the discontinuity. (ii) A high-numerical-aperture
+vectorial vortex donut of the correct handedness is reproduced by a scalar Laguerre–Gauss donut
+with matched zero curvature (CRB ratio 0.9962 at L = 150 nm), whereas the wrong handedness fills
+the zero to 0.8452 of the ring maximum. (iii) With SBR = 10 the maximum-likelihood estimator
+(MLE) is eﬀicient at the centre (L = 50 nm, N = 100;σ/σCRB = 0.991±0.005); without background
+it is biased and supereﬀicient. (iv) Iterative MINFLUX with 1000 photons and our protocol (L
+reduced from 150 to 25 nm, no background) reaches an error of 0.508 nm, 0.1606 times that of an
+ideal camera. (v) A finite zero depth ϵ sets an optimal L ∝fwhm√ϵ, and a misaligned pattern
+analysed with the nominal model produces, at the centre, a mean bias of 0.747–0.783 times the
+displacement δ of the zeros (δ = 2–10 nm, L = 100 nm, SBR = 10), which an estimator using the
+true pattern removes.
+I.
+INTRODUCTION
+MINFLUX localizes a single emitter by probing it se-
+quentially with an excitation intensity minimum placed
+at a few known positions and comparing the detected
+photon counts [1]. Because the fluorescence vanishes near
+the zero, the information per detected photon is large and
+the localization precision scales with the size L of the
+probing pattern rather than with the diffraction-limited
+width of a point-spread function; nanometre precision is
+reached with a few hundred photons, in two and three
+dimensions [1, 2].
+The same probabilistic framework
+covers other sequential structured-illumination schemes
+[3, 4], multiphoton excitation with light minima [5] and
+nanoscale tracking [6]. The excitation minimum is usu-
+ally a toroidal (donut) focus produced by a vortex phase
+mask; its zero depends on polarization and handedness
+[7, 8].
+Theoretical analyses of MINFLUX, starting with the
+Supplementary Material of Ref. [1], use the scalar parax-
+ial Laguerre–Gauss (LG) donut, a perfect zero, an exact
+knowledge of the pattern and the closed-form CRB at
+the pattern centre. Here we ask, with simulations whose
+every number is traceable to a script, how far these ide-
+alizations can be pushed. We address five questions:
+R1 Beam model. How much does the scalar LG donut
+differ from the vectorial high-NA donut near the
+zero, and what does it change in the CRB? What
+happens with the wrong handedness or with linear
+polarization?
+∗https://github.com/FlorJDC
+R2 Cramér–Rao bound. CRB maps of the TCP; the
+closed form at the centre versus the numerical com-
+putation; scaling with L, N and SBR; comparison
+with camera localization.
+R3 Estimators. MLE versus least-mean-squares (LMS)
+estimators: bias and precision from Monte Carlo
+(MC), inside and outside the TCP, compared with
+the CRB.
+R4 Iterative MINFLUX. Precision versus total photon
+budget when L is reduced over iterations, compared
+with a camera.
+R5 Non-idealities. Finite zero depth, background, and
+misalignment of the pattern analysed with the nom-
+inal model.
+The main results are: a precise statement of the dis-
+continuity of the centre CRB and of the two possible
+definitions (Sec. IV, App. A); a quantitative equivalence
+between the vectorial donut and a curvature-matched LG
+donut, and the collapse of precision with a filled zero
+(Sec. III); the eﬀiciency and the failure modes of the es-
+timators (Sec. V); the photon scaling of iterative MIN-
+FLUX against an ideal camera (Secs. VI and VII); and
+the optimal L for a finite zero depth and the bias caused
+by misalignment (Sec. VIII). Section IX ranks these ef-
+fects by their numerical impact, and Sec. X lists what
+remains open.
+
+=====PAGE 2
+2
+II.
+MODEL AND CONVENTIONS
+A.
+Beams
+The scalar paraxial donut is the LG01 intensity in the
+parametrization of Balzarotti Eq. S17 [1], normalized to
+a ring peak of one:
+ILG(ρ) = 4e ln 2
+ρ2
+fwhm2 exp
+(
+−4 ln 2
+ρ2
+fwhm2
+)
+≡e aρ2e−aρ2,
+a = 4 ln 2
+fwhm2 .
+(1)
+Here fwhm is a size parameter, not the full width at
+half maximum of any curve of the donut: the ring has
+a peak-to-peak diameter fwhm/
+√
+ln 2, i.e. 360.3 nm for
+our default fwhm = 300 nm. Near the zero ILG ≃eaρ2
+(quadratic).
+The vectorial donut is computed with the Richards–
+Wolf (Debye) integral for an aplanatic objective [8]: a
+Gaussian beam with a 0–2π vortex phase eiϕ and circu-
+lar polarization, focused with wavelength λ = 640 nm,
+numerical aperture NA = 1.4, refractive index n = 1.518
+and filling factor 5/3; the intensity is |Ex|2+|Ey|2+|Ez|2.
+We call “correct” the handedness for which the circular
+polarization rotates in the same sense as the phase ramp
+[7, 8]; in our formulation, the product of the topological
+charge and the photon spin is +1. Figure 1(a,b) com-
+pares the profiles.
+B.
+Triangular coordinate pattern
+Following Balzarotti Eq. S24 [1], up to a global rotation
+and a relabelling of the exposures (centre last), the TCP
+has K = 4 exposures with zeros at
+bk = L
+2 (cos φk, sin φk),
+φk = π
+2 + 2πk
+3 ,
+k = 0, 1, 2,
+b3 = 0,
+(2)
+so that L is the diameter of the circle of peripheral zeros
+[Fig. 1(c)]. Each exposure uses the same beam displaced
+to bi, Ii(r) = I(|r −bi|).
+C.
+Photon statistics, background and SBR
+For a fixed total number N of detected photons the
+counts (n0, . . . , n3) are multinomial with probabilities [1]
+p(0)
+i (r) =
+Ii(r)
+∑
+j Ij(r),
+pi(r) =
+SBR
+SBR + 1 p(0)
+i (r) +
+1
+SBR + 1
+1
+K ,
+(3)
+where the second form (Balzarotti Eq. S30) adds a back-
+ground equal in all exposures. The SBR is the total sig-
+nal over the total background summed over the K ex-
+posures at the emitter position (Eq. S29), so for a fixed
+background it depends on the position and on the pat-
+tern. In all our simulations, however, we hold the SBR
+fixed at the quoted value at every position (Eq. S30 with
+constant SBR), which implies a position-dependent back-
+ground; with a fixed background the SBR would instead
+vary with position (Eq. S29) and, at the centre, fall as L
+decreases (Eq. S32). When the beam carries a pedestal
+(finite zero depth, Sec. VIII) the SBR refers to the sig-
+nal of the full beam, pedestal included. For the camera
+(Sec. VI) we use Balzarotti’s SBRc, total signal over the
+background per pixel.
+D.
+Fisher information and CRB
+The Fisher information for the emitter position is
+F(r) = N
+K−1
+∑
+i=0
+∇pi ∇pT
+i
+pi
+,
+(4)
+and we report the per-axis bound
+σCRB =
+√
+1
+2 tr F −1,
+(5)
+Balzarotti’s Eq. S13. The MC precision uses the same
+convention, σ = [(var ˆx+var ˆy)/2]1/2, and the root-mean-
+square error is rmse = [⟨|ˆr−r|2⟩/2]1/2. At the exact cen-
+tre of the TCP without background the central exposure
+has p3 = 0 and Eq. (4) is ill defined; Sec. IV distinguishes
+the point value at r = 0 from the limit r →0, and “centre
+CRB” means the limit unless stated otherwise.
+E.
+Estimators
+The MLE maximizes ∑
+i ni ln pi(r) over a disk (grid
+search followed by a local refinement). The disk radius
+is part of the protocol and is stated with each result:
+L for centre points, 2L for positions swept across the
+pattern, and 0.75L for the iterative and misalignment
+studies. The LMS and modified LMS (mLMS) estimators
+are the linearized estimators of Balzarotti Eqs. S49–S51
+[1], the latter with the polynomial coeﬀicients (1.27, 3.8)
+used there for live tracking.
+III.
+SCALAR VERSUS VECTORIAL DONUT
+(R1)
+Zero and handedness.
+With circular polarization of
+the correct hand every field component of the focused
+vortex beam carries an azimuthal factor eimϕ with m ̸= 0,
+so the on-axis intensity vanishes exactly at every z: the
+zero depth I(0)/Imax is 0 to machine precision.
+With
+the opposite hand the longitudinal component Ez does
+not vanish on axis and the zero fills to 0.8452 of the ring
+maximum; with linear polarization the depth is 0.3716
+
+=====PAGE 3
+3
+0
+200
+400
+600
+radius ρ (nm)
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+intensity / ring peak
+(a)
+LG 300 nm
+LG 327.1 nm
+(curv. matched)
+vectorial
+(circ., correct hand)
+100
+101
+102
+radius ρ (nm)
+0
+2
+4
+6
+8
+10
+I/ρ2 (10−5 nm−2)
+vectorial: c = 7.042 × 10−5 nm−2
+(b)
+LG 300 nm
+LG 327.1 nm
+vectorial
+−200
+−100
+0
+100
+200
+x (nm)
+−200
+−100
+0
+100
+200
+y (nm)
+0
+1
+2
+3
+L = 100 nm
+(c)
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+intensity of exposure 0
+FIG. 1. Beam model and TCP geometry. (a) Normalized radial profiles of the scalar LG01 donut (fwhm = 300 nm, Eq. 1), of
+the LG donut with the zero curvature of the vectorial donut (fwhm = 327.1 nm), and of the vectorial Richards–Wolf vortex
+donut with circular polarization of the correct hand (λ = 640 nm, NA = 1.4, n = 1.518, filling factor 5/3); dotted lines mark the
+ring radii, i.e. half the peak-to-peak diameters 360.3 nm (LG) and 384.7 nm (vectorial). (b) I/ρ2 near the zero on a logarithmic
+radius axis: all zeros are quadratic, the vectorial curvature is c = 7.042 × 10−5 nm−2, and the curvature-matched LG follows
+the vectorial profile for ρ ≲100 nm. (c) TCP: three donut zeros (×) on a circle of diameter L (dashed; L = 100 nm shown for
+visibility) plus a central exposure (+); the map is the intensity of exposure 0.
+[Fig. 2(a–d)], consistent with the experimental guidance
+on handedness of Refs. [7, 8].
+Equivalent LG donut. The correct-hand vectorial ring
+has a peak-to-peak diameter 384.7 nm, and near the zero
+I/Imax = cρ2 with c = 7.042 × 10−5 nm−2.
+The LG
+donut of Eq. (1) with the same curvature, ea = c, has
+fwhm = 327.1 nm; the LG donut with the same ring di-
+ameter would instead have fwhm = 320.3 nm.
+CRB. Table I compares the centre CRB (limit r →0
+defined in Sec. IV, N = 100, no background), with the
+vectorial beams evaluated exactly (no interpolation grid).
+The curvature-matched LG donut reproduces the vecto-
+rial CRB to the ratios listed in the last rows of the table,
+i.e. to a fraction of a percent up to L = 150 nm; the de-
+fault LG donut with fwhm = 300 nm overestimates it,
+with a ratio vectorial/LG of 0.9717 at L = 150 nm and
+a difference that keeps growing at larger L [Fig. 2(e,f)].
+The overall curvature of the beam cancels in the proba-
+bilities pi: any exactly quadratic profile gives the same
+CRB. The centre CRB is set by how the profile de-
+parts from quadratic at a distance L/2 from each zero
+[Eq. (A2), App. A]; with the peak normalized to one,
+the curvature-matched LG donut happens to reproduce
+this departure for the vectorial beam to a fraction of a
+percent. A filled zero, on the other hand, destroys the
+MINFLUX advantage, by a factor that depends on L
+(Table I): with the wrong hand the centre CRB rises
+from 1.600 to 147.9 nm at L = 50 nm and from 5.331
+to 84.20 nm at L = 150 nm, and with linear polarization
+to 60.77 and 35.72 nm, respectively; the relative loss is
+largest at small L.
+IV.
+THE CRB AT THE TCP CENTRE
+A.
+Point value and limit
+Write x ≡L2 ln 2/fwhm2 and g ≡1 −x (x < 1, i.e.
+the peripheral zeros lie inside the ring maximum). At
+r = 0 the central exposure has p3 = 0 and ∇p3 = 0, so
+its term in Eq. (4) is 0/0. Dropping it gives the point
+value, Balzarotti’s Eq. S27 [1]:
+σpt =
+L
+2
+√
+2N
+g−1.
+(6)
+For r ̸= 0, however, p3 ∝r2 and ∇p3 ∝r, so the central
+term tends to a finite matrix of fixed norm along ˆrˆrT .
+TABLE I. Centre CRB (nm; r →0 limit, N = 100, no back-
+ground) of the TCP for the vectorial donut (correct hand,
+opposite hand, linear polarization) and for LG donuts with
+the default size parameter and with the curvature-matched
+one; last rows: CRB ratios.
+L (nm)
+50
+100
+150
+vectorial, correct
+1.600
+3.323
+5.331
+LG, curv.-matched
+1.601
+3.330
+5.351
+LG, fwhm = 300 nm
+1.605
+3.363
+5.486
+vectorial, opposite
+147.9
+89.59
+84.20
+vectorial, linear
+60.77
+38.06
+35.72
+ratio corr./curv.
+0.9995
+0.9981
+0.9962
+ratio corr./LG default
+0.9971
+0.9881
+0.9717
+
+=====PAGE 4
+4
+−400
+0
+400
+x (nm)
+−400
+0
+400
+y (nm)
+I(0)/Imax = 0.000
+(a)
+circular, correct hand
+−400
+0
+400
+x (nm)
+I(0)/Imax = 0.845
+(b)
+circular, opposite hand
+−400
+0
+400
+x (nm)
+I(0)/Imax = 0.372
+E
+(c)
+linear (x)
+−400 −200
+0
+200
+400
+x or y (nm)
+0.00
+0.25
+0.50
+0.75
+1.00
+I/Imax
+(d)
+LG 300 nm
+correct hand
+opposite hand
+linear, along x
+linear, along y
+101
+102
+L (nm)
+100
+101
+102
+103
+centre CRB, r→0 (nm)
+N = 100, no background
+(e)
+opposite hand
+linear (x)
+LG 300 nm
+LG 327.1 nm
+correct hand
+0
+100
+200
+L (nm)
+−10
+−8
+−6
+−4
+−2
+0
+CRB difference (%)
+(f)
+vectorial / LG 300
+LG 327.1 / LG 300
+vectorial / LG 327.1
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+I/Imax
+FIG. 2. Vectorial donut. (a–c) Focal-plane intensity, normalized to the ring maximum, for circular polarization of the correct
+hand, of the opposite hand, and for linear (x) polarization. (d) Profiles through the zero: the zero depth I(0)/Imax is 0 for
+the correct hand, 0.8452 for the opposite hand and 0.3716 for linear polarization. (e) Centre CRB (r →0 limit, N = 100,
+no background) of the TCP versus L; all vectorial beams are evaluated exactly. (f) Relative CRB differences: the vectorial
+donut and the curvature-matched LG with respect to the LG donut with fwhm = 300 nm, and (grey) the vectorial donut with
+respect to the curvature-matched LG (fwhm = 327.1 nm), not to the LG with fwhm = 300 nm; the latter CRB ratio is 0.9962
+at L = 150 nm.
+The limit r →0 of the bound is (App. A)
+σ2
+lim =
+L2
+8Ng2
+3g2 + ex
+3g2 + 2ex ,
+ρ ≡σlim
+σpt
+=
+√
+3g2 + ex
+3g2 + 2ex .
+(7)
+It does not depend on the direction of approach, so it is
+a well-defined, direction-independent “centre CRB” (the
+limiting error ellipse itself is anisotropic, see below). For
+L = 50 nm, N = 100 and fwhm = 300 nm the numer-
+ical limit of Eq. (5) (12 directions at |r| = 10−3 nm) is
+1.605 nm and the closed form gives 1.605 nm, while the
+point value is 1.802 nm. The closed forms agree with an
+independent numerical Fisher computation in all tested
+cases. We use the limit because it describes an emitter
+at any small but non-zero distance from the centre; the
+point value describes a set of measure zero.
+For a quadratic zero (x →0) the ratio is exactly ρ =
+2/
+√
+5, i.e. σ2
+lim = L2/(10N) against σ2
+pt = L2/(8N): ρ =
+0.8944 (numerically, with fwhm = 109 nm, 0.8944). With
+finite fwhm the ratio is not conserved: at fwhm = 300 nm
+it is 0.8944, 0.8905, 0.8780 and 0.8553 for L = 5, 50, 100
+and 150 nm [Fig. 3(f)], because the peripheral term scales
+as g2 while the central one scales as ex.
+Origin of the discontinuity. The central term tends to
+(β/N) ˆrˆrT (α and β are defined in Eq. (A4)), which has a
+limit in norm but not as a matrix; equivalently √p3 ∝|r|
+is a cone, so the differentiability of √p required by the
+Cramér–Rao theorem fails exactly at r = 0. The central
+exposure contributes only radial information, of the same
+size at any distance (a quadratic zero is scale invariant),
+and a zero count is informative. The limiting error ellipse
+is therefore anisotropic: σ∥= (α + β)−1/2 along ˆr and
+σ⊥= σpt across it (App. A); for L = 50 nm, N = 100
+these are 1.380 nm and 1.802 nm; for a quadratic zero
+(L = 100 nm, N = 100) 2.739 nm and 3.536 nm, with
+ratio
+√
+3/5 = 0.7746.
+
+=====PAGE 5
+5
+B.
+Background: continuity and non-commuting
+limits
+With a finite SBR, p3 ≥(1 −s)/K > 0 with s =
+SBR/(SBR + 1), the central term vanishes as r2 and the
+bound is continuous; the point value equals the limit and
+Balzarotti’s Eq. S31,
+σCRB(0) =
+L
+2
+√
+2N
+g−1
+√(
+1 +
+1
+SBR
+)(
+1 +
+3
+4 SBR
+)
+. (8)
+For
+SBR
+=
+10,
+L
+=
+50 nm
+and
+N
+=
+100,
+Eq.
+(8)
+gives
+1.960 nm
+and
+the
+numerical
+limit
+1.960 nm
+[Fig.
+3(e)].
+The
+two
+limits
+do
+not
+commute:
+limSBR→∞limr→0 σCRB
+=
+σpt
+whereas
+limr→0 limSBR→∞σCRB
+=
+σlim;
+the
+central
+term
+switches on over a radius rc ∝SBR−1/2 that shrinks
+to a point [Fig. 4(c)].
+To leading order rc
+≃
+(
+√
+3L/4) e−x/2/
+√
+SBR (App. A): at realistic SBR it is
+not small compared with L (where the leading-order es-
+timate is only indicative), and Eq. (8) is then the relevant
+centre value.
+C.
+Maps and scaling
+Figure 3(a–d) shows the CRB over the field of view for
+L = 50 and 100 nm, with and without background. The
+precision is best near the centre and degrades outside the
+circle of zeros.
+Scaling with L and N.
+For L ≪fwhm the centre
+CRB is linear in L: the log–log slope over L = 5–40 nm
+is 1.004 [Fig. 4(a)]. The exponent is range dependent:
+over larger L the factor g−1 steepens the curve, and
+with a perfect zero the bound diverges at the ring diam-
+eter L = fwhm/
+√
+ln 2 = 360.3 nm and decreases beyond.
+The dependence on N is exactly N −1/2 (slope −0.5000
+over N = 102–104) for the limit, Eq. (6) and Eq. (8)
+[Fig. 4(b)].
+Photon cost of background. The photons needed for a
+5 nm centre CRB at L = 50 nm (point value, Eqs. (6)
+and (8)) are 13.00, 13.45, 14.16, 15.37 and 17.93 for
+SBR = ∞, 50, 20, 10 and 5; with the background-free
+limit it would be 10.31.
+Comparison with published values and variants. With
+N = 500 and SBR = 5, Eq. (8) gives 0.9413, 1.962 and
+3.167 nm for L = 50, 100, 150 nm when fwhm = 360 nm.
+These match, up to rounding in the last digit at L =
+150 nm, the MINFLUX centre-precision column of Sup-
+plementary Table 1 of Masullo et al. [3]; that table leg-
+end states no SBR or N for this column, so SBR = 5,
+N = 500 and this fwhm are our inference from the other
+columns. By contrast, with fwhm = 300 nm the same
+formula gives 0.9469, 2.012 and 3.370 nm.
+The one-
+dimensional two-exposure bound L/(4
+√
+N) (Balzarotti
+Eq. S22c) is 1.250 nm for L = 50 nm, N = 100. With a
+multiphoton exponent c (λi ∝Ic
+i [5]) the point value
+is σpt/c:
+3.536, 1.768 and 1.179 nm for c = 1, 2, 3
+(L = 100 nm, N = 100, quadratic zero); for c > 1 the
+central term vanishes at the origin and there is no dis-
+continuity.
+V.
+ESTIMATORS VERSUS THE CRB (R3)
+All MC results in this section use L = 50 nm, fwhm =
+300 nm, seed 42 and 104 repetitions unless stated other-
+wise; standard errors (SE) of σ are nonparametric boot-
+strap estimates.
+MLE with background: eﬀicient at the centre. With
+SBR = 10 the model is regular at the centre (p3 > 0).
+For N = 100 and an MLE search disk of radius L, the
+MLE precision is σ = 1.943±0.010 nm against the bound
+1.960 nm of Eq. (8): an eﬀiciency σ/σCRB = 0.991±0.005.
+This is the value we define as the MLE eﬀiciency at the
+centre; the choice SBR = 10 (a regular, physical case) is
+a declared convention (Sec. X).
+MLE without background:
+biased and supereﬀicient.
+Without background p3 ∝r2, the model is not regu-
+lar at the centre, and the MLE beats the CRB limit:
+σ = 1.348 ± 0.007 nm, i.e. σ/σlim = 0.840 ± 0.004 and
+σ/σpt = 0.748 ± 0.004 at N = 100. The ratio does not
+approach one as N grows [Fig. 5(c)], so this is not a small-
+N effect. The price is a bias, toward the centre close to
+it [for x0 ≲8 nm, Fig. 5(d)]: at r = (2, 0) nm the mean
+error along x is −0.344 ± 0.008 nm (4 × 104 repetitions)
+[Fig. 5(d)]. The CRB bounds only unbiased estimators
+of a regular model, so there is no contradiction; it means
+that, without background, neither the point value nor
+the limit is a bound on what an MLE reports near the
+centre.
+LMS. Without background the LMS estimate at the
+centre has exactly the covariance of the point value,
+L2/(8Ng2) per axis:
+in MC, σ/σpt = 1.000 ± 0.005
+and σ/σlim = 1.123 ± 0.005 (= 1/ρ), constant in N
+[Fig. 5(c)]. With background, the expectation of the LMS
+of Balzarotti Eq. S50 without the 1/s correction is exactly
+s = SBR/(SBR + 1) times that of the background-free
+LMS at every position (the constant background term
+cancels because ∑
+k bk = 0). In Fig. 5(a,b) the LMS and
+mLMS include the 1/s correction. Beyond x0 ≈15 nm
+they are strongly biased toward the centre [Fig. 5(a)],
+because the linearization compresses the estimate, and
+their σ falls below the CRB [Fig. 5(b)]; this reflects the
+compression, not a gain in precision. Closer to the cen-
+tre this does not hold: for x0 ≲12 nm the mLMS has σ
+above the CRB, and for x0 ≈5–15 nm its bias is small
+and slightly outward.
+MLE away from the centre: an outlier tail at low N.
+With SBR = 10 and N = 100 the MLE is not eﬀicient
+everywhere inside the TCP. At r = (15, 0) nm, with a
+search disk of radius 2L, σ/σCRB = 1.51 ± 0.03, caused
+by a tail of outliers (the bump in Fig. 5(b) for x0 ≈10–
+20 nm); at N = 1000 it is 1.004 ± 0.006. The size of the
+tail depends on the search radius, which must therefore
+be reported with any such number; the convergence of
+
+=====PAGE 6
+6
+−40
+−20
+0
+20
+40
+x (nm)
+−40
+−20
+0
+20
+40
+y (nm)
+(a)
+L = 50 nm, no background
+2
+3
+5
+10
+−40
+−20
+0
+20
+40
+x (nm)
+(b)
+L = 50 nm, SBR = 10
+2
+3
+5
+10
+20
+20
+−40
+−20
+0
+20
+40
+position through the centre (nm)
+1.6
+1.8
+2.0
+2.2
+2.4
+2.6
+CRB (nm)
+L = 50 nm
+N = 100
+(e)
+no bkg.
+SBR = 10
+along x
+along y
+r = 0 (S27)
+r→0 limit
+−100
+−50
+0
+50
+100
+x (nm)
+−100
+−50
+0
+50
+100
+y (nm)
+(c)
+L = 100 nm, no background
+5
+10
+20
+50
+50
+100
+100
+−100
+−50
+0
+50
+100
+x (nm)
+(d)
+L = 100 nm, SBR = 10
+5
+10
+20
+50
+50
+100
+100
+0
+100
+200
+300
+L (nm)
+0.65
+0.70
+0.75
+0.80
+0.85
+0.90
+σr→0 / σr = 0 (S27)
+2/√5 (quadratic zero)
+(f)
+closed form, fwhm = 300 nm
+closed form, fwhm = 360 nm
+numerical (fwhm = 300 nm)
+2
+5
+10
+20
+CRB (nm)
+5
+10
+20
+50
+100
+CRB (nm)
+FIG. 3. CRB maps and the discontinuity at the TCP centre (fwhm = 300 nm, N = 100). (a–d) CRB over the field of view
+|x|, |y| ≤L for L = 50 and 100 nm, without background and with SBR = 10 (logarithmic colour scale, contours in nm; pixels
+on a perfect zero take the r →0 limit). (e) Cuts through the centre along x and y for L = 50 nm: without background the
+r →0 limit (1.605 nm, filled circle) lies below the point value of Eq. (6) (1.802 nm, open circle), which excludes the central
+exposure with p = 0; with SBR = 10 the CRB is continuous (Eq. (8), 1.960 nm). (f) Ratio of the limit to the point value versus
+L, closed form (lines) and numerical Fisher computation (circles), with the closed form for fwhm = 360 nm dashed; it tends to
+2/
+√
+5 only for a quadratic zero (L ≪fwhm).
+the MLE to the CRB away from the centre only at larger
+N agrees with Ref. [1].
+VI.
+CAMERA REFERENCE (R2)
+As a reference we use the CRB of a camera with a
+Gaussian point-spread function of σPSF = 100 nm [1]. In
+the continuum limit without background the bound is
+σPSF/
+√
+N: 5.000 nm for N = 400 and 3.162 nm for N =
+1000; this ideal value is the camera reference of Sec. VII.
+Pixelation costs little: a 9 × 9 window of 100 nm pixels
+gives 5.205 nm at N = 400 and 3.292 nm at N = 1000.
+The
+SBR
+convention
+matters
+for
+the
+camera.
+Balzarotti’s SBRc is the total signal over the background
+per pixel (Eq. S61), so SBRc = 500 on 9 × 9 pixels cor-
+responds to a total SBR of 6.173. With that convention
+the pixelated camera reaches 4.964 nm at N = 600 and
+needs 591.4 photons for 5 nm; if 500 were the total SBR it
+would reach 4.268 nm and need 437.1 photons. The SBR
+values of MINFLUX (total/total) and of the camera (to-
+tal/per pixel) are therefore not directly comparable. For
+comparison, MINFLUX with L = 50 nm and SBR = 10
+needs 15.37 photons for a 5 nm centre CRB [Fig. 4(d)].
+VII.
+ITERATIVE MINFLUX (R4)
+Protocol.
+The emitter is placed uniformly in a disk
+of radius L0/4 around the initial pattern centre. Four
+iterations use TCPs of geometrically decreasing diame-
+ter Lk = 150 →25 nm with an equal share of the total
+photon budget Ntot; each pattern is re-centred on the
+previous estimate, and each estimate is an MLE in a
+disk of radius 0.75Lk around the current centre. Unless
+stated otherwise there is no background, and each point
+uses 104 repetitions (seed 42) with bootstrap SE. The it-
+erative scheme was proposed qualitatively in Ref. [1] and
+
+=====PAGE 7
+7
+100
+101
+102
+L (nm)
+10−1
+100
+101
+102
+centre CRB (nm)
+L = fwhm/√ln 2
+= 360 nm
+fit 5-40 nm:
+slope 1.004
+N = 100, no bkg.
+(a)
+r = 0 point (Eq. S27)
+r→0 limit
+closed form
+101
+102
+103
+104
+105
+detected photons N
+10−1
+100
+101
+centre CRB (nm)
+L = 50 nm
+(b)
+SBR = 10 (Eq. S31)
+r = 0 point (Eq. S27)
+r→0 limit
+fit points, slope -0.5000
+100
+101
+102
+103
+104
+SBR (total signal / total background)
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+4.5
+5.0
+centre CRB (nm)
+S27 (no bkg., r = 0)
+no bkg., r→0
+SBR = 10: 1.960 nm
+L = 50 nm, N = 100
+(c)
+Eq. S31
+numerical, r = 0
+numerical, r→0
+100
+101
+102
+103
+104
+105
+detected photons N
+10−2
+10−1
+100
+101
+102
+localization precision (nm)
+10.3 13
+15.4
+400
+591
+5 nm
+(d)
+camera, ideal σPSF/√N
+camera 9x9 px, no bkg.
+camera 9x9 px, SBRc = 500 per px
+MINFLUX, SBR = 10
+MINFLUX, S27
+MINFLUX, r→0
+FIG. 4. Scaling of the centre CRB and comparison with camera localization. (a) CRB versus L (N = 100, no background):
+r →0 limit (numerical and closed form) and point value of Eq. (6); the log–log slope fitted over L = 5–40 nm (shaded,
+L ≪fwhm) is 1.004. With a perfect zero the CRB increases monotonically only for L below the ring diameter 360.3 nm,
+diverges there and decreases beyond (dotted). (b) CRB versus N for L = 50 nm: slope −1/2 for the limit, the point value and
+Eq. (8) with SBR = 10. (c) CRB versus SBR (L = 50 nm, N = 100): for finite SBR the point value equals the limit (Eq. (8))
+and, as SBR →∞, tends to the point value of Eq. (6), not to the background-free limit. (d) MINFLUX (L = 50 nm) versus a
+camera (σPSF = 100 nm): continuum limit σPSF/
+√
+N and a 9×9 window of 100 nm pixels, without background (dashed, nearly
+coincident with the continuum line) and with SBRc = 500 defined per pixel (total SBR 6.173); triangles mark the photons
+needed for 5 nm: 400 for the ideal camera (5.000 nm at N = 400), 591.4 for the pixelated camera with background, and for
+MINFLUX 10.31 with the r →0 limit, 13.00 with the point value and 15.37 with SBR = 10.
+relies on the scale invariance of a quadratic zero [6].
+Precision and camera comparison. For Ntot = 1000 the
+final precision is σ = 0.508±0.003 nm, i.e. 0.1606 ± 0.0008
+times the ideal camera value 3.162 nm with the same pho-
+tons; with SBR = 10 it is 0.616 ± 0.003 nm. For refer-
+ence, spending all photons at the final L = 25 nm with
+the emitter at the centre would give 0.2509 nm; the iter-
+ations pay for their field of view with photons spent at
+large L [Fig. 6(a,c)].
+Photon scaling.
+Over Ntot = 250, 500, 1000, 2000,
+4000, 8000 the final precision is 1.158, 0.736, 0.508,
+0.3544, 0.2495 and 0.1763 nm.
+The log–log slope for
+Ntot ≥500 is −0.515 ± 0.003 (bootstrap 95% interval
+[−0.5196, −0.5096]), which excludes −1/2: the iterative
+scheme improves slightly faster than N −1/2 (we have not
+isolated the mechanism; a plausible one is the better cen-
+tring of the later iterations).
+Over the full range the
+slope is −0.537 ([−0.5424, −0.5312]), but it is driven by
+a heavy-tailed error distribution at Ntot = 250, where
+the bootstrap SE (0.014 nm) is itself unstable. The ratio
+to the ideal camera falls from 0.1831 at Ntot = 250 to
+0.1577 and flattens [Fig. 6(b)].
+Adaptive schedule.
+A rule Lk+1 = max(Lmin, κσk)
+with κ = 6 and σk the centre CRB of iteration k gives
+L = 150, 25, 25, 25 nm and σ = 0.480 ± 0.003 nm at
+Ntot = 1000. The rule is less safe than it looks: the cen-
+tre CRB of iteration 0 (3.470 nm) underestimates the real
+error (4.26 ± 0.03 nm), because the emitter is not at the
+
+=====PAGE 8
+8
+0
+10
+20
+30
+40
+50
+true position x0 (nm), y0 = 0
+−40
+−30
+−20
+−10
+0
+bias ⟨̂x⟩−x0 (nm)
+(a)
+SBR = 10
+MLE
+LMS
+mLMS
+0
+10
+20
+30
+40
+50
+true position x0 (nm), y0 = 0
+0.1
+0.2
+0.5
+1
+2
+σ / σCRB
+inside TCP
+(|x0| < L/2)
+CRB
+(b)
+102
+103
+104
+photons N
+0.6
+0.7
+0.8
+0.9
+1.0
+1.1
+1.2
+σ / bound  (centre, no bkg)
+  σlim (r→0)
+  S27 (point value)
+(c)
+MLE, σ/σlim
+MLE, σ/σS27
+LMS, σ/σlim
+0
+2
+4
+6
+8
+10
+12
+true position x0 (nm), y0 = 0
+−0.4
+−0.3
+−0.2
+−0.1
+0.0
+0.1
+0.2
+bias ⟨̂x⟩−x0 (nm)
+-0.34 nm
+(d)
+MLE, no bkg, N = 100
+FIG. 5. Estimators versus the CRB (L = 50 nm, N = 100 unless indicated, seed 42). (a) Bias and (b) σ/σCRB versus the emitter
+position x0 along x, from the centre to L (inside the TCP shaded), for the MLE, the LMS and the mLMS with SBR = 10;
+off-centre MLE points use a search disk of radius 2L, and the centre point (radius L, 104 repetitions) equals the eﬀiciency
+0.991. The MLE bump in (b) at x0 ≈10–20 nm (σ/σCRB = 1.51 at x0 = 15 nm) is an outlier tail whose size depends on the
+2L search radius. (c) Centre, no background: σ of the MLE divided by the r →0 limit (supereﬀiciency, 0.840 at N = 100) and
+by the point value of Eq. (6) (0.748), and σ of the LMS divided by the limit, versus N. (d) Bias of the background-free MLE
+near the centre versus x0 (N = 100): negative (toward the centre) for x0 ≲8 nm, with −0.344 ± 0.008 nm at r = (2, 0) nm, and
+changing sign (away from the centre) near x0 ≈9 nm.
+centre of the first pattern, and a fraction 0.0265 ± 0.0016
+of the emitters ends up outside the radius L1/2 of the
+next pattern.
+Without re-centring. If the patterns are not re-centred
+the final σ is 8.14 nm and worsens in the last iteration.
+This is an artefact of the protocol, not physics: the MLE
+search disk (0.75Lk) becomes smaller than the spread
+of emitter positions (L0/4), and the estimates are trun-
+cated. The point is shown in grey in Fig. 6(a) and not
+used elsewhere.
+VIII.
+NON-IDEALITIES (R5)
+A.
+Finite zero depth
+Experimental donuts have a residual intensity ϵ at
+the zero, relative to the ring maximum (below 0.2% in
+Ref. [1]).
+We model it in two ways (App. A): a con-
+stant pedestal, I = ILG + ϵ, and a Gaussian pedestal,
+I = (eaρ2 + ϵ)e−aρ2.
+The constant pedestal is ex-
+actly a background: at the centre the CRB is Eq. (8)
+with SBRϵ = 3e x e−x/(4ϵ); the Gaussian pedestal is not
+equivalent to any background, because it differs between
+exposures and reduces the slope of the donut. With ϵ > 0
+the point value equals the limit and tends, as ϵ →0, to
+the point value σpt, not to σlim.
+Degradation at fixed L. Table II lists σCRB(ϵ)/σpt at
+the centre. The loss is largest for small L, since SBRϵ ∝
+x ∝L2: at L = 50 nm a pedestal of 5% roughly doubles
+the CRB. The two pedestal models agree to first order in
+ϵ up to corrections of relative order x2.
+Optimal L. Because shrinking L makes the pedestal
+relatively larger, the centre CRB (Gaussian pedestal,
+N
+= 100) has a minimum at an optimal diameter
+[Fig. 7(a)]: Lopt = 10.48, 23.28, 50.34 and 80.81 nm,
+with a CRB of 0.7458, 1.679, 3.878 and 7.287 nm, for
+ϵ = 0.002, 0.01, 0.05 and 0.15. In units of fwhm√ϵ the
+optimum is 0.7815, 0.7760, 0.7504 and 0.6955, indepen-
+dent of fwhm: the rule Lopt ≈0.7815 fwhm√ϵ holds only
+
+=====PAGE 9
+9
+1000
+10000
+total photons Ntotal
+0.1
+1
+10
+100
+1000
+localization precision σ (nm)
+no re-centring
+(search-disk artefact)
+(a)
+ideal camera σPSF/√N
+fit N ≥500: slope −0.515
+CRB, all N at L = 25 nm
+SBR = 10
+adaptive Lk
+iterative MINFLUX
+1000
+total photons Ntotal
+0.14
+0.15
+0.16
+0.17
+0.18
+0.19
+0.20
+σ / σcamera
+(b)
+150
+100
+50
+25
+TCP diameter Lk (nm)
+0.5
+1
+2
+5
+σ after iteration k (nm)
+1
+2
+3
+4
+(c)
+Ntotal = 1000 (4 × 250)
+centre CRB
+fixed, SBR = 10
+fixed, no bkg
+FIG. 6. Iterative MINFLUX versus camera localization (4 iterations, Lk = 150 →25 nm, equal photon split, re-centring, MLE,
+no background, 104 repetitions). (a) Final precision (σ± bootstrap SE) versus total photon budget, with the ideal camera
+σPSF/
+√
+N, the fitted slope for Ntot ≥500 (−0.515), the centre CRB if all photons were spent at L = 25 nm, and single points
+with SBR = 10 and with the adaptive schedule at Ntot = 1000; the grey cross (no re-centring) is an artefact of the truncated
+search disk. (b) σ/σcamera versus Ntot, from 0.1831 to 0.1577. (c) σ after each iteration versus the pattern diameter Lk for
+Ntot = 1000, without background and with SBR = 10, compared with the centre CRB of each iteration.
+for ϵ ≲0.01 [Fig. 7(b)]. With ϵ = 0 there is no optimum;
+the CRB grows monotonically up to the divergence at
+the ring diameter, 360.3 nm.
+Off-centre minimum. With a nearly perfect zero the
+CRB minimum moves off the centre [Fig. 7(c), ϵ = 0.002,
+L = 100 nm]: the pedestal dominates the zero within a
+radius of order
+√
+ϵ/(ea) = 4.887 nm, independent of L.
+This is a scale, not the position of the minimum, which
+depends on the direction and on L.
+B.
+Misalignment of the pattern
+We displace each of the four zeros (including the cen-
+tral one) by δ in an independent random direction and
+localize with L = 100 nm, N = 500 and SBR = 10, us-
+ing either the naive MLE, which assumes the nominal
+pattern, or the honest MLE, which uses the true one.
+MC statistics use 400 random patterns × 200 repetitions
+(seed 42), with standard errors computed between pat-
+terns, since the dispersion between patterns dominates.
+TABLE II. Centre CRB with a finite zero depth ϵ, relative to
+the point value of Eq. (6) (fwhm = 300 nm, no background);
+constant / Gaussian pedestal.
+ϵ
+L = 50 nm
+L = 100 nm
+0.002
+1.045 / 1.045
+1.012 / 1.012
+0.01
+1.227 / 1.228
+1.060 / 1.061
+0.05
+2.130 / 2.152
+1.300 / 1.307
+0.15
+4.382 / 4.584
+1.898 / 1.958
+At δ = 0 both estimators coincide exactly.
+Bias. The naive estimator is biased roughly in pro-
+portion to δ [Fig. 8(a)]. At the centre the mean |bias|
+is 1.49 ± 0.03, 3.73 ± 0.08 and 7.71 ± 0.16 nm for δ = 2,
+5 and 10 nm, and at (L/4, 0) 1.69 ± 0.04, 4.20 ± 0.10 and
+9.3 ± 0.3 nm. To separate the systematic bias from MC
+noise we also apply the naive MLE to the expected counts
+of each perturbed pattern (no Poisson noise), averaged
+over 4000 patterns.
+The resulting population slope of
+|bias| versus δ (least squares through the origin over
+δ = 2, 5, 10 nm) is 0.777 ± 0.005 at the centre and
+0.851 ± 0.007 at (L/4, 0) (SE from the sampling of pat-
+terns); both were reproduced by an independent compu-
+tation with other seeds. The ratio |bias|/δ grows with δ,
+i.e. the bias is not exactly linear: at the centre it is 0.747,
+0.755 and 0.783, and at (L/4, 0) 0.802, 0.807 and 0.863
+for δ = 2, 5, 10 nm. As a complement, the MC slope
+at the centre (weighted least squares through the origin
+over the same δ values, noisy estimates) is 0.755 ± 0.009;
+it differs from the population estimate mainly through
+its inverse-variance weighting, which favours δ = 2 nm,
+where |bias|/δ is smallest, and through the sampling of
+only 400 patterns, so the population value is the one we
+use.
+The honest estimator removes the bias. At the centre
+its mean |bias| at δ = 10 nm, 0.180 ± 0.005 nm, is close
+to the MC noise floor σ
+√
+π/(2R) expected from R = 200
+repetitions alone, 0.1643 nm, but slightly above it, by
+about three SE. At (L/4, 0) it is further above the floor
+(0.276 ± 0.008 nm against 0.2309 nm), so “honest at the
+floor” holds, approximately, only at the centre.
+At the centre the loss is bias.
+The naive σ at the
+centre changes little, from 1.855 ± 0.003 nm at δ = 0
+to 2.015 ± 0.011 nm at δ = 10 nm, while its rmse grows
+
+=====PAGE 10
+10
+to 6.228 nm [Fig. 8(b,c)]. At (L/4, 0) the naive σ also
+grows, from 2.389 nm at δ = 0 to 3.74 ± 0.16 nm at
+δ = 10 nm, with a large dispersion between patterns,
+and the rmse reaches 8.978 nm. The honest σ follows the
+CRB of the true pattern at the centre (1.854 ± 0.009 nm
+against 1.842 nm at δ = 10 nm) and lies slightly above it
+at (L/4, 0) (2.606 ± 0.019 nm against 2.545 nm).
+IX.
+DISCUSSION: WHAT MATTERS
+EXPERIMENTALLY
+Ordering the effects studied by their numerical impact
+on the centre precision gives a clear hierarchy.
+1. The quality of the zero. A filled zero is the largest ef-
+fect by far. With the wrong handedness the centre CRB
+at L = 50 nm rises from 1.600 nm to 147.9 nm, and with
+linear polarization to 60.77 nm (Table I). Even a small
+residual ϵ matters at small L: at L = 50 nm a Gaus-
+sian pedestal of ϵ = 0.05 multiplies the CRB by 2.152
+(Table II). The practical consequence is that L should
+not be reduced below Lopt for the measured zero depth
+(Sec. VIII); polarization control of the donut [7] comes
+before any other refinement.
+2. Misalignment with a nominal model. A displace-
+ment δ of the zeros that is ignored by the estimator
+produces a mean bias of 0.747–0.783 δ at the centre
+(δ = 2–10 nm, L = 100 nm) and larger at (L/4, 0) (0.802–
+0.863 δ). At δ = 10 nm and N = 500 the bias at the cen-
+tre (7.71 ± 0.16 nm) is several times the statistical pre-
+cision (2.015 nm), and it is invisible in the spread of re-
+peated localizations. Calibrating the actual pattern and
+using it in the likelihood removes it (honest MLE).
+3. Background. At L = 50 nm, N = 100, SBR = 10
+raises the centre CRB from 1.802 nm (point value) to
+1.960 nm, and the photons for 5 nm from 13.00 to 15.37.
+Background also regularizes the model, making the MLE
+eﬀicient at the centre.
+4.
+Estimator and protocol. The MLE is eﬀicient at
+the centre with background, but not uniformly inside the
+pattern at N = 100 (σ/σCRB = 1.51 at 15 nm from the
+centre), and the linearized LMS estimators are strongly
+biased off-centre. In iterative MINFLUX the search disk
+and the re-centring are part of the result; a heuristic
+L schedule based on the centre CRB leaves a fraction
+0.0265 ± 0.0016 of emitters outside the next pattern.
+5. Definitions. Without background the centre CRB
+depends on its definition by the factor ρ = 0.8905 at
+L = 50 nm; the background-free MLE even beats both
+values.
+Benchmarks against “the CRB at the centre”
+should state which one is used, or include background.
+6. Beam model. Once the zero is correct, the scalar LG
+model is adequate if its size parameter is chosen to match
+the curvature of the actual zero: the error in the centre
+CRB is then below the percent level (Table I). With the
+default fwhm the discrepancy grows with L, reaching a
+CRB ratio of 0.9717 at L = 150 nm.
+Iterative MINFLUX reaches an error 0.1577–0.1831
+times that of the ideal camera for the same photons in
+our idealized setting; the zero depth, the misalignment
+and (except for one run with SBR = 10, which gives
+0.616 ± 0.003 nm at Ntot = 1000) the background were
+absent from that simulation, and they set how much of
+this advantage survives in an experiment.
+X.
+LIMITATIONS AND OPEN POINTS
+The following points are either not verified or rest on
+declared choices; they are listed here rather than stated
+as results.
+• Scope of the model.
+All simulations are two-
+dimensional, with a fixed N (multinomial statis-
+tics), a background equal in all exposures with the
+SBR held fixed at every position (Sec. II), no dipole
+orientation effects, no aberrations beyond the zero
+depth and no drift. The camera reference is ideal
+(Sec. VI); real cameras are worse.
+• rmse normalization. We use the per-axis conven-
+tion of Eq. (5) for σ and rmse. Whether it coincides
+with the error definition of Masullo et al. [3] was
+not checked, because the main text of that work is
+not in our notes.
+• SBR = 10 for the MLE eﬀiciency. The eﬀiciency
+at the centre is defined with SBR = 10; this was
+chosen by the study coordinator on behalf of the
+author because without background the model is
+not regular (Sec. V). It is a convention, pending
+explicit confirmation by the author.
+• Vectorial ring diameter versus PyFocus. Our peak-
+to-peak diameters of the vectorial donut as a func-
+tion of the filling factor (n = 1.5) agree to within
+a few percent with the values we transcribed from
+Fig. 10 of Ref. [8] at filling factors 0.5, 2 and uni-
+form illumination, but differ clearly at filling factor
+1. We do not claim agreement there; an indepen-
+dent comparison is pending.
+• Heavy tail at low photon numbers. In iterative MIN-
+FLUX at Ntot = 250 the error distribution is heavy-
+tailed and the bootstrap SE of σ is itself unstable;
+the full-range slope inherits this.
+• Range dependence of the L exponent. The exponent
+1.004 applies only to L ≪fwhm; it increases when
+the fit range extends to larger L.
+• Three-dimensional donuts and axial misalignment
+are outside the scope of this study.
+XI.
+METHODS AND REPRODUCIBILITY
+Code. All computations use our own Python package
+donutloc (beams, patterns, photon model, Fisher infor-
+
+=====PAGE 11
+11
+10
+100
+TCP diameter L (nm)
+0.1
+1
+10
+100
+1000
+centre CRB σCRB (nm), N = 100
+(a)
+ε = 0 (r→0 limit)
+ε = 0.002
+ε = 0.01
+ε = 0.05
+ε = 0.15
+Lopt
+10−4
+10−3
+10−2
+10−1
+residual zero ε = I(0)/Imax
+0.64
+0.66
+0.68
+0.70
+0.72
+0.74
+0.76
+0.78
+Lopt / (fwhm√ε)
+0.78
+0.78 scaling
+valid here
+(b)
+0
+5
+10
+15
+20
+distance from centre |r| (nm)
+3.6
+3.8
+4.0
+4.2
+4.4
+4.6
+σCRB (nm)
+ √ε/(e a) = 4.9 nm
+(c)
+ε = 0.002, L = 100 nm, N = 100
+along 0 ∘
+along 45 ∘
+along 90 ∘
+FIG. 7. Finite zero depth (fwhm = 300 nm, N = 100, Gaussian pedestal). (a) Centre CRB versus L for ϵ = 0.002, 0.01, 0.05,
+0.15 (stars: Lopt) and for ϵ = 0 (r →0 limit), which has no optimum and diverges at the ring diameter. (b) Lopt/(fwhm√ϵ)
+versus ϵ: the value 0.7815 at ϵ = 0.002 holds only for ϵ ≲0.01 (shaded) and falls to 0.6955 at ϵ = 0.15. (c) CRB (nm) versus
+distance from the centre along three directions for ϵ = 0.002, L = 100 nm: the minimum lies off the centre; the dash-dotted
+line marks the transition scale
+√
+ϵ/(ea) = 4.887 nm, a scale and not the position of the minimum.
+0
+5
+10
+15
+zero displacement δ (nm)
+0
+2
+4
+6
+8
+10
+12
+14
+16
+mean |bias| (nm)
+(a)
+MC noise floor
+0.76 δ
+naive, centre
+honest, centre
+naive, (L/4, 0)
+honest, (L/4, 0)
+0
+5
+10
+15
+zero displacement δ (nm)
+2.0
+2.5
+3.0
+3.5
+4.0
+4.5
+5.0
+σ (nm)
+(b)
+honest CRB, centre
+honest CRB, (L/4, 0)
+naive, centre
+honest, centre
+naive, (L/4, 0)
+honest, (L/4, 0)
+0
+5
+10
+15
+zero displacement δ (nm)
+2
+4
+6
+8
+10
+12
+14
+16
+rmse (nm)
+L = 100 nm, N = 500, SBR = 10
+400 patterns × 200 reps
+(c)
+FIG. 8. TCP misalignment (L = 100 nm, N = 500, SBR = 10; all four zeros displaced by δ in random directions; 400 patterns
+× 200 repetitions; error bars are between-pattern SE). (a) Mean |bias| of the naive MLE (nominal pattern) and of the honest
+MLE (true pattern) versus δ, at the centre and at (L/4, 0), with the MC noise floor (grey band) and a straight line fitted to the
+naive centre points over all seven δ values including δ = 15 nm (dotted). The main slope estimate is the noise-free population
+value, 0.777 at the centre and 0.851 at (L/4, 0), growing with δ. (b) σ and (c) rmse versus δ, with the CRB of the true pattern:
+at the centre the naive σ changes little and its loss is bias, whereas at (L/4, 0) the naive σ also grows, from 2.389 to 3.74 nm
+at δ = 10 nm; the honest σ follows the CRB at the centre and lies slightly above it at (L/4, 0).
+mation, estimators, Monte Carlo, vectorial focusing, it-
+erative MINFLUX), with NumPy and SciPy only. Each
+figure has its own script (scripts/fig_*.py); a sin-
+gle script, scripts/compute_paper_numbers.py, writes
+the registry data/paper_numbers.json, from which ev-
+ery number in this paper is typeset through generated
+macros; no computed result is typed by hand (only in-
+put parameters and exact constants are). All MC runs
+use the seed 42.
+The central results have a statistical
+error below 2%; the others are quoted with their SE,
+namely the misalignment quantities (where the disper-
+sion between random patterns is intrinsic), the bias of the
+background-free MLE at r = (2, 0) nm and the fraction of
+emitters left outside the next pattern by the adaptive L
+schedule. The closed forms of App. A are checked against
+a numerical Fisher computation by scripts/verify_
+crb_closed_forms.py and by unit tests. A reproduction
+script in scripts/ runs, in order, the tests, the figures,
+the number registry and the provenance check.
+Provenance.
+Every quantitative statement carries
+a tag that resolves in paper/provenance.json to the
+script, check or derivation that reproduces it; scripts/
+check_provenance.py verifies that every tag and every
+number resolves and that the generated macros are in
+
+=====PAGE 12
+12
+sync with the registry.
+How the study was made. The study was carried out
+with an agent team following the agent-team methodol-
+ogy [9]: bounded rounds in which worker agents derive
+and compute, an independent verifier re-derives or re-
+computes every claim by a separate route before it is
+accepted, and a writer transcribes only verified claims
+with provenance-checked numbers. The complete audit
+trail (ledger of claims with their status, per-round reports
+and human decisions) is kept in equipo/2026-09-26_
+donut-localization/ of the repository. The author set
+the questions, the conventions and the acceptance test.
+ACKNOWLEDGMENTS
+The simulations, derivations and the draft of this
+manuscript were produced with a team of AI agents un-
+der the agent-team methodology [9], with independent
+verification of every reported claim; the author directed
+the study and is responsible for its content.
+Appendix A: Closed forms for the CRB at the TCP
+centre
+This appendix transcribes the derivation in docs/
+derivations/crb_tcp_center.md; every boxed result
+there is implemented in src/donutloc/closed_forms.
+py and checked against a numerical Fisher matrix. Equa-
+tion numbers Sn refer to the Supplementary Material of
+Ref. [1].
+1.
+Notation
+Write every exposure as λi(r) = h(|r −bi|2) with bi
+from Eq. (2), R = L/2, and for the LG donut h(u) =
+e a u e−au. Define x ≡aR2 = L2 ln 2/fwhm2 and g ≡
+1 −x. Since ∑
+k eiφk = ∑
+k e2iφk = 0,
+2
+∑
+k=0
+bk = 0,
+2
+∑
+k=0
+bkbT
+k = 3
+2R2 I.
+(A1)
+2.
+Master formula
+With hR ≡h(R2), h′
+R ≡h′(R2) and h0 ≡h(0), λk =
+hR −2h′
+R bk · r + O(r2) for the peripheral exposures and
+λ3 = h0+h′(0)r2+O(r4). By Eq. (A1) the linear term of
+S = ∑
+j λj cancels, S = S0 + O(r2) with S0 = 3hR + h0.
+At r = 0, ∇pk = −2h′
+Rbk/S0 and ∇p3 = 0, and the
+three peripheral terms of Eq. (4) give
+F =
+6NR2 h′2
+R
+hR (3hR + h0) I,
+(A2)
+valid for any radial beam provided the central term van-
+ishes at the origin. A background b per exposure amounts
+to hR →hR + b and 3hR + h0 →S0 + 4b.
+3.
+Point value
+For the LG donut hR = exe−x, R2h′
+R = ex(1 −x)e−x
+and h0 = 0. Equation (A2) gives F = (8Ng2/L2) I, hence
+Eq. (6) (Eq. S27), with the central 0/0 term excluded.
+4.
+Limit r →0
+For r ̸= 0, p3 = ea r2/S0 [1 + O(r2)] and ∇p3 =
+2ea r/S0 [1 + O(r2)], so the central term is
+∇p3∇pT
+3
+p3
+= 4ea
+S0
+ˆrˆrT +O(r2) = 16 ex
+3L2 ˆrˆrT +O(r2). (A3)
+The O(r) changes of the peripheral terms are odd in ˆr
+and do not contribute to the limit of the trace. Therefore
+Flim(ˆr) = α I + β ˆrˆrT ,
+α = 8Ng2
+L2 ,
+β = 16Nex
+3L2 ,
+(A4)
+with eigenvalues α + β (along ˆr) and α (across). The
+trace trF −1
+lim = 1/α + 1/(α + β) does not depend on ˆr,
+and Eq. (5) gives Eq. (7). For x →0, β/α = 2/3 and
+ρ2 = 4/5, i.e. ρ = 2/
+√
+5 and σ2
+lim = L2/(10N); for small
+x, ρ ≃(2/
+√
+5)(1 −9x/40). The axes of the limiting error
+ellipse are σ∥= (α + β)−1/2 and σ⊥= α−1/2 = σpt, with
+ratio
+√
+3g2/(3g2 + 2ex), equal to
+√
+3/5 for a quadratic
+zero.
+The discontinuity: the central term has norm β/N
+but direction ˆr, so it has no matrix limit at 0 (its
+trace does); assigning it the value zero (the S27 conven-
+tion) matches no directional limit.
+Equivalently, with
+F = 4N ∑
+i ∇√pi ∇√pi
+T , √p3 ≃
+√
+ea/S0 |r| is a cone,
+not differentiable at the origin.
+5.
+Background
+Eq. S30 with s = SBR/(SBR+1) is identical to adding
+b = S/(4 SBR) to each λi.
+With h0 = 0, hR + b =
+hR(1 +
+3
+4SBR) and S0 + 4b = S0(1 +
+1
+SBR); Eq. (A2) gives
+Eq. (8) (Eq. S31). Now p3 ≥(1 −s)/4 > 0 and ∇p3 =
+O(r), so the central term vanishes as r2: the CRB is
+continuous. Near the origin λ3 + b ≃ea r2 + b and the
+central term is [4ea/(S0+4b)] [r2/(r2+r2
+c)] ˆrˆrT with rc =
+(
+√
+3L/4) e−x/2/
+√
+SBR (leading order, rc ≪L). Hence
+the non-commuting limits of Sec. IV.
+
+=====PAGE 13
+13
+6.
+Finite zero depth
+Constant pedestal, h = hLG + ϵ: it is exactly a back-
+ground b = ϵ for all r, so at the centre
+σCRB(0) = σpt
+√(
+1 +
+1
+SBRϵ
+)(
+1 +
+3
+4 SBRϵ
+)
+,
+SBRϵ = 3e x e−x
+4ϵ
+.
+(A5)
+With an additional background of given SBR measured
+against the full beam, pedestal included, 1 + 1/SBReﬀ=
+(1 + 1/SBR)(1 + 1/SBRϵ) and the CRB is Eq. (8) at
+SBReﬀ.
+Gaussian pedestal, h = (ea u + ϵ)e−au: hR = (ex +
+ϵ)e−x, R2h′
+R = (exg −ϵx)e−x and h0 = ϵ, so that
+Fϵ
+Fpt
+= 3x2(eg −ϵ)2
+g2 Dϵ
+,
+Dϵ = (ex + ϵ) [3(ex + ϵ) + ϵex],
+(A6)
+with σCRB = σpt
+√
+Fpt/Fϵ. It is not equivalent to a back-
+ground: the pedestal is ϵ at the central exposure and ϵe−x
+at the peripheral ones, and it reduces the slope by the
+factor 1−ϵ/(eg). To first order in ϵ the two models differ
+by a relative factor 1 + 3
+7x2 + O(x3) in the coeﬀicient of
+ϵ. In both models p3(0) > 0, the CRB is continuous at
+the origin, and it tends to σpt as ϵ →0. The transition
+radius
+√
+ϵ/(ea) is independent of L.
+7.
+Multiphoton exponent
+For λ ∝Ic, h(u) = (ue−au)c, h′
+R/hR = cg/R2 and
+h0 = 0, so Eq. (A2) gives F = 2Nc2g2/R2 and σ(c)
+pt =
+L g−1/(2c
+√
+2N). The central term scales as r2c−2 and
+vanishes at the origin for c > 1, so the limit equals the
+point value.
+[1] F. Balzarotti, Y. Eilers, K. C. Gwosch, A. H. Gynnå,
+V. Westphal, F. D. Stefani, J. Elf, and S. W. Hell,
+Nanometer resolution imaging and tracking of fluorescent
+molecules with minimal photon fluxes, Science 355, 606
+(2017).
+[2] K. C. Gwosch, J. K. Pape, F. Balzarotti, P. Hoess, J. El-
+lenberg, J. Ries, and S. W. Hell, MINFLUX nanoscopy
+delivers 3D multicolor nanometer resolution in cells, Nat.
+Methods 17, 217 (2020).
+[3] L. A. Masullo, L. F. Lopez, and F. D. Stefani, A common
+framework for single-molecule localization using sequential
+structured illumination, Biophys. Rep. 2 (2022).
+[4] L. A. Masullo, A. M. Szalai, L. F. Lopez, M. Pilo-Pais,
+G. P. Acuna, and F. D. Stefani, An alternative to MIN-
+FLUX that enables nanometer resolution in a confocal mi-
+croscope, Light Sci. Appl. 11, 199 (2022).
+[5] L. A. Masullo and F. D. Stefani, Multiphoton single-
+molecule localization by sequential excitation with light
+minima, Light Sci. Appl. 11, 70 (2022).
+[6] F. D. Stefani, Tracking nanoscopic motion with minima of
+light, Nat. Photonics 10.1038/s41566-023-01239-4 (2023).
+[7] L. Lopez, L. Masullo, A. Szalai, F. Edorna, F. Choque,
+F. Caprile, and F. Stefani, Optimization and charac-
+terization of toroidal foci for super-resolution fluores-
+cence microscopy:
+a tutorial, J. Opt. Soc. Am. B
+10.1364/JOSAB.482413 (2023).
+[8] F. Caprile, L. A. Masullo, and F. D. Stefani, PyFocus – a
+Python package for vectorial calculations of focused opti-
+cal fields under realistic conditions. Application to toroidal
+foci, Comput. Phys. Commun. (2022).
+[9] M.
+Zaldarriaga,
+agent-team,
+https://github.com/
+matiaszaldarriaga/agent-team (2026), software reposi-
+tory.

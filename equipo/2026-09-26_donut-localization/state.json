@@ -1,8 +1,8 @@
 {
  "id": "2026-09-26_donut-localization",
  "type": "feature+derive",
- "status": "active",
- "round": 3,
+ "status": "done",
+ "round": 5,
  "rounds_budget": 5,
  "worker_count": 3,
  "team": {
@@ -968,24 +968,118 @@
    "text": "M3: every \\cite checked against notes A/B and spot-checked in the PDFs (Balzarotti p.6 <0.2 %, p.13 Eq. S13, pp.35/44 beta=1.27/3.8; Masullo SI Table 1 0.94/1.96/3.16; Stefani 2023 scale invariance; Lopez 2023 'same direction of the phase ramp'); no misattribution or invented claim; minor wording: handedness formalization is the project's own, TCP is S24 up to rotation/relabelling, 'Most analyses ... [1]' overgeneralizes (Ref. [1] experiments used a measured PSF), Masullo column's SBR=5/N=500 are inferred",
    "round": 5,
    "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "vectorial.tex 'two orders / more than one order' (V1) fixed: text now gives L-dependent Table I values (1.600->147.9 nm at L=50, 5.331->84.20 at L=150; linear 60.77/35.72), consistent with Table I; V2/V3 wording also fixed",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "fig5(d) bias direction (V7/F4) fixed in PDF caption, figures.json and body: negative for x0<~8 nm, -0.344+-0.008 at (2,0), sign change near 9 nm (plotted -0.05 at 8, +0.18 at 12)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "Estimators LMS/mLMS below-CRB/shrinkage (V6/V20) fixed in tex: 1/s shrink stated for the expectation, plotted curves include 1/s, sigma<CRB attributed to compression; mLMS sigma/CRB 1.36/1.36/1.22/0.97 at x0=0/5/10/15 and outward bias 1.6-2.5 nm at 5-15 nm confirmed from fig5_sweep.npz",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "estimators.tex 'Closer to the centre this does not hold' (residual, minor) — false for the LMS: at x0=10 nm LMS sigma/CRB=0.81 and bias -1.75 nm; restrict the clause to the mLMS",
+   "round": 5,
+   "source": "verifier",
+   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+  },
+  {
+   "status": "verified",
+   "text": "methods '<2 %' (V13) fixed: 'central results below 2%; the others quoted with their SE' listing misalignment, bias at (2,0) and adaptive fraction (now printed with +-SE)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "MC-vs-population slope explanation (V9) fixed: now inverse-variance weighting favouring delta=2 plus 400-pattern sampling; noise floor removed",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "Verifier wording items V4,V5,V8,V10,V11,V12,V14,V15,V16,V17,V19 all present in the compiled PDF (honest MLE 'about three SE above' = (0.1797-0.1643)/0.0051=3.0)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "structure/figures.json fig8(a) 'At the centre the honest MLE stays at the noise floor' (residual, minor) — tex now says slightly above (3 SE); figures.json not aligned",
+   "round": 5,
+   "source": "verifier",
+   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+  },
+  {
+   "status": "verified",
+   "text": "F1 README pip install fixed: Quick start installs only requirements.txt (exists); editable install documented separately with pip-upgrade caveat",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "F2 fig4(d) fixed: S27 '13' triangle present in fig4_scaling.pdf and in main.pdf p.7; caption matches (13.00 with the point value); dashed 9x9 no-bkg line distinguishable (open squares)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "F3 fig8 'loss is bias' fixed: restricted to the centre in tex caption, body heading and figures.json; (L/4,0) naive sigma growth 2.389->3.74+-0.16 nm cited and visible in panel (b)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "fig6(a) cosmetics fixed: 10000 tick inside panel, annotation clear of legend",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "README.md:125 fig5 row 'linearized estimators fall below the CRB only beyond x0 ~ 15 nm' (new error introduced this round) — LMS sigma/CRB is already 0.81 at x0=10 nm (0.97 at 5); only the mLMS crosses near 15 nm",
+   "round": 5,
+   "source": "verifier",
+   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+  },
+  {
+   "status": "verified",
+   "text": "All 284 \\pnum/\\pnumse macros in numbers.tex equal data/paper_numbers.json to printed precision; every value-with-SE is printed to the SE's decimal with a 1-2 significant-digit SE; abstract numbers (1.605/1.802, 0.9962, 0.8452, 0.991+-0.005, 0.508, 0.1606, 0.747-0.783) correctly rounded",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "main.pdf (16:19) is newer than all sections, numbers.tex, paper_numbers.json and figures; PDF text has no '??', no broken sentence, no visible overfull lines on inspected pages",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "python scripts/check_provenance.py: 179 tags/179 entries, 0 errors, all checks pass; python -m unittest tests.test_acceptance: 8 OK",
+   "round": 5,
+   "source": "verifier"
   }
  ],
  "plan": [
   "R1: núcleo del paquete (beams/patterns/photons), inferencia (fisher/estimators/montecarlo), derivación CRB centro TCP",
   "R2: dona vectorial, CRB de cámara, drivers (iterativo, eps×L, desalineación), fixes R1",
-  "R3: figuras 1-8, pipeline de números (204 claves), claims.json, check_provenance, fixes R2"
+  "R3: figuras 1-8, pipeline de números (204 claves), claims.json, check_provenance, fixes R2",
+  "R4: manuscrito (revtex, 13 pp.), README, CITATION, reproduce, fixes de herramientas, pendientes poblacionales",
+  "R5: verificación final independiente del manuscrito y de la entrega; pasada de correcciones; chequeo final"
  ],
  "backlog": [
-  "FIX (refuted r3): _paperstyle.cached sin invalidación por config (clave debe incluir hash de parámetros); regenerar todo con --no-cache al final",
-  "FIX (refuted r3): --quick pisa salidas finales (figuras, summaries, paper_numbers, numbers.tex): escribir a rutas separadas o marcar",
-  "FIX (refuted r3): check_provenance: \\input sin llaves, '\\src {k}' con espacio, \\pnum en macros; y \\pnum{k} sin \\src/provenance debe fallar",
-  "FIX (refuted r3): numbers.tex fallback \\detokenize{#1}",
-  "FIX (refuted r3): leyenda fig8 (400 patrones, 0.76 δ, falta L/4) y claims.json caveat 0.79; leyenda fig5 (panel d, bump de outliers); reescribir leyendas fig6/fig7 como descripción; unidad del eje fig7(c)",
-  "Pendiente L/4: estimación poblacional sin ruido (decisión inbox r4); nuevas claves en paper_numbers",
-  "Constantes duplicadas fuera de _paperconfig (40000 reps, radios de búsqueda, eps=0.002): mover a _paperconfig",
-  "Caveats para el texto: exponente L solo para L<<fwhm (1.07 en 25-150); x0=15 outlier depende del radio de búsqueda (declararlo); honesto 'en el piso' solo en el centro (en L/4 1-2.4% sobre CRB); SE bootstrap a N=250 inestable (cola pesada)",
-  "R4: paper/main.tex + sections + references.bib + provenance.json con \\pnum{k}\\src{k}; compilar con tectonic; README (inglés, estilo pta), reproduce.sh, CITATION.cff; claims.json completo",
-  "R5: regeneración total --no-cache, revisión final independiente del manuscrito, aceptación"
+  "Confirmación de la autora: SBR=10 como condición de mle_efficiency_center (declarado en el paper como convención)",
+  "Open points del paper: normalización rmse vs Masullo Eq. 4.2; Caprile F=1; cola pesada del iterativo a N=250",
+  "Extensiones (LO QUE MÁS SE PODRÍA HACER): dona 3D/top-hat, aberraciones de Zernike como origen de eps, dipolo de absorción, cámara realista, regla óptima de reducción de L, MLE con prior en el iterativo"
  ],
  "history": [
   {
@@ -1020,15 +1114,37 @@
    },
    "checks": "passed",
    "acceptance": "passed (vacuous provenance)"
+  },
+  {
+   "round": 4,
+   "summary": "Manuscrito completo con procedencia de cada número; README; regeneración total sin caché (ningún número cambió); pendientes poblacionales de desalineación (0.777 centro, 0.851 L/4).",
+   "claims": {
+    "claimed:pending": 12,
+    "claimed:verified": 4,
+    "claimed:unclear": 2
+   },
+   "checks": "passed",
+   "acceptance": "passed"
+  },
+  {
+   "round": 5,
+   "summary": "Verificador final: 5 frases refutadas + ~15 ajustes de redacción; revisor de entrega: clon limpio reproduce todo, 4 defectos (pip, leyendas). Pasada de correcciones + chequeo final: todo corregido; 3 retoques menores aplicados por el orquestador (estimators.tex LMS vs mLMS, README fila fig5, leyenda fig8 honesto ~3 SE sobre el piso).",
+   "claims": {
+    "verified": 29,
+    "refuted": 12,
+    "unclear": 6
+   },
+   "checks": "passed",
+   "acceptance": "passed"
   }
  ],
  "last_checks": {
   "passed": true,
-  "detail": "177 tests OK; acceptance 8/8 OK (provenance vacuous: paper stub)"
+  "detail": "224 unit tests OK (1 skipped: Tectonic compile test when TECTONIC unset)"
  },
  "last_acceptance": {
   "passed": true,
-  "detail": "8/8 OK, but test_manuscript_provenance_passes is vacuous until the manuscript exists"
+  "detail": "tests.test_acceptance 8/8 OK with the full manuscript (179 provenance tags, 39 claims, 217 numbers); sha256 guard intact"
  },
  "writer_seen_verified": 0
 }
