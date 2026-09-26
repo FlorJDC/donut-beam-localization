@@ -150,5 +150,63 @@ class TestShapesAndAxes(unittest.TestCase):
             fisher.fisher_matrix(tcp_model(50.0), [0.0, 0.0, 0.0], 100)
 
 
+class TestZeroPolicy(unittest.TestCase):
+    """R2 fix: no spurious Eq. S27 pixel at a perfect zero in CRB maps."""
+
+    def test_crb_map_default_limit_has_no_central_jump(self):
+        p = tcp_model(50.0)
+        m = fisher.crb_map(p, np.linspace(-2, 2, 5), [0.0], 100)[0]
+        self.assertAlmostEqual(m[2], 1.605096, delta=1e-5)       # r -> 0 limit, not 1.8025
+        self.assertLess(m[2], m[1])                               # smooth minimum at the centre
+        np.testing.assert_allclose(m, m[::-1], rtol=1e-9)
+        self.assertAlmostEqual(m[2] / fisher.crb_limit(p, 100), 1.0, delta=1e-12)
+
+    def test_crb_map_point_policy_reproduces_r1(self):
+        m = fisher.crb_map(tcp_model(50.0), np.linspace(-2, 2, 5), [0.0], 100, zero_policy="point")[0]
+        self.assertAlmostEqual(m[2], 1.802472, delta=1e-5)
+        self.assertAlmostEqual(m[2] / s27(50.0, 100, 300.0), 1.0, delta=1e-4)
+
+    def test_crb_default_is_still_point(self):
+        p = tcp_model(50.0)
+        self.assertAlmostEqual(float(fisher.crb(p, [0.0, 0.0], 100)) / s27(50.0, 100, 300.0), 1.0,
+                               delta=1e-4)
+        lim = float(fisher.crb(p, [0.0, 0.0], 100, zero_policy="limit"))
+        self.assertAlmostEqual(lim / _ref_crb_center(p, 100), 1.0, delta=1e-9)
+
+    def test_limit_at_peripheral_zero_and_array_N(self):
+        p = tcp_model(50.0)
+        z = [0.0, 25.0]                                           # peripheral zero (k = 0)
+        got = fisher.crb(p, np.array([z, [0.0, 0.0], [3.0, 1.0]]), np.array([100, 400, 100]),
+                         zero_policy="limit")
+        self.assertAlmostEqual(got[0] / fisher.crb_limit(p, 100, r_center=z), 1.0, delta=1e-12)
+        self.assertAlmostEqual(got[1] / fisher.crb_limit(p, 400), 1.0, delta=1e-12)
+        self.assertAlmostEqual(got[2] / float(fisher.crb(p, [3.0, 1.0], 100)), 1.0, delta=1e-12)
+        self.assertEqual(np.asarray(fisher.crb(p, [0.0, 0.0], 100, zero_policy="limit")).shape, ())
+
+    def test_policies_agree_with_background(self):
+        p = tcp_model(50.0, sbr=10.0)
+        xs = np.linspace(-2, 2, 5)
+        np.testing.assert_allclose(fisher.crb_map(p, xs, [0.0], 100),
+                                   fisher.crb_map(p, xs, [0.0], 100, zero_policy="point"), rtol=1e-12)
+
+    def test_bad_policy(self):
+        with self.assertRaises(ValueError):
+            fisher.crb(tcp_model(50.0), [0.0, 0.0], 100, zero_policy="bogus")
+
+
+class TestFarField(unittest.TestCase):
+
+    def test_underflow_gives_nan_not_inf(self):
+        from donutloc import beams, patterns, photons
+        p = photons.make_model(patterns.tcp_centers(50.0), beams.make_beam("gaussian", fwhm=300.0))
+        self.assertTrue(np.all(np.isnan(p(np.array([6000.0, 0.0])))))
+        for pol in ("point", "limit"):
+            c = fisher.crb(p, np.array([[6000.0, 0.0], [10.0, 0.0]]), 100, zero_policy=pol)
+            self.assertTrue(np.isnan(c[0]), pol)
+            self.assertTrue(np.isfinite(c[1]), pol)
+        sx, sy, iso = fisher.crb_axes(p, [6000.0, 0.0], 100)
+        self.assertTrue(np.isnan(sx) and np.isnan(sy) and np.isnan(iso))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -254,5 +254,34 @@ class TestApi(unittest.TestCase):
             cf.crb_tcp_center_point(50.0, 100, power=0.5)
 
 
+class TestNonIntegerPower(unittest.TestCase):
+    """R1 defect: crb_tcp_center_limit with 1 < c < 2 (limit = point for every c > 1)."""
+
+    def _num_limit(self, c):
+        from donutloc import beams, fisher, patterns, photons
+        p = photons.make_model(patterns.tcp_centers(100.0), beams.make_beam(fwhm=300.0, power=c))
+        return fisher.crb_limit(p, 100)
+
+    def test_c15_and_c2_match_numerical_limit(self):
+        import warnings
+        for c, tol in ((1.5, 1e-5), (2.0, 1e-8)):
+            with warnings.catch_warnings():
+                warnings.simplefilter("error")          # no warning for c >= 1.5
+                cl = cf.crb_tcp_center_limit(100.0, 100, 300.0, power=c)
+            self.assertAlmostEqual(cl, cf.crb_tcp_center_point(100.0, 100, 300.0, power=c), places=12)
+            self.assertAlmostEqual(self._num_limit(c) / cl, 1.0, delta=tol)
+
+    def test_warning_for_slow_convergence(self):
+        with self.assertWarns(UserWarning):
+            v = cf.crb_tcp_center_limit(100.0, 100, 300.0, power=1.1)
+        self.assertAlmostEqual(v, cf.crb_tcp_center_point(100.0, 100, 300.0, power=1.1), places=12)
+        with self.assertWarns(UserWarning):
+            cf.crb_tcp_center_limit(100.0, 100, 300.0, power=np.array([1.0, 1.2, 2.0]))
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            cf.crb_tcp_center_limit(100.0, 100, 300.0, power=1)
+
+
 if __name__ == "__main__":
     unittest.main()

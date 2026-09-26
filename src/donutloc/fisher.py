@@ -26,6 +26,22 @@ Without background, a perfect zero gives ``p_i = 0`` and ``grad p_i = 0`` at the
 "point value").  The limit r -> 0 is different (the central term tends to a non-zero,
 direction-dependent matrix); it is computed by :func:`crb_limit`, which averages the CRB over
 ``n_dir`` directions at distance ``r0`` -- the same definition used by ``tests/test_acceptance.py``.
+
+``zero_policy`` (keyword of :func:`crb` and :func:`crb_map`) selects which of the two values is
+returned at points where some ``p_i <= p_min``:
+
+* ``"point"`` -- the point value above (Balzarotti2017 Eq. S27 at the TCP centre); default of
+  :func:`crb`, so ``crb(p_fn, 0, N)`` is unchanged;
+* ``"limit"`` -- the value is replaced by :func:`crb_limit` around that point (``r0 = 1e-3`` nm,
+  ``n_dir = 12``), which makes maps continuous across a perfect zero (no isolated S27 pixel at the
+  origin of a symmetric grid); default of :func:`crb_map`.
+
+With a finite background or a residual zero ``eps > 0`` no ``p_i`` vanishes and both policies give
+the same number (point value = limit, Balzarotti2017 Eq. S31).
+
+Far field: if every exposure intensity underflows to 0 and there is no background,
+``photons.probabilities`` returns NaN and :func:`crb` returns **NaN** there (not ``inf``); ``inf``
+is reserved for a genuinely singular (finite) Fisher matrix.
 """
 
 import numpy as np
@@ -88,17 +104,58 @@ def _cov_from_F(F):
         sxx = np.where(good, d * inv, np.inf)
         syy = np.where(good, a * inv, np.inf)
         sxy = np.where(good, -b * inv, 0.0)
+        bad = np.isnan(det)                 # undefined probabilities (e.g. far-field underflow)
+        if np.any(bad):
+            sxx = np.where(bad, np.nan, sxx)
+            syy = np.where(bad, np.nan, syy)
+            sxy = np.where(bad, np.nan, sxy)
     return sxx, sxy, syy
 
 
-def crb(p_fn, r, N, **kw):
-    """Scalar CRB sigma = sqrt(tr(F^-1)/2) in nm (Balzarotti2017 Eq. S12-S13).
+_ZERO_POLICIES = ("point", "limit")
 
-    ``kw`` is forwarded to :func:`fisher_matrix` (``h``, ``p_min``).  Returns shape
-    ``r.shape[:-1]``; a singular Fisher matrix gives ``inf``.
+
+def crb(p_fn, r, N, zero_policy="point", limit_r0=1e-3, limit_n_dir=12, **kw):
+    """Scalar CRB sigma = sqrt(tr(F^-1)/2) in nm (Balzarotti2017 Eq. S11-S13).
+
+    Parameters
+    ----------
+    p_fn, r, N : as in :func:`fisher_matrix`.
+    zero_policy : {"point", "limit"}
+        What to return at points where some ``p_i <= p_min`` (a perfect zero without background):
+        ``"point"`` (default) keeps the point value with those terms excluded (Balzarotti2017
+        Eq. S27 at the TCP centre); ``"limit"`` replaces it by :func:`crb_limit` centred on that
+        point, with ``r0 = limit_r0`` and ``n_dir = limit_n_dir`` (finite-difference step
+        ``limit_r0 * 1e-2`` and ``p_min = 0`` there, the acceptance-test definition).
+    limit_r0, limit_n_dir : parameters of the ``"limit"`` replacement.
+    **kw : forwarded to :func:`fisher_matrix` (``h``, ``p_min``); ``p_min`` (default 1e-12) is also
+        the threshold that flags a zero for ``"limit"``.
+
+    Returns shape ``r.shape[:-1]``. A singular Fisher matrix gives ``inf``; undefined
+    probabilities (NaN from ``p_fn``, e.g. far-field underflow without background) give NaN.
     """
+    if zero_policy not in _ZERO_POLICIES:
+        raise ValueError("zero_policy must be one of %s, got %r" % (_ZERO_POLICIES, zero_policy))
     sxx, _, syy = _cov_from_F(fisher_matrix(p_fn, r, N, **kw))
-    return np.sqrt(0.5 * (sxx + syy))
+    out = np.sqrt(0.5 * (sxx + syy))
+    if zero_policy == "point":
+        return out
+    r = _as_points(r)
+    p_min = kw.get("p_min", 1e-12)
+    P = np.asarray(p_fn(r), dtype=float)
+    zero = np.any(P <= p_min, axis=-1)                    # NaN compares False -> stays NaN
+    if not np.any(zero):
+        return out
+    shape = r.shape[:-1]
+    flat = np.array(out, dtype=float).reshape(-1)
+    zf = np.broadcast_to(zero, shape).reshape(-1)
+    pts = r.reshape(-1, 2)[zf]                                       # (M, 2)
+    Nz = np.broadcast_to(np.asarray(N, dtype=float), shape).reshape(-1)[zf]
+    ang = 2.0 * np.pi * np.arange(int(limit_n_dir)) / int(limit_n_dir)
+    ring = pts[:, None, :] + float(limit_r0) * np.stack([np.cos(ang), np.sin(ang)], axis=-1)
+    vals = crb(p_fn, ring, Nz[:, None], zero_policy="point", h=float(limit_r0) * 1e-2, p_min=0.0)
+    flat[zf] = np.mean(vals, axis=-1)
+    return flat.reshape(shape)
 
 
 def crb_axes(p_fn, r, N, **kw):
@@ -134,8 +191,13 @@ def crb_limit(p_fn, N, r_center=(0.0, 0.0), r0=1e-3, n_dir=12, p_min=0.0):
     return float(np.mean(crb(p_fn, pts, N, h=r0 * 1e-2, p_min=p_min)))
 
 
-def crb_map(p_fn, xs, ys, N, **kw):
+def crb_map(p_fn, xs, ys, N, zero_policy="limit", **kw):
     """CRB on the grid ``xs x ys`` (nm).  Returns an array of shape ``(len(ys), len(xs))``
-    (``meshgrid`` 'xy' indexing: row = y, column = x)."""
+    (``meshgrid`` 'xy' indexing: row = y, column = x).
+
+    ``zero_policy`` defaults to ``"limit"``: pixels on a perfect zero (e.g. the origin of a
+    symmetric grid over a background-free TCP) get the r -> 0 limit instead of the Eq. S27 point
+    value, so the map has no spurious isolated peak.  Pass ``zero_policy="point"`` for the R1
+    behaviour.  Other keywords as in :func:`crb`."""
     X, Y = np.meshgrid(np.asarray(xs, float), np.asarray(ys, float), indexing="xy")
-    return crb(p_fn, np.stack([X, Y], axis=-1), N, **kw)
+    return crb(p_fn, np.stack([X, Y], axis=-1), N, zero_policy=zero_policy, **kw)

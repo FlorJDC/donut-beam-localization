@@ -105,6 +105,60 @@ class TestMLE(unittest.TestCase):
         with self.assertRaises(ValueError):
             est.mle([1, 2, 3, 4], p, search_radius=10.0, refine="bogus")
 
+    def test_nonpositive_tol_step_radius_raise_instead_of_hanging(self):
+        # R1 defect: tol=0 made the pattern search loop forever
+        p = tcp_model(50.0)
+        c = [10, 10, 10, 1]
+        for kw in ({"tol": 0.0}, {"tol": -1e-3}, {"tol": np.nan}, {"grid_step": 0.0},
+                   {"grid_step": -1.0}, {"search_radius": -5.0}, {"search_radius": np.inf},
+                   {"chunk": 0}, {"mem_budget": 0}):
+            args = {"search_radius": 50.0}
+            args.update(kw)
+            with self.assertRaises(ValueError, msg=str(kw)):
+                est.mle(c, p, **args)
+
+    def test_counts_validation(self):
+        p = tcp_model(50.0)
+        with self.assertRaisesRegex(ValueError, ">= 0"):
+            est.mle([-5, 10, 10, 0], p, 50.0)                # R1: silently accepted
+        with self.assertRaisesRegex(ValueError, "finite"):
+            est.mle([np.nan, 10, 10, 0], p, 50.0)
+        with self.assertRaisesRegex(ValueError, "finite"):
+            est.mle([[1, 2, 3, 4], [np.inf, 1, 1, 1]], p, 50.0)
+        with self.assertRaisesRegex(ValueError, "K = 3 exposures but p_fn returns K = 4"):
+            est.mle([10, 10, 10], p, 50.0)                   # R1: cryptic matmul error
+        with self.assertRaises(ValueError):
+            est.mle(np.ones((2, 2, 4)), p, 50.0)
+
+
+class TestMLEMemory(unittest.TestCase):
+    """R1 defect: the global-grid chunk did not scale with the grid size G."""
+
+    def test_fine_grid_bounded_memory_and_same_result(self):
+        import tracemalloc
+        p = tcp_model(50.0, sbr=10.0)
+        rng = np.random.default_rng(42)
+        C = rng.multinomial(2000, p(np.array([3.0, -2.0])), size=200)
+        coarse = est.mle(C, p, search_radius=50.0)                        # G = 1961
+        tracemalloc.start()
+        fine = est.mle(C, p, search_radius=50.0, grid_step=0.2)           # G = 196321
+        peak = tracemalloc.get_traced_memory()[1]
+        tracemalloc.stop()
+        # measured: ~135 MiB with the fix (64 MiB block + grid/model temporaries);
+        # ~310 MiB with the R1 fixed chunk (200 x 196321 x 8 B = 314 MB for one block)
+        self.assertLess(peak, 220 * 2 ** 20, peak)
+        np.testing.assert_allclose(fine, coarse, atol=2e-3)
+
+    def test_chunking_does_not_change_the_result(self):
+        p = tcp_model(50.0)
+        rng = np.random.default_rng(42)
+        C = rng.multinomial(300, p(np.array([4.0, 1.0])), size=37)
+        a = est.mle(C, p, search_radius=30.0, refine=False)
+        b = est.mle(C, p, search_radius=30.0, refine=False, mem_budget=1.0)   # chunk = 1
+        c = est.mle(C, p, search_radius=30.0, refine=False, chunk=5)
+        np.testing.assert_array_equal(a, b)
+        np.testing.assert_array_equal(a, c)
+
 
 class TestLMS(unittest.TestCase):
 

@@ -49,8 +49,11 @@ def _disk_grid(center, radius, step):
     return pts[order] + np.asarray(center, dtype=float)
 
 
+_MEM_BUDGET = 64 * 2 ** 20          # bytes for the (chunk, G) log-likelihood block of mle
+
+
 def mle(counts, p_fn, search_radius, center=(0.0, 0.0), grid_step=None, refine=True,
-        tol=1e-4, chunk=4096):
+        tol=1e-4, chunk=4096, mem_budget=_MEM_BUDGET):
     """Maximum-likelihood position estimate (Balzarotti2017 Eq. S33, S37) inside a disk.
 
     Algorithm (fully vectorized over the batch):
@@ -76,6 +79,16 @@ def mle(counts, p_fn, search_radius, center=(0.0, 0.0), grid_step=None, refine=T
     Robustness: ``n_i = 0`` terms contribute 0; ``p_i = 0`` is clipped to 1e-300 so the
     log-likelihood stays finite; an all-zero count vector returns ``center``.
 
+    Validation (``ValueError``): ``search_radius``, ``grid_step`` (if given) and ``tol`` must be
+    finite and > 0 (``tol <= 0`` would never stop the pattern search); ``chunk`` >= 1;
+    ``mem_budget`` > 0; counts must be finite and >= 0; the number of exposures K of ``counts``
+    must equal the length of ``p_fn(center)``.
+
+    Memory: the global grid is processed in batch chunks of
+    ``min(chunk, max(1, floor(mem_budget / (8 G))))`` rows, G = number of grid points, so the
+    ``(rows, G)`` float64 log-likelihood block stays below ``mem_budget`` bytes (default 64 MiB)
+    whatever ``grid_step``.
+
     Parameters
     ----------
     counts : array ``(K,)`` or ``(M, K)``.
@@ -85,23 +98,44 @@ def mle(counts, p_fn, search_radius, center=(0.0, 0.0), grid_step=None, refine=T
     grid_step : float or None.
     refine : bool or "scipy".
     tol : float, final step of the pattern search (nm).
-    chunk : int, batch chunk size for the global grid (memory bound).
+    chunk : int, maximum batch chunk size for the global grid.
+    mem_budget : float, bytes allowed for one ``(rows, G)`` block of the global grid
+        (default 64 MiB); the effective chunk is ``min(chunk, max(1, floor(mem_budget/(8 G))))``.
 
     Returns
     -------
     ``(2,)`` or ``(M, 2)`` estimates in nm.
     """
     counts = np.asarray(counts, dtype=float)
+    if counts.ndim not in (1, 2):
+        raise ValueError("counts must have shape (K,) or (M, K), got %r" % (counts.shape,))
     single = counts.ndim == 1
     C = np.atleast_2d(counts)
     M = C.shape[0]
     center = np.asarray(center, dtype=float)
-    if search_radius <= 0:
-        raise ValueError("search_radius must be > 0")
+    if center.shape != (2,):
+        raise ValueError("center must have shape (2,), got %r" % (center.shape,))
+    _check_pos("search_radius", search_radius)
+    _check_pos("tol", tol)
+    if grid_step is not None:
+        _check_pos("grid_step", grid_step)
+    _check_pos("mem_budget", mem_budget)
+    if int(chunk) < 1:
+        raise ValueError("chunk must be >= 1, got %r" % (chunk,))
+    if not np.all(np.isfinite(C)):
+        raise ValueError("counts must be finite")
+    if np.any(C < 0):
+        raise ValueError("counts must be >= 0")
+    K = np.asarray(p_fn(center), float).shape[-1]
+    if C.shape[1] != K:
+        raise ValueError("counts have K = %d exposures but p_fn returns K = %d probabilities"
+                         % (C.shape[1], K))
     step = float(search_radius) / 25.0 if grid_step is None else float(grid_step)
 
     grid = _disk_grid(center, search_radius, step)                   # (G, 2)
     logp = np.log(np.maximum(np.asarray(p_fn(grid), float), _P_FLOOR))  # (G, K)
+    G = grid.shape[0]
+    chunk = int(min(int(chunk), max(1, int(np.floor(float(mem_budget) / (8.0 * G))))))
     best = np.empty((M, 2))
     for s in range(0, M, chunk):
         ll = C[s:s + chunk] @ logp.T                                  # (m, G)
@@ -114,6 +148,15 @@ def mle(counts, p_fn, search_radius, center=(0.0, 0.0), grid_step=None, refine=T
     elif refine is not False:
         raise ValueError("refine must be True, False or 'scipy'")
     return best[0] if single else best
+
+
+def _check_pos(name, v):
+    try:
+        ok = np.isfinite(float(v)) and float(v) > 0
+    except (TypeError, ValueError):
+        ok = False
+    if not ok:
+        raise ValueError("%s must be a finite number > 0, got %r" % (name, v))
 
 
 def _pattern_search(C, p_fn, start, center, radius, step, tol):

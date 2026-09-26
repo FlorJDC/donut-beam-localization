@@ -19,6 +19,8 @@ Units: nm. All functions broadcast over numpy arrays; scalars in -> floats out.
 Only numpy is used.
 """
 
+import warnings
+
 import numpy as np
 
 __all__ = [
@@ -111,8 +113,20 @@ def crb_tcp_center_limit(L, N, fwhm=np.inf, power=1):
         sigma_lim^2 = L^2 / (8 N g^2) * (3 g^2 + e^x) / (3 g^2 + 2 e^x)
 
     (= L^2/(10 N) for a quadratic zero, i.e. sigma_lim/sigma_S27 = 2/sqrt(5)).
-    For c >= 2 the central term vanishes as r^(2c-2) and the limit equals the point value.
+
+    Multiphoton exponent c = ``power`` (lambda ~ I^c): the limit equals the point value
+    (Balzarotti2017 Eq. S27 divided by c) for EVERY c > 1, because the central Fisher term is
+    proportional to r^(2c-2) -> 0.  The convergence at finite r0 is slow for c -> 1+: the numerical
+    definition of the project (``fisher.crb_limit``, r0 = 1e-3 nm) agrees with this closed form to
+    ~4e-6 at c = 1.5 and ~1e-9 at c = 2, but is 2.3 % lower at c = 1.1.  A ``UserWarning`` is
+    emitted for 1 < c < 1.5, where the finite-r0 numerical value can differ noticeably.
     """
+    pw = np.asarray(power, dtype=float)
+    if np.any((pw > 1.0) & (pw < 1.5)):
+        warnings.warn("crb_tcp_center_limit: for 1 < power < 1.5 the r->0 limit (= point value) "
+                      "is approached very slowly (central term ~ r^(2c-2)); a finite-r0 numerical "
+                      "limit such as fisher.crb_limit can differ by several %", UserWarning,
+                      stacklevel=2)
     p = crb_tcp_center_point(L, N, fwhm, np.inf, power)
     if np.all(np.asarray(power) > 1):
         return p

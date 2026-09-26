@@ -58,7 +58,7 @@ class TestRunMC(unittest.TestCase):
         # rmse^2 = sigma^2 (n-1)/n + |bias|^2 / 2
         self.assertAlmostEqual(res["rmse"] ** 2,
                                res["sigma"] ** 2 * (n - 1) / n + 0.5 * np.sum(res["bias"] ** 2), places=10)
-        self.assertAlmostEqual(res["sigma_err"], res["sigma"] / np.sqrt(2 * n), places=12)
+        self.assertAlmostEqual(res["sigma_err"], res["sigma"] / (2.0 * np.sqrt(n)), places=12)
         np.testing.assert_allclose(res["bias"], e.mean(0) - r)
 
     def test_sampling_modes(self):
@@ -72,6 +72,18 @@ class TestRunMC(unittest.TestCase):
         self.assertAlmostEqual(res["counts"].sum(1).mean() / 200.0, 1.0, delta=0.01)
         with self.assertRaises(ValueError):
             mc.run_mc(lambda C: est.lms_tcp(C, 50.0, 300.0), p, r, 200, 10, mode="bogus")
+
+    def test_sigma_err_matches_seed_to_seed_scatter(self):
+        # sigma_err = sigma / (2 sqrt(n)) (V13 correction of the R1 sigma/sqrt(2n))
+        p = tcp_model(50.0)
+        f = lambda C: est.lms_tcp(C, 50.0, 300.0)
+        n = 400
+        res = [mc.run_mc(f, p, [3.0, -2.0], 200, n, seed=s) for s in range(60)]
+        sig = np.array([r["sigma"] for r in res])
+        err = np.mean([r["sigma_err"] for r in res])
+        self.assertAlmostEqual(sig.std(ddof=1) / err, 1.0, delta=0.3)
+        # the old formula would be sqrt(2) too large
+        self.assertLess(sig.std(ddof=1), 0.85 * np.mean(sig) / np.sqrt(2 * n))
 
 
 class TestMLEEfficiency(unittest.TestCase):

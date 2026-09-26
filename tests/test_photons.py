@@ -184,5 +184,19 @@ class TestPhotons(unittest.TestCase):
             photons.sample_counts(np.full((2, 2), 0.25), 10)
 
 
+class TestFarField(unittest.TestCase):
+
+    def test_all_intensities_underflow(self):
+        c = patterns.tcp_centers(50.0)
+        g = beams.make_beam("gaussian", fwhm=300.0)
+        r = np.array([[6000.0, 0.0], [10.0, 0.0]])
+        self.assertTrue(np.all(photons.intensities(r[0], c, g) == 0.0))
+        p = photons.probabilities(r, c, g)
+        self.assertTrue(np.all(np.isnan(p[0])))
+        np.testing.assert_allclose(p[1].sum(), 1.0)
+        self.assertTrue(np.all(np.isnan(photons.probabilities(r[0], c, g, sbr=10.0))))
+        np.testing.assert_allclose(photons.probabilities(r[0], c, g, bg_per_exposure=1e-3), 0.25)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,10 +46,15 @@ def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial"):
       ``std`` (2,)    per-axis sample std, ddof=1         (Eq. S42),
       ``sigma``       sqrt((var_x + var_y) / 2)  -- same convention as the CRB (Eq. S13),
       ``rmse``        sqrt(mean(|r_hat - r_true|^2) / 2), per-axis RMS error w.r.t. the true
-                      position (includes bias; per-axis normalisation so that for an unbiased
-                      estimator rmse ~ sigma, comparable with the CRB),
-      ``sigma_err``   approximate standard error of ``sigma``, sigma / sqrt(2 n_valid)
-                      (conservative: treats the two axes as one sample of size n_valid),
+                      position (includes bias).  Normalisation: divided by d = 2, the same
+                      per-axis convention as the project CRB sqrt(tr Sigma / 2)
+                      (Balzarotti2017 Eq. S13), so that for an unbiased estimator rmse ~ sigma
+                      and rmse / CRB is an efficiency; rmse^2 = sigma^2 (n-1)/n + |bias|^2/2.
+                      (Masullo's Eq. 4.2 is not in docs/literature and is not cited.)
+      ``sigma_err``   approximate standard error of ``sigma``: sigma / (2 sqrt(n_valid)).  For a
+                      Gaussian sample the std of a sample std is sigma/sqrt(2n); pooling the two
+                      axes (2 n_valid values) gives sigma/sqrt(4 n_valid).  (R1 used the
+                      conservative sigma/sqrt(2 n_valid), sqrt(2) too large.)
       ``n_rep``, ``n_valid`` (finite estimates used in the statistics), ``seed``,
       ``estimates`` (n_rep, 2), ``counts`` (n_rep, K).
     """
@@ -72,7 +77,7 @@ def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial"):
         "std": np.sqrt(var),
         "sigma": sigma,
         "rmse": rmse,
-        "sigma_err": sigma / np.sqrt(2.0 * n_valid),
+        "sigma_err": sigma / (2.0 * np.sqrt(n_valid)),
         "n_rep": int(n_rep),
         "n_valid": n_valid,
         "seed": seed,

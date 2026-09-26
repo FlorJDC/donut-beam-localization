@@ -60,8 +60,13 @@ def probabilities(r, centers, beam, sbr=None, bg_per_exposure=None):
     bg_per_exposure : float or None
         Fixed background per exposure, Balzarotti2017 Eq. S28 (position-dependent SBR).
 
-    Passing both raises ``ValueError``. If all ``lambda_i`` vanish and there is no background
-    the result is NaN (undefined).
+    Passing both raises ``ValueError``.
+
+    Far field / undefined case: if all ``lambda_i`` vanish (e.g. a Gaussian or LG beam evaluated
+    microns away, where ``exp`` underflows to 0) the no-background probabilities ``lambda_i /
+    sum_j lambda_j`` are 0/0 and the result is **NaN** (documented, no warning).  This also holds
+    with a fixed ``sbr`` (Eq. S30 needs ``p_i^(0)``); with ``bg_per_exposure > 0`` the result is the
+    well-defined uniform ``1/K``.  ``fisher.crb`` returns NaN at such points.
     """
     _check_bg(sbr, bg_per_exposure)
     lam = intensities(r, centers, beam)
