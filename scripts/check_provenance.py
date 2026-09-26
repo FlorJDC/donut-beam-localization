@@ -1,17 +1,26 @@
 # -*- coding: utf-8 -*-
 """Provenance check of the manuscript (called by tests/test_acceptance.py).
 
-1. Flattens ``paper/main.tex``: ``\\input{...}`` / ``\\include{...}`` are resolved recursively
-   (relative to ``paper/``, ``.tex`` appended when missing; e.g. ``sections/*.tex`` and
-   ``generated/numbers.tex``), LaTeX comments are stripped, and the result is written to a
-   temporary file.
+1. Flattens ``paper/main.tex``: ``\\input{...}``, ``\\include{...}`` and the brace-less TeX form
+   ``\\input name`` are resolved recursively (relative to ``paper/``, ``.tex`` appended when
+   missing; e.g. ``sections/*.tex`` and ``generated/numbers.tex``), LaTeX comments are
+   stripped, whitespace between ``\\src`` / ``\\pnum`` / ``\\pnumse`` and ``{`` is removed
+   (TeX ignores it), and the result is written to a temporary file.
 2. Runs ``agent-team/bin/check_provenance.py <flat> paper/provenance.json`` as a subprocess
    (every ``\\src{key}`` must resolve to a well-formed, reproducible registry entry).
 3. Additionally checks that
    * every ``\\pnum{k}`` / ``\\pnumse{k}`` of the flattened tex is a key of
-     ``data/paper_numbers.json`` (``\\pnumse`` also needs an ``se``);
+     ``data/paper_numbers.json`` (``\\pnumse`` also needs an ``se``); keys with leading or
+     trailing whitespace are errors (the csname would include the space); arguments that are
+     macro parameters (``#1`` inside a ``\\newcommand`` body) are skipped;
+   * every ``\\pnum{k}`` / ``\\pnumse{k}`` is backed by provenance: the flattened tex contains
+     some ``\\src{e}`` whose ``paper/provenance.json`` entry ``e`` has ``k`` in its
+     ``number_keys`` or ``detail == k`` (global rule, not by proximity);
+   * ``data/paper_numbers.json`` is not a ``--quick`` output (no top-level ``"quick"``);
    * every ``number_keys`` listed by an entry of ``paper/provenance.json`` exists there;
    * every ``numbers`` key of ``structure/claims.json`` exists and every ``script`` file exists;
+   * claims coverage in both directions: every claim has a non-empty ``numbers`` list and every
+     key of ``data/paper_numbers.json`` belongs to at least one claim;
    * ``paper/generated/numbers.tex`` is exactly what ``compute_paper_numbers.numbers_tex``
      produces from ``data/paper_numbers.json`` (in sync).
 
@@ -35,9 +44,20 @@ if HERE not in sys.path:
 DEFAULT_ROOT = os.path.dirname(HERE)
 DEFAULT_CHECKER = os.path.join(DEFAULT_ROOT, "agent-team", "bin", "check_provenance.py")
 
-_INPUT_RE = re.compile(r"\\(input|include)\s*\{([^}]+)\}")
-_PNUM_RE = re.compile(r"\\pnum\s*\{([^}]+)\}")
-_PNUMSE_RE = re.compile(r"\\pnumse\s*\{([^}]+)\}")
+# \input{name}, \include{name}, and the brace-less TeX primitive form "\input name" (the file
+# name ends at whitespace, a brace, a backslash or %).  "\inputencoding" etc. are not matched.
+_INPUT_RE = re.compile(r"\\(input|include)(?![A-Za-z@])\s*(?:\{([^}]+)\}|([^\s{}\\%]+))")
+_PNUM_RE = re.compile(r"\\pnum(?![A-Za-z@])\s*\{([^}]*)\}")
+_PNUMSE_RE = re.compile(r"\\pnumse(?![A-Za-z@])\s*\{([^}]*)\}")
+_SRC_RE = re.compile(r"\\src(?![A-Za-z@])\s*\{([^}]*)\}")
+_WS_RE = re.compile(r"\\(src|pnum|pnumse)(?![A-Za-z@])\s+\{")
+_MACRO_PARAM_RE = re.compile(r"#+\d")
+
+
+def normalize(text):
+    """Remove whitespace between \\src / \\pnum / \\pnumse and their opening brace (TeX skips
+    it), so that the agent-team checker (regex ``\\src\\{``) sees every tag."""
+    return _WS_RE.sub(lambda m: "\\%s{" % m.group(1), text)
 
 
 def strip_comments(text):
@@ -60,7 +80,9 @@ def flatten(path, base, _stack=None):
         text = strip_comments(fh.read())
 
     def repl(m):
-        name = m.group(2).strip()
+        name = (m.group(2) if m.group(2) is not None else m.group(3)).strip()
+        if _MACRO_PARAM_RE.search(name):          # \input{#1} inside a macro definition
+            return m.group(0)
         cand = os.path.join(base, name)
         if not os.path.exists(cand) and not cand.endswith(".tex"):
             cand += ".tex"
@@ -91,9 +113,21 @@ def run(root=DEFAULT_ROOT, checker=DEFAULT_CHECKER, verbose=True):
     # 1. flatten
     flat_text = None
     try:
-        flat_text = flatten(main_tex, paper)
+        flat_text = normalize(flatten(main_tex, paper))
     except (OSError, RecursionError) as exc:
         errors.append("flatten failed: %s" % exc)
+    if isinstance(numbers, dict) and "quick" in numbers:
+        errors.append("data/paper_numbers.json is a --quick output (top-level 'quick'); rerun "
+                      "scripts/compute_paper_numbers.py without --quick")
+    numbers = {k: v for k, v in numbers.items() if isinstance(v, dict)} \
+        if isinstance(numbers, dict) else {}
+
+    prov = {}
+    try:
+        with open(prov_path, encoding="utf-8") as fh:
+            prov = json.load(fh)
+    except (OSError, ValueError) as exc:
+        errors.append("cannot read %s: %s" % (prov_path, exc))
 
     # 2. agent-team checker
     out = ""
@@ -112,22 +146,44 @@ def run(root=DEFAULT_ROOT, checker=DEFAULT_CHECKER, verbose=True):
             os.remove(flat)
 
         # 3a. \pnum keys
-        for k in sorted(set(_PNUM_RE.findall(flat_text))):
-            if k.strip() not in numbers:
+        pnum = set(_PNUM_RE.findall(flat_text))
+        pnumse = set(_PNUMSE_RE.findall(flat_text))
+        for k in sorted(pnum | pnumse):
+            if k != k.strip() or not k.strip():
+                errors.append("\\pnum/\\pnumse{%s}: empty key or key with leading/trailing "
+                              "whitespace (the LaTeX csname would include it)" % k)
+        cited = set()
+        for k in sorted(pnum):
+            if _MACRO_PARAM_RE.search(k) or k != k.strip() or not k:
+                continue
+            cited.add(k)
+            if k not in numbers:
                 errors.append("\\pnum{%s} is not a key of data/paper_numbers.json" % k)
-        for k in sorted(set(_PNUMSE_RE.findall(flat_text))):
-            e = numbers.get(k.strip())
+        for k in sorted(pnumse):
+            if _MACRO_PARAM_RE.search(k) or k != k.strip() or not k:
+                continue
+            cited.add(k)
+            e = numbers.get(k)
             if not isinstance(e, dict) or "se" not in e:
                 errors.append("\\pnumse{%s}: key missing or without 'se' in paper_numbers.json"
                               % k)
+        # 3a'. every cited number is backed by a \src tag whose entry covers it
+        covered = set()
+        if isinstance(prov, dict):
+            for tag in _SRC_RE.findall(flat_text):
+                for e in tag.split(","):
+                    entry = prov.get(e.strip())
+                    if not isinstance(entry, dict):
+                        continue
+                    nk = entry.get("number_keys", [])
+                    covered.update([nk] if isinstance(nk, str) else list(nk or []))
+                    if isinstance(entry.get("detail"), str):
+                        covered.add(entry["detail"])
+        for k in sorted(cited - covered):
+            errors.append("\\pnum{%s} has no provenance: no \\src{e} in the tex whose "
+                          "paper/provenance.json entry lists it in number_keys or as detail" % k)
 
     # 3b. provenance number_keys
-    prov = {}
-    try:
-        with open(prov_path, encoding="utf-8") as fh:
-            prov = json.load(fh)
-    except (OSError, ValueError) as exc:
-        errors.append("cannot read %s: %s" % (prov_path, exc))
     if isinstance(prov, dict):
         for key, entry in prov.items():
             nk = entry.get("number_keys", []) if isinstance(entry, dict) else []
@@ -150,17 +206,24 @@ def run(root=DEFAULT_ROOT, checker=DEFAULT_CHECKER, verbose=True):
     except (OSError, ValueError) as exc:
         errors.append("cannot read %s: %s" % (claims_path, exc))
         claims = []
+    in_claims = set()
     for c in claims:
         ck = c.get("key", "?") if isinstance(c, dict) else "?"
         if not isinstance(c, dict):
             errors.append("claim is not an object: %r" % (c,))
             continue
+        if not c.get("numbers"):
+            errors.append("claim %r has an empty 'numbers' list" % ck)
+        in_claims.update(c.get("numbers", []))
         for k in c.get("numbers", []):
             if k not in numbers:
                 errors.append("claim %r: number %r not in paper_numbers.json" % (ck, k))
         scr = c.get("script")
         if scr and not os.path.exists(os.path.join(root, scr.split("::", 1)[0])):
             errors.append("claim %r: script %r does not exist" % (ck, scr))
+
+    for k in sorted(set(numbers) - in_claims):
+        errors.append("paper_numbers key %r belongs to no claim of structure/claims.json" % k)
 
     # 3d. numbers.tex in sync
     if numbers:

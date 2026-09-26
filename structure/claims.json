@@ -37,7 +37,7 @@
   "question": "R1",
   "verified_round": 2,
   "status": "verified",
-  "caveat": "Caprile F=1: 428 frente a 401 nm, NO concuerda."
+  "caveat": "Caprile et al. at F=1: 428 vs 401 nm, no agreement; declared as an open point."
  },
  {
   "key": "vectorial_curvature_lg_equivalent",
@@ -108,7 +108,7 @@
   "script": "tests/test_vectorial.py",
   "question": "R1",
   "verified_round": 3,
-  "status": "pending-r3-verification",
+  "status": "verified",
   "caveat": null
  },
  {
@@ -116,7 +116,8 @@
   "statement": "Centre CRB of the TCP defined as the r->0 limit (isotropic): sigma_lim^2 = L^2/(8N g^2)(3g^2+e^x)/(3g^2+2e^x); 1.6051 nm for L=50, N=100, fwhm=300.",
   "numbers": [
    "crb_center_lg_L50_N100_nm",
-   "crb_center_lg_L50_N100_closed_nm"
+   "crb_center_lg_L50_N100_closed_nm",
+   "fwhm_nm"
   ],
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig3_crb_maps",
@@ -175,7 +176,10 @@
  {
   "key": "crb_discontinuity_origin",
   "statement": "The discontinuity comes from the central Fisher term tending to (beta/N) r r^T, which has no matrix limit at r=0 (sqrt(p_center) ~ |r| is not differentiable).",
-  "numbers": [],
+  "numbers": [
+   "crb_center_point_S27_L50_N100_nm",
+   "crb_center_lg_L50_N100_nm"
+  ],
   "script": "scripts/verify_crb_closed_forms.py",
   "figure": "fig3_crb_maps",
   "question": "R2",
@@ -208,8 +212,8 @@
   "figure": "fig4_scaling",
   "question": "R2",
   "verified_round": 3,
-  "status": "pending-r3-verification",
-  "caveat": "Con eps=0, el CRB es monótono solo para L<360 nm."
+  "status": "verified",
+  "caveat": "The L exponent (1.004) holds only for L << fwhm: the fit gives 1.07 over L=25-150 nm. With eps=0 the centre CRB is monotonic in L only for L < 360 nm."
  },
  {
   "key": "photons_for_5nm",
@@ -227,7 +231,7 @@
   "question": "R2",
   "verified_round": 2,
   "status": "verified",
-  "caveat": "W9 en el límite r→0 da 10.3 fotones."
+  "caveat": "With the r->0 limit (no background) 10.3 photons suffice (photons_for_5nm_L50_limit_nobg)."
  },
  {
   "key": "masullo_table_fwhm360",
@@ -293,7 +297,7 @@
   "question": "R2",
   "verified_round": 2,
   "status": "verified",
-  "caveat": "SBR de la cámara por píxel: 500/81."
+  "caveat": "The camera SBR is defined per pixel: SBR_total = 500/81."
  },
  {
   "key": "crb_limit_array_N_fix",
@@ -304,7 +308,7 @@
   "script": "tests/test_fisher.py",
   "question": "R2",
   "verified_round": 3,
-  "status": "pending-r3-verification",
+  "status": "verified",
   "caveat": null
  },
  {
@@ -318,9 +322,9 @@
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig5_estimators",
   "question": "R3",
-  "verified_round": 1,
-  "status": "pending-r3-verification",
-  "caveat": "SBR=10 para mle_efficiency_center: decisión del orquestador (inbox r1), pendiente de confirmación explícita de la autora."
+  "verified_round": 3,
+  "status": "verified",
+  "caveat": "SBR=10 for mle_efficiency_center is an orchestrator decision (inbox r1) taken on behalf of the author; it is a declared choice pending her explicit confirmation."
  },
  {
   "key": "mle_superefficient_nobg",
@@ -334,9 +338,9 @@
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig5_estimators",
   "question": "R3",
-  "verified_round": 1,
-  "status": "pending-r3-verification",
-  "caveat": "El sesgo del MLE sin fondo es ≈ −0.34 nm."
+  "verified_round": 3,
+  "status": "verified",
+  "caveat": "The bias at r=(2,0) is about -0.34 nm with SE 2.2 %: cite mle_nobg_bias_x_r2_nm with \\pnumse."
  },
  {
   "key": "mle_offcenter_sbr10_tail",
@@ -349,8 +353,8 @@
   "figure": "fig5_estimators",
   "question": "R3",
   "verified_round": 3,
-  "status": "pending-r3-verification",
-  "caveat": "MLE not efficient across the whole TCP at N=100"
+  "status": "verified",
+  "caveat": "The outlier tail at x0 = 10-20 nm (sigma/CRB ~ 1.5 at N=100) depends on the MLE search-disk radius (2L = 100 nm here; a 50 nm disk gives 1.456); the radius must be stated."
  },
  {
   "key": "lms_center_equals_s27",
@@ -362,20 +366,23 @@
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig5_estimators",
   "question": "R3",
-  "verified_round": 1,
-  "status": "pending-r3-verification",
+  "verified_round": 3,
+  "status": "verified",
   "caveat": null
  },
  {
   "key": "lms_sbr_shrink",
   "statement": "Without the 1/s factor the LMS with SBR=10 shrinks the estimate by exactly s=10/11 at any r.",
-  "numbers": [],
+  "numbers": [
+   "lms_sbr10_shrink_factor"
+  ],
   "script": "tests/test_estimators.py",
   "figure": "fig5_estimators",
   "question": "R3",
   "verified_round": 1,
   "status": "verified",
-  "caveat": null
+  "caveat": null,
+  "numbers_added_round": 4
  },
  {
   "key": "bootstrap_se",
@@ -386,8 +393,8 @@
   "script": "tests/test_montecarlo.py",
   "question": "R3",
   "verified_round": 3,
-  "status": "pending-r3-verification",
-  "caveat": null
+  "status": "verified",
+  "caveat": "The bootstrap SE at N=250 is unstable (extremely heavy tail, kurtosis ~43; a factor 2 between independent draws)."
  },
  {
   "key": "iterative_beats_camera",
@@ -402,8 +409,8 @@
   "script": "scripts/run_iterative_sweep.py",
   "figure": "fig6_iterative",
   "question": "R4",
-  "verified_round": 2,
-  "status": "pending-r3-verification",
+  "verified_round": 3,
+  "status": "verified",
   "caveat": null
  },
  {
@@ -429,8 +436,8 @@
   "figure": "fig6_iterative",
   "question": "R4",
   "verified_round": 3,
-  "status": "pending-r3-verification",
-  "caveat": "La pendiente depende del rango (-0.52...-0.54) y no es compatible con -0.5 al 95 %; la distribución en N=250 tiene colas pesadas."
+  "status": "verified",
+  "caveat": "The slope excludes -0.5: -0.515 for N >= 500; the full-range value (-0.537) is driven by the heavy-tailed N=250 point."
  },
  {
   "key": "iterative_adaptive_rule",
@@ -445,8 +452,8 @@
   "figure": "fig6_iterative",
   "question": "R4",
   "verified_round": 3,
-  "status": "pending-r3-verification",
-  "caveat": null
+  "status": "verified",
+  "caveat": "The adaptive rule covers ~97 %, not 99 %: the centre CRB of iteration 0 (3.47 nm) underestimates the real error (4.26 nm). adaptive_frac_outside_next_radius has SE 6 %: cite with \\pnumse."
  },
  {
   "key": "iterative_no_recenter",
@@ -457,9 +464,9 @@
   "script": "scripts/run_iterative_sweep.py",
   "figure": "fig6_iterative",
   "question": "R4",
-  "verified_round": 2,
-  "status": "pending-r3-verification",
-  "caveat": "Los 8 nm de `recenter=False` son un artefacto del disco de búsqueda."
+  "verified_round": 3,
+  "status": "verified",
+  "caveat": "The ~8 nm obtained without re-centring is an artefact of the MLE search disk, not physics."
  },
  {
   "key": "eps_degradation_table",
@@ -492,12 +499,17 @@
  {
   "key": "eps_constant_pedestal_is_background",
   "statement": "A constant pedestal eps is exactly Eq. S31 at the centre with SBR_eps = 3e x e^{-x}/(4 eps); a Gaussian pedestal is not equivalent to a background.",
-  "numbers": [],
+  "numbers": [
+   "eps_constant_pedestal_sbr_eff_L100_eps0p05",
+   "eps_constant_pedestal_over_s31_L100_eps0p05",
+   "eps_gaussian_pedestal_over_s31_L100_eps0p05"
+  ],
   "script": "scripts/verify_crb_closed_forms.py",
   "question": "R5",
   "verified_round": 1,
   "status": "verified",
-  "caveat": null
+  "caveat": null,
+  "numbers_added_round": 4
  },
  {
   "key": "eps_offcenter_minimum",
@@ -510,7 +522,7 @@
   "question": "R5",
   "verified_round": 1,
   "status": "verified",
-  "caveat": "4.9 nm (V10) es una escala, no el argmin."
+  "caveat": "4.9 nm (V10) is a scale, not the argmin."
  },
  {
   "key": "eps_optimal_L",
@@ -528,18 +540,19 @@
    "L_opt_over_fwhm_sqrt_eps_eps0p01",
    "L_opt_over_fwhm_sqrt_eps_eps0p05",
    "L_opt_over_fwhm_sqrt_eps_eps0p15",
-   "eps0_crb_divergence_L_nm"
+   "eps0_crb_divergence_L_nm",
+   "lg_ring_diameter_nm"
   ],
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig7_zero_depth",
   "question": "R5",
   "verified_round": 2,
   "status": "verified",
-  "caveat": "L_opt ≈ 0.78 fwhm √eps vale solo para eps ≲ 0.01. Con eps=0, el CRB es monótono solo para L<360 nm."
+  "caveat": "L_opt ~ 0.78 fwhm sqrt(eps) holds only for eps <~ 0.01. With eps=0 the centre CRB is monotonic in L only for L < 360 nm (divergence at the ring diameter)."
  },
  {
   "key": "misalignment_naive_bias",
-  "statement": "Misaligned TCP (every zero displaced by delta, L=100, N=500, SBR=10, 400 patterns x 200 reps): the naive MLE is biased roughly proportionally to delta while the honest MLE stays at the MC noise floor.",
+  "statement": "Misaligned TCP (every zero displaced by delta in a random direction, L=100, N=500, SBR=10, 400 patterns x 200 reps): the naive MLE (ideal-TCP model) is biased roughly proportionally to delta (MC slope 0.755 at the centre), while the honest MLE stays at the MC noise floor at the centre.",
   "numbers": [
    "misalignment_naive_bias_abs_center_d0_nm",
    "misalignment_naive_bias_abs_center_d2_nm",
@@ -558,15 +571,22 @@
    "misalignment_mc_floor_center_d5_nm",
    "misalignment_mc_floor_center_d10_nm",
    "misalignment_naive_bias_over_delta_center",
-   "misalignment_naive_bias_over_delta_Lq",
-   "misalignment_delta0_identical"
+   "misalignment_delta0_identical",
+   "misalignment_honest_bias_abs_Lq_d0_nm",
+   "misalignment_mc_floor_Lq_d0_nm",
+   "misalignment_honest_bias_abs_Lq_d2_nm",
+   "misalignment_mc_floor_Lq_d2_nm",
+   "misalignment_honest_bias_abs_Lq_d5_nm",
+   "misalignment_mc_floor_Lq_d5_nm",
+   "misalignment_honest_bias_abs_Lq_d10_nm",
+   "misalignment_mc_floor_Lq_d10_nm"
   ],
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig8_misalignment",
   "question": "R5",
-  "verified_round": 2,
-  "status": "pending-r3-verification",
-  "caveat": "Sesgo ingenuo ≈0.75–0.86 δ según la posición (pendiente por el origen, δ≥2, 400 patrones × 200: 0.755±0.009 en el centro, 0.862±0.012 en (L/4,0); claves misalignment_naive_bias_over_delta_*). La cifra 0.79±0.02 (fig8 con 50 patrones) debe re-evaluarse con el rerun de fig8 a 400 patrones."
+  "verified_round": 3,
+  "status": "verified",
+  "caveat": "'Honest at the MC floor' holds only at the centre: at (L/4,0), delta=10, the honest |bias| (0.27 nm) is ~5 sigma above the floor (0.23 nm). The misalignment_*_bias_abs_* numbers have SE > 2 % (between-pattern spread): cite with \\pnumse. The 0.79 figure (fig 8 with 50 patterns) is superseded; the headline slope is the noise-free population estimate (claim misalignment_naive_bias_population)."
  },
  {
   "key": "misalignment_loss_is_bias",
@@ -587,24 +607,85 @@
    "misalignment_crb_honest_center_d0_nm",
    "misalignment_crb_honest_center_d2_nm",
    "misalignment_crb_honest_center_d5_nm",
-   "misalignment_crb_honest_center_d10_nm"
+   "misalignment_crb_honest_center_d10_nm",
+   "misalignment_naive_sigma_Lq_d0_nm",
+   "misalignment_honest_sigma_Lq_d0_nm",
+   "misalignment_naive_rmse_Lq_d0_nm",
+   "misalignment_honest_rmse_Lq_d0_nm",
+   "misalignment_honest_rmse_center_d0_nm",
+   "misalignment_crb_honest_Lq_d0_nm",
+   "misalignment_naive_sigma_Lq_d2_nm",
+   "misalignment_honest_sigma_Lq_d2_nm",
+   "misalignment_naive_rmse_Lq_d2_nm",
+   "misalignment_honest_rmse_Lq_d2_nm",
+   "misalignment_honest_rmse_center_d2_nm",
+   "misalignment_crb_honest_Lq_d2_nm",
+   "misalignment_naive_sigma_Lq_d5_nm",
+   "misalignment_honest_sigma_Lq_d5_nm",
+   "misalignment_naive_rmse_Lq_d5_nm",
+   "misalignment_honest_rmse_Lq_d5_nm",
+   "misalignment_honest_rmse_center_d5_nm",
+   "misalignment_crb_honest_Lq_d5_nm",
+   "misalignment_naive_sigma_Lq_d10_nm",
+   "misalignment_honest_sigma_Lq_d10_nm",
+   "misalignment_naive_rmse_Lq_d10_nm",
+   "misalignment_honest_rmse_Lq_d10_nm",
+   "misalignment_honest_rmse_center_d10_nm",
+   "misalignment_crb_honest_Lq_d10_nm"
   ],
   "script": "scripts/compute_paper_numbers.py",
   "figure": "fig8_misalignment",
   "question": "R5",
-  "verified_round": 2,
-  "status": "pending-r3-verification",
-  "caveat": null
+  "verified_round": 3,
+  "status": "verified",
+  "caveat": "At (L/4,0) the honest sigma is 1-2.4 % above the honest CRB for delta <= 10 (about 8 % at delta=15): 'follows the honest CRB' is exact only at the centre. misalignment_naive_sigma_Lq_d10_nm has SE 4.3 %: cite with \\pnumse."
  },
  {
   "key": "misalignment_sigma_se_fix",
   "statement": "misalignment_study sigma_se is now the std over patterns of the per-pattern sigmas / sqrt(P) (the old within-pattern formula is kept as sigma_se_within; it was 2.6-3.6x too small at delta=10, 20x200).",
-  "numbers": [],
+  "numbers": [
+   "misalignment_naive_sigma_center_d10_nm",
+   "misalignment_honest_sigma_center_d10_nm"
+  ],
   "script": "tests/test_experiments.py",
   "figure": "fig8_misalignment",
   "question": "R5",
   "verified_round": 3,
-  "status": "pending-r3-verification",
+  "status": "verified",
   "caveat": null
+ },
+ {
+  "key": "misalignment_naive_bias_population",
+  "statement": "Noise-free population estimate of the naive-MLE bias under misalignment (MLE on the expected counts, no Poisson noise, mean over 4000 random patterns, seed 42; L=100, SBR=10): |bias|/delta grows with delta, 0.747/0.755/0.783 at the centre and 0.802/0.807/0.863 at (L/4,0) for delta=2/5/10 nm; least-squares slopes through the origin over delta=2,5,10: 0.777 (centre) and 0.851 (L/4,0).",
+  "numbers": [
+   "misalignment_naive_bias_over_delta_pop_center",
+   "misalignment_naive_bias_over_delta_pop_center_d2",
+   "misalignment_naive_bias_over_delta_pop_center_d5",
+   "misalignment_naive_bias_over_delta_pop_center_d10",
+   "misalignment_naive_bias_over_delta_pop_Lq",
+   "misalignment_naive_bias_over_delta_pop_Lq_d2",
+   "misalignment_naive_bias_over_delta_pop_Lq_d5",
+   "misalignment_naive_bias_over_delta_pop_Lq_d10",
+   "misalignment_pop_n_patterns"
+  ],
+  "script": "scripts/compute_paper_numbers.py",
+  "figure": "fig8_misalignment",
+  "question": "R5",
+  "verified_round": null,
+  "status": "pending-r4-verification",
+  "caveat": "The unweighted slope through the origin is dominated by delta=10 and hides the growth with delta (nonlinear); quote the per-delta ratios together with it. Reference values of the r3 verifier (independent code, other patterns): 0.746/0.755/0.784 (centre), 0.794/0.802/0.871 (L/4,0)."
+ },
+ {
+  "key": "misalignment_naive_bias_Lq_mc_slope",
+  "statement": "Monte Carlo (400 patterns x 200 reps) weighted slope of the naive |bias| vs delta at (L/4,0): 0.862 +- 0.012. Superseded by the noise-free population estimate (inbox r4); kept in data/paper_numbers.json as a complement and NOT cited.",
+  "numbers": [
+   "misalignment_naive_bias_over_delta_Lq"
+  ],
+  "script": "scripts/compute_paper_numbers.py",
+  "figure": "fig8_misalignment",
+  "question": "R5",
+  "verified_round": null,
+  "status": "superseded",
+  "caveat": "The quoted SE understates the spread between pattern draws (independent draws gave 0.814 and 0.836; population ~0.83-0.85)."
  }
 ]

@@ -55,7 +55,10 @@ class _Tree(object):
 
 
 GOOD_PROV = {"crb_x_nm": {"statement": "centre CRB", "type": "script",
-                          "reproduce": "scripts/s.py", "number_keys": ["crb_x_nm"]}}
+                          "reproduce": "scripts/s.py", "number_keys": ["crb_x_nm"]},
+             "eff": {"statement": "efficiency", "type": "script", "reproduce": "scripts/s.py",
+                     "detail": "eff", "number_keys": ["eff"]}}
+ALL_CLAIMS = [{"key": "c", "numbers": ["eff", "crb_x_nm"], "script": "scripts/s.py"}]
 
 
 class TestCheckProvenance(unittest.TestCase):
@@ -71,9 +74,87 @@ class TestCheckProvenance(unittest.TestCase):
 
     def test_ok(self):
         self._check(_Tree("The CRB is \\pnum{crb_x_nm}\\src{crb_x_nm} nm "
-                          "(\\pnum{eff} $\\pm$ \\pnumse{eff}).\n", provenance=GOOD_PROV,
-                          claims=[{"key": "c", "numbers": ["eff"], "script": "scripts/s.py"}]),
+                          "(\\pnum{eff}\\src{eff} $\\pm$ \\pnumse{eff}).\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), True)
+
+    # ---------------------------------------------------------------- round 4 (D3 holes)
+    def test_braceless_input_is_flattened(self):
+        t = _Tree("\\input sections/other\n", provenance=GOOD_PROV, claims=ALL_CLAIMS)
+        t.write("paper/sections/other.tex", "Hidden \\src{nowhere} and \\pnum{zzz}.\n")
+        res, errors, _ = t.run()
+        t.close()
+        self.assertFalse(res)
+        self.assertTrue(any("nowhere" in e for e in errors), errors)
+        self.assertTrue(any("zzz" in e for e in errors), errors)
+
+    def test_braceless_input_good_file_passes(self):
+        t = _Tree("\\input sections/other \n", provenance=GOOD_PROV, claims=ALL_CLAIMS)
+        t.write("paper/sections/other.tex", "Fine \\pnum{eff}\\src{eff}.\n")
+        self._check(t, True)
+
+    def test_braceless_input_missing_file_fails(self):
+        self._check(_Tree("\\input sections/nothere\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), False, "flatten failed")
+
+    def test_src_with_space_is_checked(self):
+        self._check(_Tree("Claim \\src {nowhere}.\n", provenance=GOOD_PROV, claims=ALL_CLAIMS),
+                    False, "nowhere")
+
+    def test_src_and_pnum_with_space_resolve(self):
+        self._check(_Tree("V \\pnum {eff}\\src {eff}.\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), True)
+
+    def test_pnum_with_space_inside_braces_fails(self):
+        self._check(_Tree("V \\pnum{ eff}\\src{eff}.\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), False, "whitespace")
+
+    def test_macro_parameter_is_ignored(self):
+        body = ("\\newcommand{\\nn}[1]{\\pnum{#1}}\n"
+                "\\newcommand{\\mm}[2]{\\pnumse{##1}}\nV \\pnum{eff}\\src{eff}.\n")
+        self._check(_Tree(body, provenance=GOOD_PROV, claims=ALL_CLAIMS), True)
+
+    def test_pnum_without_src_fails(self):
+        self._check(_Tree("Value \\pnum{eff} only.\n", provenance=GOOD_PROV, claims=ALL_CLAIMS),
+                    False, "no provenance")
+
+    def test_pnumse_without_src_fails(self):
+        self._check(_Tree("Value \\pnumse{eff} only.\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), False, "no provenance")
+
+    def test_pnum_backed_by_src_elsewhere_passes(self):
+        """The rule is global: a \\src{e} anywhere in the tex whose entry lists k suffices."""
+        self._check(_Tree("First \\src{eff}.\n\nLater \\pnum{eff} again \\pnumse{eff}.\n",
+                          provenance=GOOD_PROV, claims=ALL_CLAIMS), True)
+
+    def test_src_entry_not_covering_key_fails(self):
+        self._check(_Tree("V \\pnum{eff}\\src{crb_x_nm}.\n", provenance=GOOD_PROV,
+                          claims=ALL_CLAIMS), False, "no provenance")
+
+    def test_detail_alone_covers_key(self):
+        prov = {"e1": {"statement": "s", "type": "script", "reproduce": "scripts/s.py",
+                       "detail": "eff"}}
+        self._check(_Tree("V \\pnum{eff}\\src{e1}.\n", provenance=prov, claims=ALL_CLAIMS),
                     True)
+
+    def test_comma_separated_src(self):
+        self._check(_Tree("V \\pnum{eff} \\pnum{crb_x_nm}\\src{crb_x_nm,eff}.\n",
+                          provenance=GOOD_PROV, claims=ALL_CLAIMS), True)
+
+    def test_quick_numbers_fail(self):
+        nums = dict(NUMBERS, quick=True)
+        self._check(_Tree("x\n", numbers=nums, claims=ALL_CLAIMS), False, "--quick")
+
+    def test_claim_with_empty_numbers_fails(self):
+        self._check(_Tree("x\n", claims=ALL_CLAIMS + [{"key": "empty", "numbers": []}]),
+                    False, "empty")
+
+    def test_number_without_claim_fails(self):
+        self._check(_Tree("x\n", claims=[{"key": "c", "numbers": ["eff"]}]), False,
+                    "crb_x_nm")
+
+    def test_normalize(self):
+        self.assertEqual(cp.normalize("\\src {a} \\pnum\n{b} \\pnumse  {c} \\srcx {d}"),
+                         "\\src{a} \\pnum{b} \\pnumse{c} \\srcx {d}")
 
     def test_unresolved_src_fails(self):
         self._check(_Tree("Claim \\src{nowhere}.\n", provenance=GOOD_PROV), False,

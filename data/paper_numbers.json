@@ -505,6 +505,24 @@
   "script": "scripts/compute_paper_numbers.py",
   "description": "with eps=0 the centre CRB diverges at L = fwhm/sqrt(ln2) (ring diameter); monotonic only for smaller L"
  },
+ "eps_constant_pedestal_over_s31_L100_eps0p05": {
+  "value": 1.0000000000000004,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "centre CRB with a constant pedestal eps=0.05 / Eq. S31 at SBR=SBR_eps (1 exactly for the constant pedestal; not for the gaussian one), L=100, N=100, fwhm=300"
+ },
+ "eps_constant_pedestal_sbr_eff_L100_eps0p05": {
+  "value": 2.90750797929026,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "effective SBR of a constant pedestal eps=0.05 at the centre, SBR_eps = 3 e x e^-x/(4 eps), L=100, fwhm=300"
+ },
+ "eps_gaussian_pedestal_over_s31_L100_eps0p05": {
+  "value": 1.0053210231395657,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "centre CRB with a gaussian pedestal eps=0.05 / Eq. S31 at SBR=SBR_eps (1 exactly for the constant pedestal; not for the gaussian one), L=100, N=100, fwhm=300"
+ },
  "fwhm_masullo_nm": {
   "value": 360.0,
   "unit": "nm",
@@ -705,6 +723,12 @@
   "script": "scripts/compute_paper_numbers.py",
   "description": "LMS (Eq. S49-S50) sigma / S27 at the centre, no background (analytically 1); L=50, N=100, 10000 reps, seed 42",
   "se": 0.004855212051005496
+ },
+ "lms_sbr10_shrink_factor": {
+  "value": 0.9090909090909091,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "LMS on the expected counts at r=(5,0) with SBR=10: estimate without / with the 1/s factor (= s = SBR/(SBR+1) = 10/11 at any r), L=50, fwhm=300"
  },
  "misalignment_crb_honest_Lq_d0_nm": {
   "value": 2.3631206853289104,
@@ -1038,6 +1062,62 @@
   "description": "weighted LS slope of the naive |bias| vs delta through the origin, delta in [2.0, 5.0, 10.0] (paper numbers; fig 8 fits a denser delta grid under misalignment_naive_bias_slope_*); L=100, N=500, SBR=10, 400 patterns x 200 reps, seed 42",
   "se": 0.009271382096601314
  },
+ "misalignment_naive_bias_over_delta_pop_Lq": {
+  "value": 0.8506956555160232,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population slope of the naive |bias| vs delta at (L/4, 0): unweighted least-squares fit through the origin sum(delta b)/sum(delta^2) over delta=[2.0, 5.0, 10.0] nm; noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.007422611269702287
+ },
+ "misalignment_naive_bias_over_delta_pop_Lq_d10": {
+  "value": 0.8634718916670533,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at (L/4, 0), delta=10 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.008103152564060795
+ },
+ "misalignment_naive_bias_over_delta_pop_Lq_d2": {
+  "value": 0.802290740569161,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at (L/4, 0), delta=2 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.005951053525910378
+ },
+ "misalignment_naive_bias_over_delta_pop_Lq_d5": {
+  "value": 0.8073354973034009,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at (L/4, 0), delta=5 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.006102368095990507
+ },
+ "misalignment_naive_bias_over_delta_pop_center": {
+  "value": 0.7768263559835796,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population slope of the naive |bias| vs delta at the centre: unweighted least-squares fit through the origin sum(delta b)/sum(delta^2) over delta=[2.0, 5.0, 10.0] nm; noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.004970261219979847
+ },
+ "misalignment_naive_bias_over_delta_pop_center_d10": {
+  "value": 0.7834885724752224,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at the centre, delta=10 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.004946826593184678
+ },
+ "misalignment_naive_bias_over_delta_pop_center_d2": {
+  "value": 0.7471281876667419,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at the centre, delta=2 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.0052071443304492265
+ },
+ "misalignment_naive_bias_over_delta_pop_center_d5": {
+  "value": 0.7549291969477022,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "population mean naive |bias| / delta at the centre, delta=5 nm (grows with delta: nonlinear); noise-free: naive MLE (ideal-TCP model, disk radius 0.75 L) on the EXPECTED counts of each perturbed TCP (no Poisson noise, no MC floor), mean over 4000 random misalignment patterns (4 zeros each moved by delta in a random direction, seed 42); L=100, SBR=10; SE = pattern sampling only",
+  "se": 0.005125354550241077
+ },
  "misalignment_naive_rmse_Lq_d0_nm": {
   "value": 2.3910337939730892,
   "unit": "nm",
@@ -1141,6 +1221,12 @@
   "script": "scripts/compute_paper_numbers.py",
   "description": "mean sigma of the naive MLE at the centre, delta=5 (SE between patterns); L=100, N=500, SBR=10, 400 patterns x 200 reps, seed 42",
   "se": 0.004368916413525515
+ },
+ "misalignment_pop_n_patterns": {
+  "value": 4000,
+  "unit": "",
+  "script": "scripts/compute_paper_numbers.py",
+  "description": "number of random misalignment patterns of the noise-free population estimate (misalignment_naive_bias_over_delta_pop_*)"
  },
  "mle_efficiency_center": {
   "value": 0.9912292806217669,

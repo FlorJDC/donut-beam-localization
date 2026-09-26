@@ -1,0 +1,25 @@
+\section{Camera reference (R2)}\label{sec:camera}
+
+As a reference we use the CRB of a camera with a Gaussian point-spread function of
+$\sigma_{\mathrm{PSF}}=100$\,nm \cite{Balzarotti2017}. In the continuum limit without background
+the bound is $\sigma_{\mathrm{PSF}}/\sqrt N$:
+\pnum{camera_ideal_N400_nm}\src{camera_ideal_N400_nm}\,nm for $N=400$ and
+\pnum{camera_sigma_nm}\src{camera_sigma_nm}\,nm for $N=1000$; this \emph{ideal} value is the
+camera reference of Sec.~\ref{sec:iterative}. Pixelation costs little: a $9\times9$ window of
+$100$\,nm pixels gives \pnum{camera_pixelated_9x9_N400_nm}\src{camera_pixelated_9x9_N400_nm}\,nm
+at $N=400$ and \pnum{camera_pixelated_9x9_N1000_nm}\src{camera_pixelated_9x9_N1000_nm}\,nm at
+$N=1000$.
+
+The SBR convention matters for the camera. Balzarotti's $\sbr_c$ is the total signal over the
+background \emph{per pixel} (Eq.~S61), so $\sbr_c=500$ on $9\times9$ pixels corresponds to a total
+SBR of \pnum{camera_sbr_perpixel_to_total}\src{camera_sbr_perpixel_to_total}. With that
+convention the pixelated camera reaches
+\pnum{camera_perpixel_sbr500_N600_nm}\src{camera_perpixel_sbr500_N600_nm}\,nm at $N=600$ and
+needs \pnum{camera_photons_for_5nm_perpixel_sbr500}\src{camera_photons_for_5nm_perpixel_sbr500}
+photons for $5$\,nm; if $500$ were the total SBR it would reach
+\pnum{camera_total_sbr500_N600_nm}\src{camera_total_sbr500_N600_nm}\,nm and need
+\pnum{camera_photons_for_5nm_total_sbr500}\src{camera_photons_for_5nm_total_sbr500} photons. The
+SBR values of MINFLUX (total/total) and of the camera (total/per pixel) are therefore not
+directly comparable. For comparison, MINFLUX with $L=50$\,nm and $\sbr=10$ needs
+\pnum{photons_for_5nm_L50_sbr10}\src{photons_for_5nm_L50_sbr10} photons for a $5$\,nm centre CRB
+[Fig.~\ref{fig:scaling}(d)].

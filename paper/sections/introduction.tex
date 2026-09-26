@@ -1,0 +1,40 @@
+\section{Introduction}\label{sec:intro}
+
+MINFLUX localizes a single emitter by probing it sequentially with an excitation intensity
+minimum placed at a few known positions and comparing the detected photon counts
+\cite{Balzarotti2017}. Because the fluorescence vanishes near the zero, the information per
+detected photon is large and the localization precision scales with the size $L$ of the probing
+pattern rather than with the diffraction-limited width of a point-spread function; nanometre
+precision is reached with a few hundred photons, in two and three dimensions
+\cite{Balzarotti2017,Gwosch2020}. The same probabilistic framework covers other sequential
+structured-illumination schemes \cite{Masullo2022,Masullo2022rastmin}, multiphoton excitation
+with light minima \cite{MasulloStefani2022} and nanoscale tracking \cite{Stefani2023}. The
+excitation minimum is usually a toroidal (donut) focus produced by a vortex phase mask; its zero
+depends on polarization and handedness \cite{Lopez2023,Caprile2022}.
+
+Most analyses of MINFLUX use the scalar paraxial Laguerre--Gauss (LG) donut, a perfect zero, an
+exact knowledge of the pattern and the closed-form CRB at the pattern centre
+\cite{Balzarotti2017}. Here we ask, with simulations whose every number is traceable to a script,
+how far these idealizations can be pushed. We address five questions:
+\begin{itemize}
+\item[R1] \emph{Beam model.} How much does the scalar LG donut differ from the vectorial
+high-NA donut near the zero, and what does it change in the CRB? What happens with the wrong
+handedness or with linear polarization?
+\item[R2] \emph{Cram\'er--Rao bound.} CRB maps of the TCP; the closed form at the centre versus
+the numerical computation; scaling with $L$, $N$ and SBR; comparison with camera localization.
+\item[R3] \emph{Estimators.} MLE versus least-mean-squares (LMS) estimators: bias and precision
+from Monte Carlo (MC), inside and outside the TCP, compared with the CRB.
+\item[R4] \emph{Iterative MINFLUX.} Precision versus total photon budget when $L$ is reduced
+over iterations, compared with a camera.
+\item[R5] \emph{Non-idealities.} Finite zero depth, background, and misalignment of the pattern
+analysed with the nominal model.
+\end{itemize}
+
+The main results are: a precise statement of the discontinuity of the centre CRB and of the two
+possible definitions (Sec.~\ref{sec:crb}, App.~\ref{app:derivation}); a quantitative equivalence
+between the vectorial donut and a curvature-matched LG donut, and the collapse of precision with
+a filled zero (Sec.~\ref{sec:vectorial}); the efficiency and the failure modes of the estimators
+(Sec.~\ref{sec:estimators}); the photon scaling of iterative MINFLUX against an ideal camera
+(Secs.~\ref{sec:camera} and~\ref{sec:iterative}); and the optimal $L$ for a finite zero depth
+and the bias caused by misalignment (Sec.~\ref{sec:nonideal}). Section~\ref{sec:discussion}
+ranks these effects by their numerical impact, and Sec.~\ref{sec:open} lists what remains open.

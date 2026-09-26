@@ -2,7 +2,7 @@
 """Figure 8 -- TCP misalignment: naive versus honest MLE.
 
 experiments.misalignment_study with _paperconfig.MIS (L = 100 nm, N = 500, SBR = 10,
-n_patterns = 50 random misaligned TCPs x n_rep = 200 repetitions, seed 42): every one of the
+n_patterns = 400 random misaligned TCPs x n_rep = 200 repetitions, seed 42): every one of the
 4 zeros is displaced by delta in an independent random direction; the photons are simulated with
 the true (misaligned) TCP and estimated by the MLE with the true model ("honest") and with the
 ideal TCP ("naive").  True positions: the TCP centre and (L/4, 0).  The deltas include
@@ -10,11 +10,14 @@ MIS_DELTAS; the study re-creates its random generator for every delta (common ra
 so the value at each delta does not depend on which other deltas are computed.
 
 (a) mean |bias| versus delta, with the Monte Carlo noise floor of an unbiased estimator
-    (sigma sqrt(pi/(2R))) and the fitted line |bias| ~ slope * delta of the naive MLE (~0.75).
+    (sigma sqrt(pi/(2R))) and the fitted line |bias| ~ slope * delta of the naive MLE at the
+    centre (weighted fit over all plotted deltas, including 15 nm: ~0.76).  The paper's principal
+    slope is the noise-free population estimate of compute_paper_numbers.py
+    (misalignment_naive_bias_over_delta_pop_*), not this line.
 (b) sigma versus delta and the honest CRB (r -> r_true limit, averaged over patterns).
 (c) rmse versus delta.
 
-Error bars: bias_abs_se and sigma_se, both the standard error over the 50 patterns (the
+Error bars: bias_abs_se and sigma_se, both the standard error over the patterns (the
 between-pattern sigma_se of experiments.misalignment_study, r3 fix); rmse has no error bar.
 """
 import os

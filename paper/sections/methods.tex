@@ -1,0 +1,28 @@
+\section{Methods and reproducibility}\label{sec:methods}
+
+\emph{Code.} All computations use our own Python package \texttt{donutloc} (beams, patterns,
+photon model, Fisher information, estimators, Monte Carlo, vectorial focusing, iterative
+MINFLUX), with NumPy and SciPy only. Each figure has its own script
+(\nolinkurl{scripts/fig_*.py}); a single script, \nolinkurl{scripts/compute_paper_numbers.py}, writes
+the registry \nolinkurl{data/paper_numbers.json}, from which every number in this paper is typeset
+through generated macros; no computed result is typed by hand (only input parameters and
+exact constants are). All MC runs use the seed $42$ and enough
+repetitions for a statistical error below $2\%$; where the dispersion is intrinsic (between
+random misalignment patterns) the number is quoted with its SE. The closed forms of
+App.~\ref{app:derivation} are checked against a numerical Fisher computation by
+\nolinkurl{scripts/verify_crb_closed_forms.py} and by unit tests. A reproduction script in
+\nolinkurl{scripts/} runs, in order, the tests, the figures, the number registry and the provenance
+check.
+
+\emph{Provenance.} Every quantitative statement carries a tag that resolves in
+\nolinkurl{paper/provenance.json} to the script, check or derivation that reproduces it;
+\nolinkurl{scripts/check_provenance.py} verifies that every tag and every number resolves and that
+the generated macros are in sync with the registry.
+
+\emph{How the study was made.} The study was carried out with an agent team following the
+agent-team methodology \cite{agentteam}: bounded rounds in which worker agents derive and
+compute, an independent verifier re-derives or recomputes every claim by a separate route before
+it is accepted, and a writer transcribes only verified claims with provenance-checked numbers.
+The complete audit trail (ledger of claims with their status, per-round reports and human
+decisions) is kept in \nolinkurl{equipo/2026-09-26_donut-localization/} of the repository. The
+author set the questions, the conventions and the acceptance test.

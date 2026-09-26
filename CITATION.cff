@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "donut-beam-localization: a reproducible simulation study of single-emitter localization with donut beams (MINFLUX and variants)"
+type: software
+authors:
+  - alias: flor-choque
+    website: "https://github.com/FlorJDC"
+repository-code: "https://github.com/FlorJDC/donut-beam-localization"
+url: "https://github.com/FlorJDC/donut-beam-localization"
+license: MIT
+version: 0.1.0
+keywords:
+  - MINFLUX
+  - single-molecule localization
+  - donut beam
+  - Cramer-Rao bound
+  - maximum likelihood
+  - super-resolution microscopy

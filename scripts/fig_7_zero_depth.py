@@ -31,7 +31,7 @@ from donutloc import beams, experiments, fisher, patterns, photons  # noqa: E402
 N, FWHM = C.N_REF, C.FWHM
 ZM = "gaussian"
 L_RING = FWHM / np.sqrt(np.log(2.0))          # ring diameter where eps=0 diverges (360.7 nm)
-EPS_C, L_C = 0.002, 100.0                     # panel (c), V10
+EPS_C, L_C = C.EPS_TRANSITION, 100.0                    # panel (c), V10
 
 
 def compute(quick):

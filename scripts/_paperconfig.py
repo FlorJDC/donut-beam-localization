@@ -26,3 +26,13 @@ EPS_LIST = (0.002, 0.01, 0.05, 0.15)
 MIS = dict(L=100.0, N=500, sbr=10, n_patterns=400, n_rep=200)
 MIS_DELTAS = (0.0, 2.0, 5.0, 10.0)
 DATA = os.path.join(ROOT, "data"); MC = os.path.join(DATA, "mc"); FIGDIR = os.path.join(ROOT, "paper", "figures")
+# MLE search-disk radii (fig 5 and compute_paper_numbers must agree): centre points use radius
+# L (r1 convention of mle_efficiency_center), off-centre / x-sweep points use 2L.
+MLE_RADIUS_CENTRE_OVER_L = 1.0
+MLE_RADIUS_SWEEP_OVER_L = 2.0
+N_REP_BIAS0 = 40000              # MLE bias near the centre without background (mle_nobg_bias_x_r2_nm)
+EPS_TRANSITION = 0.002           # eps of zero_depth_transition_scale_nm (fig 7c, V10)
+# noise-free (population) naive-MLE bias under misalignment (inbox r4)
+MIS_POP_N_PATTERNS = 4000
+MIS_POP_DELTAS = (2.0, 5.0, 10.0)
+QUICK_DIRNAME = "quick"          # --quick outputs go to paper/figures/quick, data/quick, ...

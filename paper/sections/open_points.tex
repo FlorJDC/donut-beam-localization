@@ -1,0 +1,32 @@
+\section{Limitations and open points}\label{sec:open}
+
+The following points are either not verified or rest on declared choices; they are listed here
+rather than stated as results.
+
+\begin{itemize}
+\item \emph{Scope of the model.} All simulations are two-dimensional, with a fixed $N$
+(multinomial statistics), a background equal in all exposures, no dipole orientation effects,
+no aberrations beyond the zero depth and no drift. The camera reference is ideal
+(Sec.~\ref{sec:camera}); real cameras are worse.
+\item \emph{rmse normalization.} We use the per-axis convention of Eq.~\eqref{eq:crb} for $\sigma$
+and rmse. Whether it coincides with the error definition of Masullo \textit{et al.}
+\cite{Masullo2022} was not checked, because the main text of that work is not in our notes.
+\item \emph{$\sbr=10$ for the MLE efficiency.} The efficiency at the centre is defined with
+$\sbr=10$; this was chosen by the study coordinator on behalf of the author because without
+background the model is not regular (Sec.~\ref{sec:estimators}). It is a convention, pending
+explicit confirmation by the author.
+\item \emph{Vectorial ring diameter versus PyFocus.} Our peak-to-peak diameters of the
+vectorial donut as a function of the filling factor ($n=1.5$) do not agree with the values we
+transcribed from Fig.~10 of Ref.~\cite{Caprile2022}, notably at filling factor $1$. We do not
+claim agreement; an independent comparison is pending.
+\item \emph{Heavy tail at low photon numbers.} In iterative MINFLUX at $N_{\mathrm{tot}}=250$
+the error distribution is heavy-tailed and the bootstrap SE of $\sigma$ is itself unstable; the
+full-range slope inherits this.
+\item \emph{Range dependence of the $L$ exponent.} The exponent
+\pnum{crb_exponent_L}\src{crb_exponent_L} applies only to $L\ll\fwhm$; it increases when the fit
+range extends to larger $L$.
+\item \emph{Population misalignment slopes.} The noise-free population slopes of
+Sec.~\ref{sec:nonideal} were added in the last round of the study and are pending an
+independent re-computation; the Monte Carlo values quoted with their SE are verified.
+\item \emph{Three-dimensional donuts and axial misalignment} are outside the scope of this study.
+\end{itemize}

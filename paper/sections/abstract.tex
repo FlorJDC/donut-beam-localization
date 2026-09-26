@@ -1,0 +1,27 @@
+\begin{abstract}
+We present a reproducible simulation study of the localization of single fluorescent emitters
+with donut-shaped excitation beams in the triangular coordinate pattern (TCP) of MINFLUX: three
+donut zeros on a circle of diameter $L$ plus a central exposure. Every number quoted is produced
+by a script and was reproduced by an independent verifier. (i)~At the TCP centre the
+Cram\'er--Rao bound (CRB) is discontinuous without background: the $r\to0$ limit lies below the
+point value at $r=0$ (Balzarotti Eq.~S27), with ratio $2/\sqrt5$ for a quadratic zero; for
+$L=50$\,nm, $N=100$ photons and a donut size parameter $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm
+the limit is \pnum{crb_center_lg_L50_N100_nm}\src{crb_center_lg_L50_N100_nm}\,nm against
+\pnum{crb_center_point_S27_L50_N100_nm}\src{crb_center_point_S27_L50_N100_nm}\,nm; any finite
+signal-to-background ratio (SBR) removes the discontinuity. (ii)~A high-numerical-aperture
+vectorial vortex donut of the correct handedness is reproduced by a scalar Laguerre--Gauss
+donut with matched zero curvature (CRB ratio
+\pnum{crb_vec_over_lgcurv_L150_N100}\src{crb_vec_over_lgcurv_L150_N100} at $L=150$\,nm), whereas
+the wrong handedness fills the zero to
+\pnum{vectorial_zero_depth_wrong_handedness}\src{vectorial_zero_depth_wrong_handedness} of the
+ring maximum. (iii)~With $\sbr=10$ the maximum-likelihood estimator (MLE) is efficient at the
+centre ($\sigma/\crb=\pnum{mle_efficiency_center}\pm\pnumse{mle_efficiency_center}$\src{mle_efficiency_center});
+without background it is biased and superefficient. (iv)~Iterative MINFLUX with $1000$ photons
+reaches \pnum{iterative_sigma_nm}\src{iterative_sigma_nm}\,nm, a fraction
+\pnum{iterative_ratio_to_camera_N1000}\src{iterative_ratio_to_camera_N1000} of the ideal camera
+precision. (v)~A finite zero depth $\epsilon$ sets an optimal $L\propto\fwhm\sqrt{\epsilon}$, and
+a misaligned pattern analysed with the nominal model produces a bias of about
+\pnum{misalignment_naive_bias_over_delta_pop_center}\src{misalignment_naive_bias_over_delta_pop_center}
+times the displacement of the zeros at the centre, which an estimator using the true pattern
+removes.
+\end{abstract}

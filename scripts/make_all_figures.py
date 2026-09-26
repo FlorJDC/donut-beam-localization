@@ -4,7 +4,8 @@
 Usage: python scripts/make_all_figures.py [--quick] [--no-cache] [--only fig_1 fig_3 ...]
 
 Exit code 0 only if every script succeeds and writes its PDF (paper/figures/fig<n>_<name>.pdf,
-derived from the script name scripts/fig_<n>_<name>.py).
+derived from the script name scripts/fig_<n>_<name>.py).  With ``--quick`` the PDFs are expected
+in paper/figures/quick/ (and summaries in data/quick/): the final figures are never touched.
 """
 import argparse
 import glob
@@ -17,14 +18,15 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 FIGDIR = os.path.join(ROOT, "paper", "figures")
+QUICK_FIGDIR = os.path.join(FIGDIR, "quick")
 
 
-def pdf_for(script):
-    """scripts/fig_<n>_<name>.py -> paper/figures/fig<n>_<name>.pdf"""
+def pdf_for(script, quick=False):
+    """scripts/fig_<n>_<name>.py -> paper/figures[/quick]/fig<n>_<name>.pdf"""
     m = re.match(r"fig_(\d+)_(.+)\.py$", os.path.basename(script))
     if not m:
         return None
-    return os.path.join(FIGDIR, "fig%s_%s.pdf" % (m.group(1), m.group(2)))
+    return os.path.join(QUICK_FIGDIR if quick else FIGDIR, "fig%s_%s.pdf" % (m.group(1), m.group(2)))
 
 
 def discover():
@@ -33,12 +35,12 @@ def discover():
     return sorted(scripts, key=lambda s: int(re.match(r"fig_(\d+)_", os.path.basename(s)).group(1)))
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--quick", action="store_true", help="pass --quick to every figure script")
     ap.add_argument("--no-cache", dest="no_cache", action="store_true", help="pass --no-cache")
     ap.add_argument("--only", nargs="*", default=None, help="run only scripts whose name starts with these")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     scripts = discover()
     if args.only:
@@ -49,7 +51,7 @@ def main():
     flags = (["--quick"] if args.quick else []) + (["--no-cache"] if args.no_cache else [])
     rows = []
     for s in scripts:
-        pdf = pdf_for(s)
+        pdf = pdf_for(s, args.quick)
         t0 = time.time()
         before = os.path.getmtime(pdf) if os.path.exists(pdf) else None
         print("=== %s %s" % (os.path.basename(s), " ".join(flags)), flush=True)

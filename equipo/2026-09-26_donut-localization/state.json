@@ -674,6 +674,114 @@
    "text": "X3-check_provenance holes: '\\input sections/hidden' (no braces, valid TeX) is not flattened, so its bad \\pnum and \\src pass (exit 0); '\\src {key}' with a space is not recognized as a tag, so an unresolved key passes; \\pnum inside a user macro gives a false error on '#1' and the real key is not checked. Low risk for plain \\pnum{k}\\src{k} writing, but should be closed (whitespace-tolerant regexes, brace-less \\input)",
    "round": 3,
    "source": "verifier"
+  },
+  {
+   "status": "pending",
+   "text": "D1: _paperstyle.cached stores a sha256[:16] of all upper-case _paperconfig constants (paths excluded) + caller params + quick flag in each npz and recomputes on mismatch or missing key; tests TestCacheInvalidation (6) incl. changing MIS.n_patterns",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "D2: --quick writes only paper/figures/quick/, data/quick/ (summaries and paper_numbers.json with top-level quick=true) and paper/generated/quick/numbers.tex; reproduce.py --quick left the sha256 of every paper/figures/*.pdf, data/*.json and numbers.tex unchanged; check_provenance rejects a final paper_numbers.json containing 'quick'",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "D3: check_provenance flattens brace-less '\\input name', tolerates whitespace in '\\src {k}' / '\\pnum {k}', errors on '\\pnum{ k}', skips macro parameters (#1, ##1), and requires every \\pnum/\\pnumse key to be covered by some \\src{e} whose provenance entry has it in number_keys or as detail; 18 new tests in tests/test_check_provenance.py (28 total, all pass)",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "D3/h: check_provenance fails on a claim with empty numbers or a paper_numbers key in no claim; on the real project: 39 claims, 217 numbers, 178 tags/entries, 'all checks pass', exit 0",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "D4: numbers.tex fallback is \\textbf{??\\detokenize{#1}??}; with Tectonic a document using \\pnum{no_such_key}, \\pnumse{no_such_key} and \\pnum in math compiles (exit 0, no 'Missing $'), while the old macro exits 1",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "Constants moved to _paperconfig (N_REP_BIAS0=40000, MLE_RADIUS_CENTRE_OVER_L=1, MLE_RADIUS_SWEEP_OVER_L=2, EPS_TRANSITION=0.002) and used by compute_paper_numbers.py, fig_5_estimators.py and fig_7_zero_depth.py; the full --no-cache regeneration changed no value",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "Population (noise-free) naive-MLE bias, 4000 patterns, seed 42, L=100, SBR=10: |bias|/delta = 0.7471/0.7549/0.7835 (centre) and 0.8023/0.8073/0.8635 (L/4,0) for delta=2/5/10 (SE ~0.005-0.008); unweighted LSQ slope through the origin 0.7768+-0.0050 (centre) and 0.8507+-0.0074 (L/4,0); keys misalignment_naive_bias_over_delta_pop_* and misalignment_pop_n_patterns=4000",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "With the same first 400 patterns as the 400x200 MC, the noise-free naive |bias| (centre 1.492/3.759/7.760, L/4 1.654/4.158/9.151 nm) matches the MC (1.492/3.731/7.708 and 1.691/4.202/9.304) within 1 MC SE; the (L/4,0) MC slope spread (0.814-0.862) is pattern sampling (population slope 0.896/0.876/0.851 over 400/1000/4000 patterns)",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "New demo keys: lms_sbr10_shrink_factor=0.9090909 (=10/11), eps_constant_pedestal_over_s31_L100_eps0p05=1.0000000000000004, eps_gaussian_pedestal_over_s31_L100_eps0p05=1.00532, eps_constant_pedestal_sbr_eff_L100_eps0p05=2.90751",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "claims.json: 39 claims (37 verified, 1 pending-r4-verification, 1 superseded), every claim has numbers, all 217 keys covered, 15 pending-r3 set to verified round 3, caveats in English with no non-ASCII",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "Regeneration: make_all_figures --no-cache 8/8 OK (17m48s), all fig*_summary.json identical to the pre-round versions; compute_paper_numbers 217 keys (376 s): 0 of the 204 existing keys changed value/SE/unit, 13 new; 149 shared summary keys match the registry",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "pending",
+   "text": "Checks: unittest discover 218 tests OK (38.0 s, TECTONIC set); tests.test_acceptance 8/8 OK; check_provenance exit 0 'all checks pass'; sha256 tests/test_acceptance.py = 7d198853...2303 unchanged",
+   "round": 4,
+   "source": "worker-1"
+  },
+  {
+   "status": "verified",
+   "text": "paper/main.tex (revtex4-2) with 14 section files compiles with Tectonic to paper/main.pdf, 13 pages, no errors, no overfull boxes, 0 undefined references/citations, no '??' in the PDF text",
+   "round": 4,
+   "source": "writer"
+  },
+  {
+   "status": "verified",
+   "text": "python scripts/check_provenance.py (stricter \\pnum->\\src rule) -> 'provenance: 178 tag(s), 178 entry(ies), 0 error(s), 0 warning(s)'; 'claims: 39, numbers: 217, provenance entries: 178'; 'all checks pass'",
+   "round": 4,
+   "source": "writer"
+  },
+  {
+   "status": "verified",
+   "text": "python -m unittest tests.test_acceptance -> Ran 8 tests, OK (after the manuscript was filled)",
+   "round": 4,
+   "source": "writer"
+  },
+  {
+   "status": "verified",
+   "text": "Every \\pnum{k}/\\pnumse{k} in the flattened manuscript (166 distinct keys) is followed by \\src{k} whose provenance entry has number_keys [k] and detail k; no computed value is typed by hand; misalignment_naive_bias_over_delta_Lq (superseded) is not cited",
+   "round": 4,
+   "source": "writer"
+  },
+  {
+   "status": "unclear",
+   "text": "Captions in the tex and structure/figures.json (W1, 11:28) agree in content by my reading; an independent caption-vs-PDF check (r5 verifier) is still needed, and main.pdf must be recompiled after W1's final figure regeneration",
+   "round": 4,
+   "source": "writer"
+  },
+  {
+   "status": "unclear",
+   "text": "Population misalignment slopes (misalignment_naive_bias_over_delta_pop_*) are cited by key as the main estimate but are pending-r4-verification; the centre value 0.777 (unweighted LSQ) differs from the MC weighted slope 0.755 +- 0.009 by ~2.4 SE",
+   "round": 4,
+   "source": "writer"
   }
  ],
  "plan": [

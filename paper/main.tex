@@ -1,15 +1,51 @@
-% Manuscript entry point (stub created in round 3; round 4 fills paper/sections/).
+% Manuscript entry point.
 % Every quantitative statement: \pnum{key}\src{key}; keys resolve in data/paper_numbers.json
-% (values) and paper/provenance.json (how to reproduce). Check: python scripts/check_provenance.py
-\documentclass[aps,pra,twocolumn,superscriptaddress]{revtex4-2}
-\usepackage{amsmath,graphicx}
+% (values, generated/numbers.tex) and paper/provenance.json (how to reproduce).
+% Check: python scripts/check_provenance.py   Compile: tectonic main.tex (from paper/)
+\documentclass[aps,pra,twocolumn,superscriptaddress,floatfix,longbibliography]{revtex4-2}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
 \newcommand{\src}[1]{}
 \input{generated/numbers}
 
+% notation
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\rhat}{\hat{\mathbf{r}}}
+\newcommand{\sbr}{\mathrm{SBR}}
+\newcommand{\fwhm}{\mathrm{fwhm}}
+\newcommand{\crb}{\sigma_{\mathrm{CRB}}}
+
 \begin{document}
-\title{Localization of single emitters with donut beams: a reproducible simulation study}
+
+\title{Localization of single emitters with donut beams:\\
+a reproducible simulation study of MINFLUX-type patterns}
+
+\author{flor-choque}
+\homepage{https://github.com/FlorJDC}
+\noaffiliation
+
+\input{sections/abstract}
+
 \maketitle
 
-% \input{sections/introduction}
+\input{sections/introduction}
+\input{sections/model}
+\input{sections/vectorial}
+\input{sections/crb_center}
+\input{sections/estimators}
+\input{sections/camera}
+\input{sections/iterative}
+\input{sections/nonidealities}
+\input{sections/discussion}
+\input{sections/open_points}
+\input{sections/methods}
+\input{sections/acknowledgments}
+
+\appendix
+\input{sections/appendix}
+
+\bibliography{references}
 
 \end{document}

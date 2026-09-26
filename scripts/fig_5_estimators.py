@@ -29,11 +29,11 @@ import matplotlib.ticker as mticker  # noqa: E402
 from donutloc import beams, closed_forms, estimators, fisher, montecarlo, patterns, photons  # noqa: E402
 
 L, N, FWHM, SBR = C.L_REF, C.N_REF, C.FWHM, C.SBR_MLE
-# MLE search disk: radius 2L for the x-sweep (true positions reach x0 = L); the centre points use
+# MLE search disk (_paperconfig.MLE_RADIUS_*_OVER_L): radius 2L for the x-sweep (true positions reach x0 = L); the centre points use
 # radius L, the r1 convention for mle_efficiency_center (worker B, verified); the same point must
 # be computed with the same radius and seed in compute_paper_numbers.py to give the same value.
-R_SWEEP = 2.0 * L
-R_CENTRE = L
+R_SWEEP = C.MLE_RADIUS_SWEEP_OVER_L * L
+R_CENTRE = C.MLE_RADIUS_CENTRE_OVER_L * L
 
 
 def sigma_se(err):
@@ -125,7 +125,7 @@ def run_centre(quick):
 def run_bias0(quick):
     """(d): MLE without background, N=100, bias along x near the centre (many repetitions so
     that SE(bias) <= 0.01 nm at x0 = 2)."""
-    R = 4000 if quick else 40000
+    R = C.N_REP_BIAS0 // 10 if quick else C.N_REP_BIAS0
     xs = np.array([0.5, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0])
     p_0 = model(None)
     out = {"x": xs, "n_rep": R, "bias": np.zeros((xs.size, 2)), "bias_se": np.zeros((xs.size, 2)),

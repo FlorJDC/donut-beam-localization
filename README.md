@@ -1,145 +1,171 @@
-# agent-team-template
+# donut-beam-localization
 
-Plantilla de arranque para proyectos que trabajan con la metodología de
-[`agent-team`](https://github.com/matiaszaldarriaga/agent-team): un equipo acotado de agentes
-(Claude Code o Codex) con un **verificador independiente permanente**, que produce **un**
-entregable con **procedencia reproducible** y se detiene solo. Tú decides si continuarlo,
-congelarlo o abandonarlo.
+A reproducible simulation study ("paper companion") of single-emitter localization with
+donut-shaped excitation beams (MINFLUX and variants): beam models, Cramer-Rao bounds,
+estimators, iterative MINFLUX and experimental non-idealities.
 
-Trae el toolkit ya integrado (funciona en Windows, Linux y macOS, con Python ≥ 3.8), el elenco
-de agentes como subagentes de Claude Code, comandos para trabajar en modo interactivo, y la
-estructura mínima para que un proyecto nuevo empiece a andar en minutos.
+Every number in the manuscript is produced by a script, stored in `data/paper_numbers.json`,
+and cited in the LaTeX source through a macro that resolves to that registry, with a provenance
+entry saying how to reproduce it. A checker enforces this.
 
-## Estructura
+## Quick start
 
-```
-OBJECTIVE.template.md   plantilla del objetivo: cópiala a OBJECTIVE.md y complétala
-papers/                 material fuente que el equipo puede leer (papers, specs, datos)
-AGENTS.md               la metodología (la leen Claude y Codex)
-CLAUDE.md               reglas para Claude Code (importa AGENTS.md) + "Sobre este proyecto"
-job.cmd / job.sh        lanzadores del CLI `job` para este proyecto (Windows / bash)
-agent-team/             el toolkit agent-team (motor, roles, recetas, tests); ver agent-team/README.md
-.agent-team/            configuración propia del proyecto:
-  policy.json             límites a lo que el PI puede elegir
-  roles/  recipes/        roles y tipos de trabajo propios (tienen prioridad sobre los del toolkit)
-  plantillas/             intent de `feature`, test de aceptación, checks.py, checks.sh
-  intents/                los intents de cada trabajo
-.claude/agents/         el elenco como subagentes: pi, worker, verifier, code-reviewer, test-writer, writer
-.claude/commands/       /equipo-nuevo  /equipo-ronda  /equipo-estado  /job-preparar
-.claude/skills/         skill agent-team (Claude sabe manejar `job` en este proyecto)
-jobs/                   corridas del CLI `job` (gitignored: es estado local)
-equipo/                 trabajos del modo interactivo (gitignored)
-scripts/                apply-to-existing.ps1 / .sh: llevar esta plantilla a un proyecto existente
-```
+Requirements: Python >= 3.8 with numpy, scipy and matplotlib (numba is optional). Tested on
+Windows with Python 3.8, numpy 1.24, scipy 1.10 and matplotlib 3.7.
 
-## Puesta en marcha de un proyecto nuevo
-
-1. Crea el repo del proyecto desde esta plantilla: botón **"Use this template"** en GitHub,
-   o clónala:
-
-   ```sh
-   git clone https://github.com/FlorJDC/agent-team-template mi-proyecto
-   cd mi-proyecto && git remote remove origin      # que el proyecto tenga su propio remoto
-   ```
-
-2. Requisitos (una vez por máquina): Python ≥ 3.8, Git (en Windows, Git for Windows: su `bash`
-   corre los checks), y los CLIs `claude` y/o `codex` para los backends reales. **No hay nada
-   que instalar**: `job.cmd` / `job.sh` usan el toolkit de `agent-team/`.
-
-   ```powershell
-   .\job.cmd recipes                  # Windows (cmd / PowerShell)
-   ./job.sh recipes                   # bash (Linux, macOS, Git Bash)
-   ```
-
-3. Completa la sección **"Sobre este proyecto"** de `CLAUDE.md` (cómo correr tests,
-   convenciones, qué no tocar) y el objetivo:
-
-   ```sh
-   cp OBJECTIVE.template.md OBJECTIVE.md
-   ```
-
-4. Pon el material fuente en `papers/` (o lo que corresponda).
-
-5. Trabaja, en cualquiera de los dos modos.
-
-## Dos modos, la misma metodología
-
-### Modo interactivo (dentro de Claude Code)
-
-Para seguir y entender cada paso. Claude hace de motor: lanza los subagentes, cosecha las
-afirmaciones del verificador en `equipo/<id>/state.json`, corre checks y aceptación, y se
-detiene después de cada ronda.
-
-```
-/equipo-nuevo derive @OBJECTIVE.md          crea equipo/<id>/ (sin correr nada)
-/equipo-ronda <id>                          UNA ronda: pi → workers → verifier → writer → checks
-/equipo-ronda <id> "revisa el caso límite"  otra ronda, con tu indicación
-/equipo-estado                              estado de todos los trabajos
-```
-
-### Modo CLI (`job`: el motor completo)
-
-Para trabajos más largos o desatendidos: rondas acotadas, tripwires de progreso, checkpoint
-a las 2 rondas, `view.html` para monitorear e inyectar indicaciones.
-
-```powershell
-.\job.cmd new derive "@OBJECTIVE.md" --pi --run      # el PI dota el equipo y corre (gasto real)
-start jobs\<id>\view.html                            # monitor + caja para inyectar directivas
-.\job.cmd resume <id> --say "concéntrate en el canal resonante"
-.\job.cmd freeze <id>                                # o: abandon <id>
-```
-
-`derive` es una de varias recetas: también hay `feature`, `draft`, `wiki` (y las propias en
-`.agent-team/recipes/`). `job roles` y `job recipes` listan lo disponible. En Claude Code,
-`/job-preparar` te ayuda a escribir primero el test de aceptación y un intent corto, y arma el
-comando. Probar sin gastar: `.\job.cmd new derive "prueba" --backend mock --run --rounds 2`.
-
-## La metodología en 8 reglas
-
-1. **Empieza simple**: si es chico y bien entendido, hazlo directo. El equipo es para cuando la
-   verificación independiente *es* el producto.
-2. **Primero el test de aceptación, en rojo.** Es la especificación; el equipo puede hacerlo
-   pasar, nunca editarlo (queda protegido por hash).
-3. **Objetivo corto**: solo lo que un test no puede expresar.
-4. **El verificador es permanente** y trabaja sin el razonamiento del worker. Solo lo que él
-   reproduce pasa a `verified`, y lo verificado no se re-deriva.
-5. **Nada se inventa**: cada afirmación lleva `\src{clave}` / `[src:clave]` respaldada en
-   `out/provenance.json`; el check de procedencia bloquea "terminado" si falta algo.
-6. **Pocas rondas** (3), leer, y continuar con una indicación.
-7. **Nunca un scheduler**: todo acotado por rondas y presupuesto, con kill-switch.
-8. **Tú decides** al final de cada corrida. Integrar el resultado al proyecto es un paso aparte.
-
-Detalle completo en [`AGENTS.md`](AGENTS.md), [`agent-team/README.md`](agent-team/README.md) y
-el porqué en [`agent-team/docs/DESIGN.md`](agent-team/docs/DESIGN.md).
-
-## Usarla en un proyecto que ya existe
-
-Desde un clon de esta plantilla:
-
-```powershell
-.\scripts\apply-to-existing.ps1 -Target C:\ruta\al\proyecto -Git
-```
 ```sh
-./scripts/apply-to-existing.sh /ruta/al/proyecto --git
+git clone https://github.com/FlorJDC/donut-beam-localization.git
+cd donut-beam-localization
+pip install -e .                          # or: pip install -r requirements.txt
+
+python -m unittest discover -s tests      # unit tests (about a minute)
+python scripts/reproduce.py --quick       # fast smoke run: reduced Monte Carlo, separate outputs
+python scripts/reproduce.py               # full reproduction (about 25 minutes on a laptop)
+sh scripts/reproduce.sh                   # same, from a POSIX shell
 ```
 
-No pisa nada: si el proyecto ya tiene `CLAUDE.md`, `AGENTS.md` o `.gitignore`, solo agrega (o
-actualiza al re-ejecutar) una sección marcada `<!-- agent-team:inicio -->…<!-- agent-team:fin -->`.
+`scripts/reproduce.py` runs, in order: the unit tests, `make_all_figures.py --no-cache`,
+`compute_paper_numbers.py`, `check_provenance.py` and the acceptance test. If
+[Tectonic](https://tectonic-typesetting.github.io/) is on `PATH` (or given by `--tectonic PATH`
+or the `TECTONIC` environment variable) it also compiles `paper/main.tex`. `--with-sweep` reruns
+the iterative-MINFLUX sweep first; without it the committed `data/iterative_sweep.json` is
+used.
 
-## Actualizar el toolkit
+`--quick` writes only to `paper/figures/quick/`, `data/quick/` and `paper/generated/quick/`
+(git-ignored). The quick numbers file carries `"quick": true`, and `check_provenance.py` rejects
+such a file in the final location. A quick run can never overwrite the paper's products.
 
-`agent-team/` es una copia del toolkit upstream (commit `87e1368`) con parches para Windows /
-Python 3.8 y soporte de configuración por proyecto (`.agent-team/`). Por eso va copiado y no
-como submódulo: el upstream todavía no corre en Windows con Python 3.8. Qué cambió y cómo
-traer cambios del upstream: [`agent-team/PARCHES-PLANTILLA.md`](agent-team/PARCHES-PLANTILLA.md).
-Tests: `cd agent-team && python -m unittest discover -s tests`.
+## Repository structure
 
-## Qué NO incluye esta plantilla a propósito
+```
+src/donutloc/          the Python package (units: nm)
+  beams.py               scalar beams: LG01 donut (Balzarotti Eq. S17), Gaussian, quadratic zero
+  vectorial.py           Richards-Wolf vortex donut (handedness, linear polarization, zero depth)
+  patterns.py            exposure patterns: TCP (3 donuts on a circle of diameter L + centre),
+                         polygons, random misalignment
+  photons.py             multinomial photon model with background (SBR)
+  fisher.py              Fisher information and CRB (with the r -> 0 limit at a perfect zero)
+  closed_forms.py        closed-form centre CRBs (Eq. S27, S31, the r -> 0 limit, finite zero depth)
+  estimators.py          MLE (vectorized grid + pattern search), LMS, mLMS
+  montecarlo.py          Monte Carlo driver, bootstrap standard errors
+  camera.py              camera CRB (ideal and pixelated, background conventions)
+  experiments.py         drivers: iterative MINFLUX, eps x L sweeps, misalignment studies
+scripts/
+  _paperconfig.py        every shared parameter (seed 42, fwhm 300 nm, L, N, MC sizes, ...)
+  _paperstyle.py         figure style, parameter-hashed Monte Carlo cache, quick-mode routing
+  fig_<n>_<name>.py      one script per figure -> paper/figures/fig<n>_<name>.pdf + data/fig<n>_summary.json
+  make_all_figures.py    runs every figure script and reports script -> pdf -> status
+  run_iterative_sweep.py iterative MINFLUX vs photon budget -> data/iterative_sweep.json
+  compute_paper_numbers.py  the ONLY writer of data/paper_numbers.json and paper/generated/numbers.tex
+  check_provenance.py    manuscript provenance check (see below)
+  verify_crb_closed_forms.py  numerical check of the closed forms
+  reproduce.py / .sh     the full pipeline
+tests/                 unit tests + tests/test_acceptance.py (hash-pinned definition of "done")
+data/                  paper_numbers.json, fig*_summary.json, iterative_sweep.json (data/mc/: cache)
+structure/             claims.json (claim -> numbers -> status) and figures.json (figure -> script -> caption)
+paper/                 main.tex (revtex4-2), sections/, references.bib, provenance.json,
+                       generated/numbers.tex, figures/
+docs/derivations/      derivation of the centre CRB of the TCP
+docs/literature/       notes extracted from the published literature (equations and page numbers)
+papers/README.md       the reference list (the PDFs are not redistributed)
+equipo/2026-09-26_donut-localization/   the audit trail of how the study was produced (see below)
+agent-team/, AGENTS.md, CLAUDE.md, .claude/, .agent-team/   the agent-team methodology and tooling
+```
 
-Cosas específicas de un proyecto (setup del entorno, el paper puntual, los `OBJECTIVE.md` ya
-completados, las corridas en `jobs/` y `equipo/`) no van en la plantilla: nacen en cada
-proyecto concreto. Esta plantilla es el esqueleto reutilizable, no un proyecto en sí.
+## Pipeline
 
-## Licencia
+| Script | Output |
+|---|---|
+| `scripts/fig_1_schematic.py` ... `scripts/fig_8_misalignment.py` | `paper/figures/fig<n>_<name>.pdf`, `data/fig<n>_summary.json` |
+| `scripts/make_all_figures.py [--no-cache] [--quick]` | all of the above, with a status table |
+| `scripts/run_iterative_sweep.py` | `data/iterative_sweep.json` |
+| `scripts/compute_paper_numbers.py` | `data/paper_numbers.json`, `paper/generated/numbers.tex` |
+| `scripts/check_provenance.py` | pass/fail report for the manuscript |
+| `scripts/reproduce.py` | the whole sequence above, plus the tests |
 
-MIT. El toolkit `agent-team/` es © sus autores ([`agent-team/LICENSE`](agent-team/LICENSE)).
+Monte Carlo results of the figure scripts are cached in `data/mc/*.npz`. Each cache stores a
+hash of the `_paperconfig` parameters; a cache whose hash no longer matches is recomputed.
+Code changes are not detected, so the final products are always regenerated with `--no-cache`.
+
+## Figures
+
+| Id | Script | Question | What it shows |
+|---|---|---|---|
+| fig1 | `fig_1_schematic.py` | R1 | LG vs vectorial donut profiles, the quadratic zero and its curvature, TCP geometry |
+| fig2 | `fig_2_vectorial.py` | R1 | Vectorial donut: handedness and linear polarization (zero depth 0 / 0.845 / 0.372), centre CRB vs L against LG beams |
+| fig3 | `fig_3_crb_maps.py` | R2 | CRB maps of the TCP; the discontinuity at the centre (r -> 0 limit vs the Eq. S27 point value) and its removal by background |
+| fig4 | `fig_4_scaling.py` | R2 | Scaling of the centre CRB with L, N and SBR; MINFLUX vs camera (ideal and pixelated) |
+| fig5 | `fig_5_estimators.py` | R3 | MLE, LMS and mLMS bias and sigma/CRB inside and outside the TCP; background-free MLE superefficiency and bias |
+| fig6 | `fig_6_iterative.py` | R4 | Iterative MINFLUX vs photon budget against the ideal camera; per-iteration precision |
+| fig7 | `fig_7_zero_depth.py` | R5 | Finite zero depth: optimal L, validity of L_opt ~ 0.78 fwhm sqrt(eps), off-centre CRB minimum |
+| fig8 | `fig_8_misalignment.py` | R5 | TCP misalignment: bias and precision of the naive vs the honest MLE |
+
+The questions (from `OBJECTIVE.md`): R1 beam model (scalar LG vs vectorial donut), R2
+Cramer-Rao bound (maps, closed forms, scaling, camera comparison), R3 estimators (MLE vs
+LMS/mLMS), R4 iterative MINFLUX vs camera, R5 non-idealities (zero depth, background,
+misalignment). The captions are in `structure/figures.json`.
+
+## `data/` and the number registry
+
+`data/paper_numbers.json` maps each key to
+`{"value", "unit", "script", "description"[, "se"]}`. `se` is the Monte Carlo standard error,
+from a bootstrap for standard deviations. All parameters come from `scripts/_paperconfig.py`
+(seed 42), and the file is fully regenerated, deterministically, by
+`scripts/compute_paper_numbers.py`. The same script writes `paper/generated/numbers.tex`, which
+defines `\pnum{key}` (value) and `\pnumse{key}` (standard error). An unknown key typesets as a
+visible `??key??` marker.
+
+`structure/claims.json` groups the keys into claims. Each claim records its statement, numbers,
+script, figure, question, verification status and caveat. Every key belongs to at least one
+claim, and every claim has at least one number.
+
+The figure summaries `data/fig*_summary.json` repeat the numbers printed by each figure script.
+Their shared keys are identical to the registry.
+
+## Testing, acceptance and provenance
+
+```sh
+python -m unittest discover -s tests          # full suite
+python -m unittest tests.test_acceptance -v   # the acceptance test ("done")
+python scripts/check_provenance.py            # manuscript provenance
+```
+
+`tests/test_acceptance.py` was written before the work started and is pinned by its sha256 in
+the team ledger. It recomputes the key physics with its own minimal implementation, independent
+of `donutloc`.
+
+`scripts/check_provenance.py` does the following:
+
+- It flattens `paper/main.tex`, following `\input{...}`, `\include{...}` and the brace-less
+  `\input name`.
+- It requires every `\src{key}` to resolve to a reproducible entry of `paper/provenance.json`.
+- It requires every `\pnum{k}` or `\pnumse{k}` to be a registry key (with an `se` for
+  `\pnumse`).
+- It requires every cited number to be backed by a `\src{e}` whose provenance entry lists `k`.
+- It checks that `numbers.tex` is in sync with the registry.
+- It checks that claims and registry cover each other.
+
+## How this study was made
+
+The study was carried out with the [agent-team](https://github.com/matiaszaldarriaga/agent-team)
+methodology (see `AGENTS.md`). A bounded team of AI agents worked in short rounds: a PI
+planning each round, workers computing and coding, and a permanent verifier and code reviewer.
+The team produced one deliverable and stopped after each round for the author's decision.
+
+- **Independent verification.** A result entered the manuscript only after a verifier with no
+  stake in it reproduced it by an independent route. The verifier used its own Fisher and MLE
+  code, its own seeds, limits and special cases. Refuted or unclear results stay open until
+  resolved; the manuscript lists the remaining ones as open points.
+- **Traceability.** The full record is versioned in `equipo/2026-09-26_donut-localization/`:
+  - `state.json`: every claim with its status and round, the plan and the check results;
+  - `inbox.jsonl`: every human direction;
+  - `reports/`: what each role wrote in each round.
+- **Provenance rule.** No number in the text is typed by hand. It is `\pnum{key}\src{key}`,
+  checked by `scripts/check_provenance.py`, and the acceptance test runs that check.
+
+The literature notes in `docs/literature/` cite equations and pages of published papers. The
+PDFs themselves are not redistributed (see `papers/README.md`).
+
+## License
+
+MIT. See `LICENSE`. For citation metadata, see `CITATION.cff`.

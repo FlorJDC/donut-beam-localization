@@ -253,5 +253,97 @@ class TestR3Fixes(unittest.TestCase):
         self.assertNotIn("99 % probability", ex.l_schedule.__doc__)
 
 
+class TestMisalignmentPopulation(unittest.TestCase):
+    """Noise-free (population) naive-MLE bias under misalignment (inbox r4)."""
+
+    def test_zero_displacement_gives_zero_bias(self):
+        m = ex.misalignment_population_bias([0.0], n_patterns=20)
+        self.assertLess(float(np.max(m["bias_abs_mean"])), 1e-3)
+        self.assertTrue(np.all(np.isnan(m["ratio"])))
+        self.assertTrue(np.all(np.isnan(m["slope"])))
+
+    def test_converges_as_delta_to_zero(self):
+        """|bias|/delta tends to a finite constant as delta -> 0 (the bias is linear in delta
+        for small delta): the ratios at delta = 0.25 and 0.5 agree to < 2 % and lie close to
+        the delta = 2 value; the bias itself vanishes."""
+        m = ex.misalignment_population_bias([0.25, 0.5, 2.0], n_patterns=300)
+        r = m["ratio"]
+        for q in range(2):
+            self.assertLess(abs(r[0, q] / r[1, q] - 1.0), 0.02, r[:, q])
+            self.assertLess(abs(r[1, q] / r[2, q] - 1.0), 0.05, r[:, q])
+        self.assertTrue(np.all(m["bias_abs_mean"][0] < 0.25))
+        # the ratio at the centre is ~0.75 and larger at (L/4, 0)
+        self.assertTrue(0.70 < r[0, 0] < 0.80, r[0, 0])
+        self.assertGreater(r[0, 1], r[0, 0])
+
+    def test_slope_definition_and_same_patterns_as_study(self):
+        d = [2.0, 5.0, 10.0]
+        m = ex.misalignment_population_bias(d, n_patterns=30, positions=[(0.0, 0.0)])
+        b = m["bias_abs_mean"][:, 0]
+        dd = np.asarray(d)
+        self.assertAlmostEqual(m["slope"][0], float(np.sum(dd * b) / np.sum(dd ** 2)), places=12)
+        np.testing.assert_allclose(m["ratio"][:, 0], b / dd)
+        self.assertTrue(np.isfinite(m["slope_se"][0]) and m["slope_se"][0] > 0)
+        # pattern k is the same draw as misalignment_study's pattern k (rng re-created per delta)
+        from donutloc import beams, estimators, patterns, photons
+        L = 100.0
+        rng = np.random.default_rng(42)
+        ideal = patterns.tcp_centers(L)
+        beam = beams.make_beam("donut", fwhm=300.0)
+        true_c = patterns.perturb_centers(ideal, 5.0, rng=rng)
+        cnt = 500.0 * photons.make_model(true_c, beam, sbr=10)(np.zeros(2))
+        est = estimators.mle(cnt, photons.make_model(ideal, beam, sbr=10), search_radius=0.75 * L)
+        one = ex.misalignment_population_bias([5.0], n_patterns=2, positions=[(0.0, 0.0)])
+        b0 = float(np.hypot(*est))
+        self.assertGreater(one["bias_abs_se"][0, 0], 0.0)
+        self.assertAlmostEqual(2 * one["bias_abs_mean"][0, 0] - b0,
+                               float(np.hypot(*_second_pattern_bias())), places=8)
+
+    def test_agrees_with_monte_carlo_centre_within_3_se(self):
+        """Paired check against the 400 x 200 Monte Carlo stored in data/paper_numbers.json:
+        with the SAME 400 patterns (same seed and draw order as misalignment_study), the
+        noise-free naive |bias| at the centre agrees with the MC |bias| within 3 SE for
+        delta = 2, 5, 10, and the MC-weighted slope of the population values agrees with the MC
+        slope within 3 SE."""
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "data", "paper_numbers.json")
+        if not os.path.exists(path):
+            self.skipTest("data/paper_numbers.json missing")
+        import json
+        with open(path, encoding="utf-8") as fh:
+            pn = json.load(fh)
+        d = np.array([2.0, 5.0, 10.0])
+        m = ex.misalignment_population_bias(d, n_patterns=400, positions=[(0.0, 0.0)])
+        mc_b = np.array([pn["misalignment_naive_bias_abs_center_d%d_nm" % k]["value"]
+                         for k in (2, 5, 10)])
+        mc_se = np.array([pn["misalignment_naive_bias_abs_center_d%d_nm" % k]["se"]
+                          for k in (2, 5, 10)])
+        z = (m["bias_abs_mean"][:, 0] - mc_b) / mc_se
+        self.assertTrue(np.all(np.abs(z) < 3.0), z)
+        w = 1.0 / mc_se ** 2
+        s_pop = np.sum(w * d * m["bias_abs_mean"][:, 0]) / np.sum(w * d ** 2)
+        mc = pn["misalignment_naive_bias_over_delta_center"]
+        self.assertLess(abs(s_pop - mc["value"]) / mc["se"], 3.0, (s_pop, mc["value"]))
+
+    def test_validation(self):
+        with self.assertRaises(ValueError):
+            ex.misalignment_population_bias([-1.0], n_patterns=5)
+        with self.assertRaises(ValueError):
+            ex.misalignment_population_bias([1.0], n_patterns=1)
+
+
+def _second_pattern_bias():
+    """Naive-MLE error of the 2nd random pattern (delta = 5, centre), drawn independently."""
+    from donutloc import beams, estimators, patterns, photons
+    L = 100.0
+    rng = np.random.default_rng(42)
+    ideal = patterns.tcp_centers(L)
+    beam = beams.make_beam("donut", fwhm=300.0)
+    patterns.perturb_centers(ideal, 5.0, rng=rng)
+    true_c = patterns.perturb_centers(ideal, 5.0, rng=rng)
+    cnt = 500.0 * photons.make_model(true_c, beam, sbr=10)(np.zeros(2))
+    return estimators.mle(cnt, photons.make_model(ideal, beam, sbr=10), search_radius=0.75 * L)
+
+
 if __name__ == "__main__":
     unittest.main()

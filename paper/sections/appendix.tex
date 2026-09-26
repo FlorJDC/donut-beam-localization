@@ -1,0 +1,103 @@
+\section{Closed forms for the CRB at the TCP centre}\label{app:derivation}
+
+This appendix transcribes the derivation in \nolinkurl{docs/derivations/crb_tcp_center.md}\src{deriv_master_formula}; every boxed result there is implemented in
+\nolinkurl{src/donutloc/closed_forms.py} and checked against a numerical Fisher matrix\src{check_closed_forms}. Equation numbers S$n$ refer to the Supplementary Material of
+Ref.~\cite{Balzarotti2017}.
+
+\subsection{Notation}
+Write every exposure as $\lambda_i(\rr)=h(|\rr-\bb_i|^2)$ with $\bb_i$ from Eq.~\eqref{eq:tcp},
+$R=L/2$, and for the LG donut $h(u)=e\,a\,u\,e^{-au}$. Define $x\equiv aR^2=L^2\ln2/\fwhm^2$ and
+$g\equiv1-x$. Since $\sum_ke^{i\varphi_k}=\sum_ke^{2i\varphi_k}=0$,
+\begin{equation}
+\sum_{k=0}^{2}\bb_k=\mathbf0,\qquad\sum_{k=0}^{2}\bb_k\bb_k^{T}=\tfrac32R^2\,\mathbb{I} .
+\label{eq:triangle}
+\end{equation}
+
+\subsection{Master formula}
+With $h_R\equiv h(R^2)$, $h'_R\equiv h'(R^2)$ and $h_0\equiv h(0)$,
+$\lambda_k=h_R-2h'_R\,\bb_k\cdot\rr+O(r^2)$ for the peripheral exposures and
+$\lambda_3=h_0+h'(0)r^2+O(r^4)$. By Eq.~\eqref{eq:triangle} the linear term of
+$S=\sum_j\lambda_j$ cancels, $S=S_0+O(r^2)$ with $S_0=3h_R+h_0$. At $\rr=\mathbf0$,
+$\nabla p_k=-2h'_R\bb_k/S_0$ and $\nabla p_3=\mathbf0$, and the three peripheral terms of
+Eq.~\eqref{eq:fisher} give
+\begin{equation}
+F=\frac{6NR^2\,h_R'^2}{h_R\,(3h_R+h_0)}\;\mathbb{I} ,
+\label{eq:master}
+\end{equation}
+valid for any radial beam provided the central term vanishes at the origin. A background $b$
+per exposure amounts to $h_R\to h_R+b$ and $3h_R+h_0\to S_0+4b$.
+
+\subsection{Point value}
+For the LG donut $h_R=exe^{-x}$, $R^2h'_R=ex(1-x)e^{-x}$ and $h_0=0$. Equation~\eqref{eq:master}
+gives $F=(8Ng^2/L^2)\,\mathbb{I}$, hence Eq.~\eqref{eq:s27} (Eq.~S27), with the central $0/0$ term
+excluded.
+
+\subsection{Limit $r\to0$}
+For $\rr\neq\mathbf0$, $p_3=ea\,r^2/S_0\,[1+O(r^2)]$ and $\nabla p_3=2ea\,\rr/S_0\,[1+O(r^2)]$, so
+the central term is\src{deriv_limit}
+\begin{equation}
+\frac{\nabla p_3\nabla p_3^{T}}{p_3}=\frac{4ea}{S_0}\,\rhat\rhat^{T}+O(r^2)
+=\frac{16\,e^{x}}{3L^2}\,\rhat\rhat^{T}+O(r^2).
+\end{equation}
+The $O(r)$ changes of the peripheral terms are odd in $\rhat$ and do not contribute to the limit
+of the trace. Therefore
+\begin{equation}
+F_{\lim}(\rhat)=\alpha\,\mathbb{I}+\beta\,\rhat\rhat^{T},\qquad
+\alpha=\frac{8Ng^2}{L^2},\qquad\beta=\frac{16Ne^{x}}{3L^2},
+\end{equation}
+with eigenvalues $\alpha+\beta$ (along $\rhat$) and $\alpha$ (across). The trace
+$\mathrm{tr}F_{\lim}^{-1}=1/\alpha+1/(\alpha+\beta)$ does not depend on $\rhat$, and
+Eq.~\eqref{eq:crb} gives Eq.~\eqref{eq:limit}. For $x\to0$, $\beta/\alpha=2/3$ and
+$\rho^2=4/5$, i.e.\ $\rho=2/\sqrt5$ and $\sigma_{\lim}^2=L^2/(10N)$; for small $x$,
+$\rho\simeq(2/\sqrt5)(1-9x/40)$. The axes of the limiting error ellipse are
+$\sigma_\parallel=(\alpha+\beta)^{-1/2}$ and $\sigma_\perp=\alpha^{-1/2}=\sigma_{\mathrm{pt}}$,
+with ratio $\sqrt{3g^2/(3g^2+2e^{x})}$, equal to $\sqrt{3/5}$ for a quadratic zero.
+
+The discontinuity\src{deriv_discontinuity}: the central term has norm $\beta/N$ but direction
+$\rhat$, so it has no matrix limit at $\mathbf0$ (its trace does); assigning it the value zero
+(the S27 convention) matches no directional limit. Equivalently, with
+$F=4N\sum_i\nabla\sqrt{p_i}\,\nabla\sqrt{p_i}^{T}$, $\sqrt{p_3}\simeq\sqrt{ea/S_0}\,|\rr|$ is a
+cone, not differentiable at the origin.
+
+\subsection{Background}
+Eq.~S30 with $s=\sbr/(\sbr+1)$ is identical to adding $b=S/(4\,\sbr)$ to each $\lambda_i$. With
+$h_0=0$, $h_R+b=h_R(1+\tfrac{3}{4\sbr})$ and $S_0+4b=S_0(1+\tfrac{1}{\sbr})$; Eq.~\eqref{eq:master}
+gives Eq.~\eqref{eq:s31} (Eq.~S31). Now $p_3\ge(1-s)/4>0$ and $\nabla p_3=O(r)$, so the central
+term vanishes as $r^2$: the CRB is continuous. Near the origin
+$\lambda_3+b\simeq ea\,r^2+b$ and the central term is
+$[4ea/(S_0+4b)]\,[r^2/(r^2+r_c^2)]\,\rhat\rhat^{T}$ with
+$r_c=(\sqrt3L/4)\,e^{-x/2}/\sqrt{\sbr}$ (leading order, $r_c\ll L$). Hence the non-commuting
+limits of Sec.~\ref{sec:crb}\src{deriv_noncommuting}.
+
+\subsection{Finite zero depth}
+\emph{Constant pedestal}, $h=h_{\mathrm{LG}}+\epsilon$: it is exactly a background $b=\epsilon$
+for all $\rr$, so at the centre\src{deriv_pedestal}
+\begin{equation}
+\begin{gathered}
+\crb(\mathbf0)=\sigma_{\mathrm{pt}}\sqrt{\Big(1+\frac{1}{\sbr_\epsilon}\Big)\Big(1+\frac{3}{4\,\sbr_\epsilon}\Big)},\\
+\sbr_\epsilon=\frac{3e\,x\,e^{-x}}{4\epsilon}.
+\end{gathered}
+\end{equation}
+With an additional background of given SBR measured against the full beam, pedestal included,
+$1+1/\sbr_{\mathrm{eff}}=(1+1/\sbr)(1+1/\sbr_\epsilon)$ and the CRB is Eq.~\eqref{eq:s31} at
+$\sbr_{\mathrm{eff}}$.
+
+\emph{Gaussian pedestal}, $h=(ea\,u+\epsilon)e^{-au}$: $h_R=(ex+\epsilon)e^{-x}$,
+$R^2h'_R=(exg-\epsilon x)e^{-x}$ and $h_0=\epsilon$, so that
+\begin{equation}
+\frac{F_\epsilon}{F_{\mathrm{pt}}}=\frac{3x^2(eg-\epsilon)^2}{g^2\,D_\epsilon},\qquad
+D_\epsilon=(ex+\epsilon)\,[3(ex+\epsilon)+\epsilon e^{x}],
+\end{equation}
+with $\crb=\sigma_{\mathrm{pt}}\sqrt{F_{\mathrm{pt}}/F_\epsilon}$.
+It is not equivalent to a background: the pedestal is $\epsilon$ at the central exposure and
+$\epsilon e^{-x}$ at the peripheral ones, and it reduces the slope by the factor
+$1-\epsilon/(eg)$. To first order in $\epsilon$ the two models differ by a relative factor
+$1+\tfrac37x^2+O(x^3)$ in the coefficient of $\epsilon$. In both models $p_3(\mathbf0)>0$, the
+CRB is continuous at the origin, and it tends to $\sigma_{\mathrm{pt}}$ as $\epsilon\to0$. The
+transition radius $\sqrt{\epsilon/(ea)}$ is independent of $L$.
+
+\subsection{Multiphoton exponent}
+For $\lambda\propto I^c$, $h(u)=(ue^{-au})^c$, $h'_R/h_R=cg/R^2$ and $h_0=0$, so
+Eq.~\eqref{eq:master} gives $F=2Nc^2g^2/R^2$ and
+$\sigma_{\mathrm{pt}}^{(c)}=L\,g^{-1}/(2c\sqrt{2N})$\src{deriv_multiphoton}. The central term
+scales as $r^{2c-2}$ and vanishes at the origin for $c>1$, so the limit equals the point value.

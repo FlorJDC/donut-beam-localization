@@ -1,0 +1,59 @@
+\section{Discussion: what matters experimentally}\label{sec:discussion}
+
+Ordering the effects studied by their numerical impact on the centre precision gives a clear
+hierarchy.
+
+\emph{1. The quality of the zero.} A filled zero is the largest effect by far. With the wrong
+handedness the centre CRB at $L=50$\,nm rises from
+\pnum{crb_center_vec_correct_L50_N100_nm}\src{crb_center_vec_correct_L50_N100_nm}\,nm to
+\pnum{crb_center_vec_opposite_L50_N100_nm}\src{crb_center_vec_opposite_L50_N100_nm}\,nm, and
+with linear polarization to
+\pnum{crb_center_vec_linear_L50_N100_nm}\src{crb_center_vec_linear_L50_N100_nm}\,nm
+(Table~\ref{tab:vectorial}). Even a small residual $\epsilon$ matters at small $L$: at $L=50$\,nm
+a Gaussian pedestal of $\epsilon=0.05$ multiplies the CRB by
+\pnum{crb_eps_degradation_L50_eps0p05_gaussian}\src{crb_eps_degradation_L50_eps0p05_gaussian}
+(Table~\ref{tab:eps}). The practical consequence is that $L$ should not be reduced below
+$L_{\mathrm{opt}}$ for the measured zero depth (Sec.~\ref{sec:nonideal}); polarization control
+of the donut \cite{Lopez2023} comes before any other refinement.
+
+\emph{2. Misalignment with a nominal model.} A displacement $\delta$ of the zeros that is ignored
+by the estimator produces a bias of order
+\pnum{misalignment_naive_bias_over_delta_pop_center}\src{misalignment_naive_bias_over_delta_pop_center}$\,\delta$
+at the centre and larger off-centre. At $\delta=10$\,nm and $N=500$ the bias at the centre
+(\pnum{misalignment_naive_bias_abs_center_d10_nm}\,$\pm$\,\pnumse{misalignment_naive_bias_abs_center_d10_nm}\src{misalignment_naive_bias_abs_center_d10_nm}\,nm)
+is several times the statistical precision
+(\pnum{misalignment_naive_sigma_center_d10_nm}\src{misalignment_naive_sigma_center_d10_nm}\,nm),
+and it is invisible in the spread of repeated localizations. Calibrating the actual pattern and
+using it in the likelihood removes it (honest MLE).
+
+\emph{3. Background.} At $L=50$\,nm, $N=100$, $\sbr=10$ raises the centre CRB from
+\pnum{crb_center_point_S27_L50_N100_nm}\src{crb_center_point_S27_L50_N100_nm}\,nm (point value)
+to \pnum{crb_center_sbr10_L50_N100_nm}\src{crb_center_sbr10_L50_N100_nm}\,nm, and the photons
+for $5$\,nm from \pnum{photons_for_5nm_L50_sbrinf}\src{photons_for_5nm_L50_sbrinf} to
+\pnum{photons_for_5nm_L50_sbr10}\src{photons_for_5nm_L50_sbr10}. Background also regularizes the
+model, making the MLE efficient at the centre.
+
+\emph{4. Estimator and protocol.} The MLE is efficient at the centre with background, but not
+uniformly inside the pattern at $N=100$
+($\sigma/\crb=\pnum{mle_sbr10_sigma_over_crb_x15_N100}\src{mle_sbr10_sigma_over_crb_x15_N100}$
+at $15$\,nm from the centre), and the linearized LMS estimators are strongly biased off-centre.
+In iterative MINFLUX the search disk and the re-centring are part of the result; a heuristic
+$L$ schedule based on the centre CRB leaves a fraction
+\pnum{adaptive_frac_outside_next_radius}\src{adaptive_frac_outside_next_radius} of emitters
+outside the next pattern.
+
+\emph{5. Definitions.} Without background the centre CRB depends on its definition by the factor
+$\rho=\pnum{limit_to_point_ratio_L50}\src{limit_to_point_ratio_L50}$ at $L=50$\,nm; the
+background-free MLE even beats both values. Benchmarks against ``the CRB at the centre'' should
+state which one is used, or include background.
+
+\emph{6. Beam model.} Once the zero is correct, the scalar LG model is adequate if its size
+parameter is chosen to match the curvature of the actual zero: the error in the centre CRB is
+then below the percent level (Table~\ref{tab:vectorial}). With the default $\fwhm$ the
+discrepancy grows with $L$, reaching a CRB ratio of
+\pnum{crb_vec_over_lg300_L150_N100}\src{crb_vec_over_lg300_L150_N100} at $L=150$\,nm.
+
+Iterative MINFLUX reaches a small fraction of the camera precision for the same photons
+(\pnum{iterative_ratio_min}\src{iterative_ratio_min}--\pnum{iterative_ratio_max}\src{iterative_ratio_max})
+in our idealized setting; the effects above, all absent from that simulation, set how much of
+this advantage survives in an experiment.

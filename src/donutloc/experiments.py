@@ -27,7 +27,8 @@ import numpy as np
 from . import beams, estimators, fisher, montecarlo, patterns, photons
 
 __all__ = ["iterative_minflux", "iterative_vs_photons", "l_schedule", "eps_L_sweep",
-           "optimal_L", "crb_center", "misalignment_study", "error_stats"]
+           "optimal_L", "crb_center", "misalignment_study", "misalignment_population_bias",
+           "error_stats"]
 
 DEFAULT_SEED = 42
 DEFAULT_FWHM = 300.0
@@ -538,3 +539,71 @@ def misalignment_study(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr
                       "n_patterns": P, "n_rep": R, "seed": seed, "estimator": estimator,
                       "search_margin": float(search_margin), "beam": _beam_desc(beam)}}
     return out
+
+
+def misalignment_population_bias(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr=10,
+                                 n_patterns=4000, seed=DEFAULT_SEED, positions=None, beam=None,
+                                 search_margin=0.25):
+    """Noise-free (population) bias of the naive MLE under TCP misalignment.
+
+    Same misalignment model, pattern draws and naive estimator as ``misalignment_study``
+    (``default_rng(seed)`` re-created for every delta, so the ``n_patterns`` random directions
+    are shared by all deltas; naive MLE = ``estimators.mle`` with the ideal-TCP model in the
+    disk of radius ``L/2 + search_margin*L``), but **without Poisson noise**: the MLE is applied
+    to the *expected* counts ``N p_true(r_true)`` of each perturbed pattern.  The resulting
+    estimate is the large-N limit of the naive estimator, so ``|r_hat - r_true|`` is the pure
+    model-mismatch bias of that pattern (no MC noise floor).  The population value is the mean
+    over patterns; its standard error is the std over patterns / sqrt(n_patterns) (sampling of
+    patterns only).  The argmax is invariant to the scale of the counts, so ``N`` only enters
+    through ``sbr`` bookkeeping.
+
+    Returns a dict with ``delta`` (n_d,), ``positions`` (n_pos, 2) and arrays (n_d, n_pos):
+    ``bias_abs_mean``, ``bias_abs_se``, ``ratio`` = bias_abs_mean/delta (NaN at delta = 0),
+    ``ratio_se``; plus ``slope`` (n_pos,): least-squares slope through the origin of
+    ``bias_abs_mean`` vs delta over the deltas > 0 (unweighted,
+    sum(delta*b)/sum(delta^2)), ``slope_se`` (n_pos,): its pattern-sampling SE computed from the
+    per-pattern slopes, and ``params``.
+    """
+    beam = _default_beam(beam, fwhm)
+    deltas = np.atleast_1d(np.asarray(displacement_list, float))
+    if np.any(deltas < 0):
+        raise ValueError("displacements must be >= 0")
+    if positions is None:
+        positions = [(0.0, 0.0), (L / 4.0, 0.0)]
+    pos = np.atleast_2d(np.asarray(positions, float))
+    P = int(n_patterns)
+    if P < 2:
+        raise ValueError("n_patterns >= 2 required")
+    ideal = patterns.tcp_centers(L)
+    p_naive = photons.make_model(ideal, beam, sbr=sbr)
+    radius = L * (0.5 + float(search_margin))
+    shape = (deltas.size, pos.shape[0])
+    b_all = np.empty((deltas.size, pos.shape[0], P))
+    for i, d in enumerate(deltas):
+        rng = np.random.default_rng(seed)
+        cnt = np.empty((pos.shape[0], P, ideal.shape[0]))
+        for j in range(P):
+            true_c = patterns.perturb_centers(ideal, d, rng=rng)
+            p_true = photons.make_model(true_c, beam, sbr=sbr)
+            cnt[:, j, :] = float(N) * np.asarray(p_true(pos), float)
+        for q in range(pos.shape[0]):
+            est = estimators.mle(cnt[q], p_naive, search_radius=radius)
+            b_all[i, q] = np.hypot(*(est - pos[q]).T)
+    mean = b_all.mean(axis=2)
+    se = b_all.std(axis=2, ddof=1) / np.sqrt(P)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ratio = np.where(deltas[:, None] > 0, mean / deltas[:, None], np.nan)
+        ratio_se = np.where(deltas[:, None] > 0, se / deltas[:, None], np.nan)
+    k = deltas > 0
+    slope = np.full(pos.shape[0], np.nan)
+    slope_se = np.full(pos.shape[0], np.nan)
+    if np.any(k):
+        dk = deltas[k]
+        per_pattern = np.einsum("d,dqp->qp", dk, b_all[k]) / np.sum(dk ** 2)   # (n_pos, P)
+        slope = per_pattern.mean(axis=1)
+        slope_se = per_pattern.std(axis=1, ddof=1) / np.sqrt(P)
+    return {"delta": deltas, "positions": pos, "bias_abs_mean": mean, "bias_abs_se": se,
+            "ratio": ratio, "ratio_se": ratio_se, "slope": slope, "slope_se": slope_se,
+            "params": {"L": float(L), "N": int(N), "fwhm": float(fwhm), "sbr": sbr,
+                       "n_patterns": P, "seed": seed, "estimator": "mle", "noise": "none",
+                       "search_margin": float(search_margin), "beam": _beam_desc(beam)}}
