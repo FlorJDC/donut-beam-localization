@@ -2,7 +2,7 @@
  "id": "2026-09-26_donut-localization",
  "type": "feature+derive",
  "status": "active",
- "round": 1,
+ "round": 2,
  "rounds_budget": 5,
  "worker_count": 3,
  "team": {
@@ -230,23 +230,221 @@
    "text": "V17 — Without the 1/s factor the LMS with SBR=10 shrinks the estimate by exactly s = 10/11 relative to the background-free LMS, at any r, not only linearly (the constant term (1-s)/4 * sum r_i vanishes); checked 0.90909 at (2,0), (0,3), (4,-2).",
    "round": 1,
    "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "Suite completa: python -m unittest discover -s tests -> Ran 142 tests in 17.744s, OK (skipped=1, aceptación sin paper_numbers); sha256 de tests/test_acceptance.py = 7d198853...2303 intacto (change set revisado como HEAD~1..HEAD = df7a97c)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Fix R1 crb_map: escenario original crb_map(p, linspace(-2,2,5), [0], 100) -> [1.619,1.609,1.60510,1.609,1.619] (sin salto); zero_policy='point' reproduce 1.80247; continuo para |x| 1e-7..1e-3 (1.6050956±3e-8); crb(p,0,N) sigue dando S27 por defecto",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Fix R1 mle tol<=0: tol=0, tol<0, grid_step=0 -> ValueError; tol=1e-300 termina en 0.14 s; conteos negativos/no finitos y K distinto -> ValueError",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Fix R1 memoria de mle: M=2000, grid_step=0.2 (G~1.96e5) -> pico de 135 MiB, 2.4 s; el bloque (chunk, G) queda acotado por mem_budget (residual menor: la evaluación del modelo O(G*K) no está acotada; radio 200, step 0.2 -> 623 MiB)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Fix R1 closed_forms 1<c<2: docstring corregido y warning para 1<c<1.5; diferencia relativa contra fisher.crb_limit: c=1.1 -2.16e-2, c=1.5 -7.1e-6, c=2 5.2e-9",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "tests/test_integration.py existe y pasa (patterns+beams+make_model -> crb_limit = copia de _crb_center = closed form a 1e-6; MLE SBR=10 eficiente; lms = lms_tcp); NaN en campo lejano -> crb NaN (también en crb_map con la política limit)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "vectorial.py: reducción de Bessel rederivada (coincide con nota B §2.2); 2D directa contra Bessel <=1.1e-15 en correcta, opuesta, lineal pol_angle=0.3, charge=2 y z=200 (valida la superposición lineal de campos); n_theta 801 contra 3201: opuesta 0.8452409/0.8452407, lineal 0.3716482, curvatura 7.042221e-5, D_pp 384.666; ls=+1 da cero exacto para charge ±1; nota B n=1.5: 0.86896/0.38231",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "make_vectorial_beam circular (interp lineal en rho^2): interp/exacto = 1-2.5e-5 cerca del cero, conserva I∝rho^2; crb_limit diferencia relativa 2.4e-5 (L=50,100), CRB en (7,3) 3e-4..6e-4",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "camera.py: p por píxel = norm.cdf independiente a 1e-16, orden row-major (y exterior); Fisher separable independiente 5.2045491 nm (9x9, a=100, N=400) = paquete; SBR_c=500 por píxel equivale a total 500/81 (4.96418); límite ideal 1.0001 sigma/sqrt(N); renormalización en la ventana declarada",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "experiments.misalignment_study: el honesto usa los centros perturbados (p_true); los 4 ceros (incluido el central) se mueven exactamente |delta|; con delta=0 honesto e ingenuo son idénticos bit a bit (números aleatorios comunes)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "experiments.iterative_minflux, corrida independiente (semilla 7, n_rep=2000): fijo sigma=0.508±0.0066 (bootstrap), consistente con 0.497±0.011 de W3; SBR=10 0.631; adaptivo 0.475; cámara 3.162; reparto de fotones correcto (1003/4 -> [250,250,250,253])",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Privacidad: ningún archivo versionado nuevo contiene material de docs/private/ (que está en .gitignore)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "experiments.misalignment_study sigma_se = sigma_mean/(2 sqrt(R P)) ignora la varianza entre patrones: con delta=10 en el centro, 20x200, SE de la fórmula 0.0144/0.0157 contra SE real entre patrones 0.0380/0.0561 (honesto/ingenuo, 2.6x/3.6x); la significancia de 'sigma ingenuo 1.85->1.98' está sobreestimada",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "fisher.crb con zero_policy='limit' falla cuando N se transmite más allá de r: crb(p,[0,0],np.array([100,400]),zero_policy='limit') -> ValueError 'cannot broadcast a non-scalar to a scalar array', mientras que con 'point' devuelve [1.802,0.901] (barrido de N en un punto, relevante para crb_exponent_N)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "Docstring de experiments.l_schedule (adaptivo): 'kappa=6 contiene la verdad con ~99 %' es falso porque sigma_k es el CRB central (3.47) y el error real de la iteración 0 es 4.29 (emisor hasta L0/4 fuera del centro); el 2.65 % de los emisores queda fuera de L_1/2=12.5 nm (L0=150, N_k=250)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "make_vectorial_beam polarization='linear' (bilineal, grid_step=5) no sirve para el CRB y no avisa: con L=50, N=100 el CRB en (7,3) da 66.99 interpolado contra 62.36 exacto (+7.4 %) y crb_limit 58.77 contra 60.77 (-3.3 %); sin test ni warning (compare_crb usa mode='exact' y no está afectado)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "SE del iterativo sigma/(2 sqrt R): subestima el bootstrap en ~16 % (0.0057 contra 0.0066, errores heterocedásticos, curtosis 3.3); para el requisito '<2 %' de los números del paper conviene usar el bootstrap",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "iterative_minflux recenter=False: el 8.06 nm de la última iteración está dominado por el truncamiento del disco de búsqueda (radio 0.75 L_k alrededor del origen < r0_spread=37.5 nm para L=25), no por la física; hay que interpretarlo con cuidado en el paper",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Pendiente para R3: faltan data/paper_numbers.json, compute_paper_numbers.py, structure/figures.json y claims.json, scripts/check_provenance.py (envoltorio de agent-team/bin/check_provenance.py), fig_*.py, paper y README; crb_exponent_L depende del rango (1.008 en [10..50], 1.074 en [25..150], fuera de ±0.05): fijar L<<fwhm; declarar si camera_sigma_nm es la ideal (3.162) o la pixelada (~3.29); la dona vectorial en mode='exact' es inviable para MLE o mapas (10 s por 2000 puntos): usar interp",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "SBR=10 para mle_efficiency_center sigue pendiente de confirmación explícita de la autora (no bloquea)",
+   "round": 2,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "W1 — Vectorial RW donut, l=1 with sigma=+1 circular: on-axis intensity exactly 0 (independent direct 2D pupil quadrature gives I(0)/Imax ~1e-32 at z=0, 300, -500 nm; all components carry e^{i phi}, e^{2i phi}, e^{3i phi}).",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W2 — Zero depth I(0)/Imax (Imax searched in 2D): opposite handedness 0.845241 (n=1.518) / 0.868963 (n=1.5); linear 0.371648 (n=1.518) / 0.382305 (n=1.5); x and y linear identical.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W3 — Peak-to-peak diameter 384.666 nm (n=1.518, F=5/3); with n=1.5: 515.52/401.35/382.87/377.62 nm for F=0.5/1/2/100 (independent 2D quadrature). Caveat: differs from Caprile2022 Fig.10 as transcribed (508/428/392/380), notably at F=1; do not claim agreement with Caprile at F=1.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W4 — Curvature at the zero c = 7.04223e-5 nm^-2 (n=1.518; exact via |dE/dx|^2/Imax, isotropic); curvature-matched LG fwhm = 327.141 nm; diameter-matched fwhm = 320.256 nm.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W5 — sigma=-1: on-axis Ex,Ey = 0 and Ez(0,z) = -(2pi/sqrt2) int g sin(theta) e^{ikz cos theta} dtheta != 0 (J0 kernel; matched 1e-15 at z=0,200,500 nm); sigma=+1: |Ez|^2 carries 21.76% of focal-plane energy (Parseval, exact; direct plane integral to 3 um 21.36%).",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W6 — r->0 centre CRB, N=100, no background, n=1.518, L=50/100/150: vectorial correct 1.60041/3.32324/5.33104; LG fwhm=327.14 1.60124/3.32964/5.35145; LG fwhm=300 1.60510/3.36341/5.48647; opposite 147.886/89.588/84.197; linear (true 2D pattern, fixed x pol) 60.774/38.061/35.723; curvature-matched LG within 0.05/0.19/0.38% (direct Fisher with exact field gradient at |r|=1e-3 in 3 directions + general limit formula F/N=(f'L)^2/(2f^2) Id + 4c/(3f) rr).",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W7 — Pixelated Gaussian PSF Fisher: sigma_PSF=100, pixel 100, 9x9, no bkg, N=400: CRB=5.2045 nm; pixel 10 nm, 121x121: CRB/(sigma/sqrtN)=1.000417.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W8 — With SBR_c=500 defined as total signal / background per pixel (SBR_total = 500/81 = 6.17), 9x9, N=600: CRB=4.964 nm and 591 photons for 5 nm. Caveat: if SBR=500 were total, CRB=4.268 nm and 437 photons; the convention must be stated.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W9 — MINFLUX S31 at the centre (point value), L=50, fwhm=300: 13.00/13.45/14.16/15.37/17.93 photons for 5 nm at SBR inf/50/20/10/5 (at SBR=inf this is the Eq. S27 point value; the r->0 limit would give 10.3).",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W10 — Iterative MINFLUX (N_total=1000, 4x250, L=150->82.55->45.43->25, recentring, MLE in disk 0.75 L_k, 500 reps, own seeds): final sigma 0.506±0.012 / 0.521±0.012 nm without bkg, 0.606 / 0.607±0.014 with SBR=10, consistent with 0.497±0.011 / 0.613±0.014; without recentring 4.34/3.16/3.17/7.94 and 4.11/3.44/3.20/8.53 nm, consistent with 4.34/3.20/3.23/8.06; camera 3.162 nm.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "W11 — sigma_iter vs N_total slope -0.526 and camera ratio 0.15–0.17 — qualitatively reproduced, not at the stated precision: with 3000–6000 reps I get sigma = 1.180±0.020 (N=250, ratio 0.187), 0.748, 0.509, 0.355, 0.2514±0.0024 (N=4000; worker 0.233), 0.1736 nm, slope -0.545 over the full range (-0.523 for N>=500), ratio 0.155–0.187. N=250 is heavy-tailed (none of 12 blocks of 500 reps reaches 1.094). Needs more reps under the same protocol, or restating as slope ≈ -0.52…-0.55 depending on range, ratio 0.155–0.19.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W12 — Gaussian pedestal eps, N=100, fwhm=300, centre CRB: L_opt = 10.484/23.280/50.337/80.810 nm, CRB = 0.7458/1.6787/3.8784/7.2867 nm for eps=0.002/0.01/0.05/0.15. Caveats: with eps=0 the CRB is monotonic increasing only for L < ring diameter fwhm/sqrt(ln2)=360 nm (diverges there, then decreases); L_opt/(fwhm sqrt eps) = 0.781/0.776/0.750/0.695 (fwhm-independent), so 0.78 holds only for eps <~ 0.01.",
+   "round": 2,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "W13 — Misalignment (L=100, N=500, SBR=10, all 4 zeros displaced by delta in random directions, 20 patterns x 200 reps): naive MLE centre bias 1.45/3.81/7.76 nm (own draw) vs honest 0.16–0.20 (MC floor ≈0.17); naive sigma 1.84->2.02: the loss is bias. The claimed 1.58/4.01/8.31 are inside the ±10% pattern-sampling spread (population means from noise-free MLE 1.49±0.15 / 3.78±0.35 / 7.84±0.72 over 20-pattern draws, ≈0.75 delta).",
+   "round": 2,
+   "source": "verifier"
   }
  ],
  "plan": [
-  "R1: núcleo del paquete (beams/patterns/photons), inferencia (fisher/estimators/montecarlo), derivación CRB centro TCP"
+  "R1: núcleo del paquete (beams/patterns/photons), inferencia (fisher/estimators/montecarlo), derivación CRB centro TCP",
+  "R2: dona vectorial, CRB de cámara, drivers (iterativo, eps×L, desalineación), fixes R1"
  ],
  "backlog": [
-  "FIX (refuted r1): fisher.crb/crb_map saltan al valor puntual S27 para r<=1e-5 nm (píxel +12% en mapas con el origen)",
-  "FIX (refuted r1): estimators.mle se cuelga con tol<=0",
-  "FIX (refuted r1): estimators.mle memoria: chunk fijo 4096 no escala con la grilla (6.4 GB con grid_step 0.2)",
-  "FIX (refuted r1): closed_forms.crb_tcp_center_limit con 1<c<2 no entero: el límite = valor puntual para todo c>1 (verificador V11); corregir docstring/condición",
-  "Test de integración make_model->fisher/estimators/montecarlo->closed_forms en la suite",
-  "montecarlo sigma_err: usar sigma/(2 sqrt R) (el actual sobreestima por sqrt2); documentar normalización de rmse",
-  "NaN en campo lejano (gaussiano r=6000) y conteos negativos en mle: validar",
-  "Paper: sesgo MLE sin fondo ≈ -0.34 ± 0.01 nm (no -0.29); V10: 4.9 nm es escala, argmin depende de L y dirección",
-  "R2: CRB de cámara; mapas de CRB; escalamientos (exponentes L,N); L óptimo; MC MLE vs LMS/mLMS en el FOV",
-  "R3: dona vectorial Richards-Wolf (nota B) + profundidad del cero por handedness; MINFLUX iterativo vs cámara; eps x L; desalineación honesto vs ingenuo",
-  "R4: figuras, compute_paper_numbers.py, structure/*.json, check_provenance.py; R5: paper, README"
+  "FIX (refuted r2): misalignment_study sigma_se ignora varianza entre patrones (usar SE entre patrones)",
+  "FIX (refuted r2): fisher.crb zero_policy='limit' falla con N array y r escalar",
+  "FIX (refuted r2): docstring l_schedule adaptivo ('99%' falso; kappa usa CRB central)",
+  "FIX (refuted r2): make_vectorial_beam lineal interpolado (grid 5 nm) sesga el CRB 3-7% sin warning -> warning/test o grid fino",
+  "SE del iterativo: usar bootstrap (sigma/(2sqrtR) subestima ~16%)",
+  "W11 unclear: pendiente iterativo vs N -> más reps (>=3000) o reportar rango -0.52..-0.55 y cociente 0.155-0.19",
+  "Texto: Caprile F=1 (428 vs 401 nm) no concuerda; SBR de cámara por píxel (500/81); W9 con límite r->0 da 10.3 fotones; eps=0 CRB monótono solo L<360 nm; L_opt≈0.78 fwhm sqrt(eps) solo eps<~0.01; sesgo ingenuo ≈0.75 delta; recenter=False 8 nm es artefacto del disco de búsqueda",
+  "paper_numbers: crb_exponent_L con L<<fwhm (p.ej. 5..40 nm); camera_sigma_nm = ideal sigma_PSF/sqrt(N) declarado; mle_efficiency_center con SBR=10",
+  "R3: compute_paper_numbers.py, structure/figures.json+claims.json, scripts/check_provenance.py (envoltorio, imprime 'all checks pass'), fig_*.py (>=6) + make_all_figures.py, mapas CRB, MC MLE vs LMS/mLMS en el FOV",
+  "R4: paper/main.tex + sections + references.bib + provenance.json, compilar con tectonic; R5: README, reproduce.sh, CITATION.cff, revisión final + aceptación"
  ],
  "history": [
   {
@@ -259,11 +457,22 @@
    },
    "checks": "passed",
    "acceptance": "skip"
+  },
+  {
+   "round": 2,
+   "summary": "Dona vectorial RW (cero exacto con handedness correcta; opuesta 0.845, lineal 0.372; LG igualada por curvatura reproduce el CRB vectorial a <0.4%), cámara (reproduce ~600 fotones de Balzarotti), iterativo (0.50 nm vs cámara 3.16 nm con 1000 fotones), L óptimo con cero imperfecto, desalineación (ingenuo sesgado ≈0.75 delta). Fixes R1 confirmados.",
+   "claims": {
+    "verified": 24,
+    "refuted": 4,
+    "unclear": 5
+   },
+   "checks": "passed",
+   "acceptance": "skip"
   }
  ],
  "last_checks": {
   "passed": true,
-  "detail": "84 tests OK (1 skipped: acceptance, no paper_numbers yet); verify_crb_closed_forms: 89 exact checks pass"
+  "detail": "142 tests OK (1 skipped: acceptance); 89 closed-form checks pass"
  },
  "last_acceptance": {
   "passed": false,
