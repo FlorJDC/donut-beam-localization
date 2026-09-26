@@ -148,13 +148,17 @@ def summary_dir(quick=None):
     return os.path.join(_paperconfig.DATA, _paperconfig.QUICK_DIRNAME) if q else _paperconfig.DATA
 
 
+PDF_METADATA = {"CreationDate": None, "ModDate": None}
+
+
 def savefig(fig, name):
     """Write <fig_dir()>/<name>.pdf, close the figure, print and return the path."""
     d = fig_dir()
     os.makedirs(d, exist_ok=True)
     base = name[:-4] if name.endswith(".pdf") else name
     path = os.path.join(d, base + ".pdf")
-    fig.savefig(path)
+    # no timestamps in the PDF, so regenerating a figure is byte-identical
+    fig.savefig(path, metadata=PDF_METADATA)
     plt.close(fig)
     print("wrote %s" % path)
     return path
@@ -203,8 +207,9 @@ def write_summary(fig_id):
     out = dict(_SUMMARY)
     if _STATE["quick"]:
         out["quick"] = True
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(out, f, indent=1, sort_keys=True)
+        f.write("\n")
     print("wrote %s" % path)
     return path
 

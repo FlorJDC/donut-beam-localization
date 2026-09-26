@@ -6,6 +6,13 @@
 # Usage:  sh scripts/reproduce.sh [--quick] [--with-sweep] [--skip-tests] [--no-latex] [--tectonic PATH]
 set -e
 cd "$(dirname "$0")/.."
-PY="${PYTHON:-python3}"
-command -v "$PY" >/dev/null 2>&1 || PY=python
+# $PYTHON wins; otherwise python3, unless it is missing or cannot run (on Windows `python3` can be
+# the Microsoft Store stub, which exists on PATH but does not start Python), then python.
+if [ -n "${PYTHON:-}" ]; then
+    PY="$PYTHON"
+elif command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+    PY=python3
+else
+    PY=python
+fi
 exec "$PY" scripts/reproduce.py "$@"

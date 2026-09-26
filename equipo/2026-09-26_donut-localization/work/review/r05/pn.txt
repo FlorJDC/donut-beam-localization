@@ -1,0 +1,218 @@
+[]
+L_opt_eps0p002_nm 10.484412357992904  nm
+L_opt_eps0p01_nm 23.280315521660803  nm
+L_opt_eps0p05_nm 50.336650731671014  nm
+L_opt_eps0p15_nm 80.80970073749592  nm
+L_opt_over_fwhm_sqrt_eps_eps0p002 0.7814619578870331  
+L_opt_over_fwhm_sqrt_eps_eps0p01 0.7760105173886934  
+L_opt_over_fwhm_sqrt_eps_eps0p05 0.7503744853045394  
+L_opt_over_fwhm_sqrt_eps_eps0p15 0.6954991670407265  
+adaptive_frac_outside_next_radius 0.0265 0.0016061677994530959 
+adaptive_iter0_crb_center_nm 3.469949720587243  nm
+adaptive_iter0_sigma_nm 4.263509911967216 0.026868323712114624 nm
+camera_ideal_N400_nm 5.0  nm
+camera_perpixel_sbr500_N600_nm 4.9641788449868836  nm
+camera_photons_for_5nm_perpixel_sbr500 591.4337185203674  photons
+camera_photons_for_5nm_total_sbr500 437.12323812927536  photons
+camera_pixelated_9x9_N1000_nm 3.291645894727008  nm
+camera_pixelated_9x9_N400_nm 5.204549139040088  nm
+camera_sbr_perpixel_to_total 6.172839506172839  
+camera_sigma_nm 3.1622776601683795  nm
+camera_total_sbr500_N600_nm 4.267724013497882  nm
+crb_1d_quadratic_L50_N100_nm 1.25  nm
+crb_center_lg300_L100_N100_nm 3.363411105379956  nm
+crb_center_lg300_L150_N100_nm 5.486472241660276  nm
+crb_center_lg300_L50_N100_nm 1.6050955712820285  nm
+crb_center_lg_L50_N100_closed_nm 1.6050955676488428  nm
+crb_center_lg_L50_N100_nm 1.6050955712820285  nm
+crb_center_lgcurv_L100_N100_nm 3.3296434944519775  nm
+crb_center_lgcurv_L150_N100_nm 5.351442244023537  nm
+crb_center_lgcurv_L50_N100_nm 1.6012359544414494  nm
+crb_center_multiphoton_c1_L100_N100_quadratic_nm 3.5355339059327373  nm
+crb_center_multiphoton_c2_L100_N100_quadratic_nm 1.7677669529663687  nm
+crb_center_multiphoton_c3_L100_N100_quadratic_nm 1.1785113019775793  nm
+crb_center_point_S27_L50_N100_nm 1.8024719062965908  nm
+crb_center_sbr10_L50_N100_nm 1.9600587058960406  nm
+crb_center_sbr10_limit_L50_N100_nm 1.9600587033709  nm
+crb_center_sbr5_N500_fwhm300_L100_nm 2.012405711557181  nm
+crb_center_sbr5_N500_fwhm300_L150_nm 3.3701243995767287  nm
+crb_center_sbr5_N500_fwhm300_L50_nm 0.9469412719618978  nm
+crb_center_sbr5_N500_fwhm360_L100_nm 1.962372253026145  nm
+crb_center_sbr5_N500_fwhm360_L150_nm 3.1672693698498424  nm
+crb_center_sbr5_N500_fwhm360_L50_nm 0.9412947338052162  nm
+crb_center_vec_correct_L100_N100_nm 3.3232386650742742  nm
+crb_center_vec_correct_L150_N100_nm 5.3310411221245735  nm
+crb_center_vec_correct_L50_N100_nm 1.600414754550864  nm
+crb_center_vec_linear_L100_N100_nm 38.06131070805538  nm
+crb_center_vec_linear_L150_N100_nm 35.72298430646498  nm
+crb_center_vec_linear_L50_N100_nm 60.77420112870313  nm
+crb_center_vec_opposite_L100_N100_nm 89.58836687703429  nm
+crb_center_vec_opposite_L150_N100_nm 84.1967269259482  nm
+crb_center_vec_opposite_L50_N100_nm 147.88600722506212  nm
+crb_eps_degradation_L100_eps0p002_constant 1.0120363390812213  
+crb_eps_degradation_L100_eps0p002_gaussian 1.0120782856885184  
+crb_eps_degradation_L100_eps0p01_constant 1.0601541323669794  
+crb_eps_degradation_L100_eps0p01_gaussian 1.06055696925795  
+crb_eps_degradation_L100_eps0p05_constant 1.3002344321807762  
+crb_eps_degradation_L100_eps0p05_gaussian 1.3071530096812696  
+crb_eps_degradation_L100_eps0p15_constant 1.8984588911916318  
+crb_eps_degradation_L100_eps0p15_gaussian 1.9580233148320798  
+crb_eps_degradation_L50_eps0p002_constant 1.04542852011131  
+crb_eps_degradation_L50_eps0p002_gaussian 1.0454699330900192  
+crb_eps_degradation_L50_eps0p01_constant 1.2268139676204266  
+crb_eps_degradation_L50_eps0p01_gaussian 1.2277033606831182  
+crb_eps_degradation_L50_eps0p05_constant 2.130041431919036  
+crb_eps_degradation_L50_eps0p05_gaussian 2.1517715746905295  
+crb_eps_degradation_L50_eps0p15_constant 4.38167594644918  
+crb_eps_degradation_L50_eps0p15_gaussian 4.583503927613071  
+crb_exponent_L 1.0043477933205587  
+crb_exponent_N -0.49999999999999983  
+crb_limit_axis_par_L100_N100_quadratic_nm 2.7386127875258306  nm
+crb_limit_axis_par_L50_N100_nm 1.3797675853503208  nm
+crb_limit_axis_perp_L100_N100_quadratic_nm 3.5355339059327378  nm
+crb_limit_axis_perp_L50_N100_nm 1.8024719062965908  nm
+crb_limit_axis_ratio_quadratic 0.7745966692414834  
+crb_opt_eps0p002_nm 0.745815349969247  nm
+crb_opt_eps0p01_nm 1.6786740447081847  nm
+crb_opt_eps0p05_nm 3.878413877135987  nm
+crb_opt_eps0p15_nm 7.28668178071284  nm
+crb_vec_over_lg300_L100_N100 0.9880560422003055  
+crb_vec_over_lg300_L150_N100 0.9716701164811385  
+crb_vec_over_lg300_L50_N100 0.9970837769320952  
+crb_vec_over_lgcurv_L100_N100 0.9980764218786861  
+crb_vec_over_lgcurv_L150_N100 0.9961877338914108  
+crb_vec_over_lgcurv_L50_N100 0.9994871462333158  
+eps0_crb_divergence_L_nm 360.33672263593496  nm
+eps_constant_pedestal_over_s31_L100_eps0p05 1.0000000000000004  
+eps_constant_pedestal_sbr_eff_L100_eps0p05 2.90750797929026  
+eps_gaussian_pedestal_over_s31_L100_eps0p05 1.0053210231395657  
+fwhm_masullo_nm 360.0  nm
+fwhm_nm 300.0  nm
+iterative_adaptive_sigma_nm 0.47954956650539093 0.0027064022138170185 nm
+iterative_crb_all_photons_L25_N1000_nm 0.2509361567541259  nm
+iterative_no_recenter_sigma_nm_ARTEFACT 8.144742302880484 0.04504230041289436 nm
+iterative_ratio_max 0.1830997643854856  
+iterative_ratio_min 0.1576640552144642  
+iterative_ratio_to_camera_N1000 0.160561253867469 0.000848353427731987 
+iterative_sbr10_sigma_nm 0.6164818957983189 0.003272144622969625 nm
+iterative_sigma_N1000_nm 0.507739266193721 0.0026827290924441322 nm
+iterative_sigma_N2000_nm 0.35440018821417946 0.001933114691159953 nm
+iterative_sigma_N250_nm 1.15802458899663 0.01374922165278263 nm
+iterative_sigma_N4000_nm 0.24952128221278316 0.0013213293986075526 nm
+iterative_sigma_N500_nm 0.7358984629906175 0.004167482898628615 nm
+iterative_sigma_N8000_nm 0.17627377253391108 0.0009500556451380786 nm
+iterative_sigma_nm 0.507739266193721 0.0026827290924441322 nm
+iterative_slope_N_ge_500 -0.5148302737955811 0.0025443833789578385 
+iterative_slope_N_ge_500_ci95_hi -0.5096328822156363  
+iterative_slope_N_ge_500_ci95_lo -0.5195801016871089  
+iterative_slope_all -0.5365320215232086 0.0028657381520863596 
+iterative_slope_all_ci95_hi -0.5312136414547969  
+iterative_slope_all_ci95_lo -0.5423538157129608  
+lg_ring_diameter_nm 360.33672263593496  nm
+limit_to_point_ratio_L100 0.8780494058418923  
+limit_to_point_ratio_L150 0.8552671573299861  
+limit_to_point_ratio_L5 0.8943884373303029  
+limit_to_point_ratio_L50 0.8904968571447623  
+limit_to_point_ratio_quadratic 0.8944271909999159  
+limit_to_point_ratio_quadratic_numeric 0.8944271930298965  
+lms_nobg_sigma_over_crb_limit_center 1.1229445514533927 0.005452250618360448 
+lms_nobg_sigma_over_s27_center 0.9999785960805649 0.004855212051005496 
+lms_sbr10_shrink_factor 0.9090909090909091  
+misalignment_crb_honest_Lq_d0_nm 2.3631206853289104  nm
+misalignment_crb_honest_Lq_d10_nm 2.5448530511124177  nm
+misalignment_crb_honest_Lq_d2_nm 2.3712555063730196  nm
+misalignment_crb_honest_Lq_d5_nm 2.4092703951138263  nm
+misalignment_crb_honest_center_d0_nm 1.8628443653780393  nm
+misalignment_crb_honest_center_d10_nm 1.8421169747583546  nm
+misalignment_crb_honest_center_d2_nm 1.8605556076805465  nm
+misalignment_crb_honest_center_d5_nm 1.8445055350331327  nm
+misalignment_delta0_identical 1  
+misalignment_honest_bias_abs_Lq_d0_nm 0.21827882498818987 0.005679589987515236 nm
+misalignment_honest_bias_abs_Lq_d10_nm 0.27594175254983483 0.008299529034813393 nm
+misalignment_honest_bias_abs_Lq_d2_nm 0.22322619166117302 0.006214239245221824 nm
+misalignment_honest_bias_abs_Lq_d5_nm 0.22927262325359404 0.006326743870970925 nm
+misalignment_honest_bias_abs_center_d0_nm 0.17336842413478096 0.004668119226691617 nm
+misalignment_honest_bias_abs_center_d10_nm 0.17970451698485712 0.005103181405425275 nm
+misalignment_honest_bias_abs_center_d2_nm 0.16899790041320134 0.004477980450039944 nm
+misalignment_honest_bias_abs_center_d5_nm 0.17696923570979353 0.004777203677213218 nm
+misalignment_honest_rmse_Lq_d0_nm 2.3910337939730892  nm
+misalignment_honest_rmse_Lq_d10_nm 2.6375032829535447  nm
+misalignment_honest_rmse_Lq_d2_nm 2.3973255495838406  nm
+misalignment_honest_rmse_Lq_d5_nm 2.45602389222768  nm
+misalignment_honest_rmse_center_d0_nm 1.8566798996029348  nm
+misalignment_honest_rmse_center_d10_nm 1.8646607028352271  nm
+misalignment_honest_rmse_center_d2_nm 1.8526343665911646  nm
+misalignment_honest_rmse_center_d5_nm 1.8492876638507958  nm
+misalignment_honest_sigma_Lq_d0_nm 2.3888498377719456 0.004684967695882186 nm
+misalignment_honest_sigma_Lq_d10_nm 2.605868171601 0.019308681671410803 nm
+misalignment_honest_sigma_Lq_d2_nm 2.3937561626407704 0.00575144054365751 nm
+misalignment_honest_sigma_Lq_d5_nm 2.447828713837253 0.009506504528589758 nm
+misalignment_honest_sigma_center_d0_nm 1.8548493529576748 0.0034116125734762644 nm
+misalignment_honest_sigma_center_d10_nm 1.8543146792199352 0.009298609343374502 nm
+misalignment_honest_sigma_center_d2_nm 1.8506382649303226 0.003963231276093382 nm
+misalignment_honest_sigma_center_d5_nm 1.8450759578413787 0.00558176339379564 nm
+misalignment_mc_floor_Lq_d0_nm 0.21170630470969512  nm
+misalignment_mc_floor_Lq_d10_nm 0.23093905378531543  nm
+misalignment_mc_floor_Lq_d2_nm 0.21214111643007222  nm
+misalignment_mc_floor_Lq_d5_nm 0.2169331715098968  nm
+misalignment_mc_floor_center_d0_nm 0.16438174392497176  nm
+misalignment_mc_floor_center_d10_nm 0.16433435969870003  nm
+misalignment_mc_floor_center_d2_nm 0.16400854596544265  nm
+misalignment_mc_floor_center_d5_nm 0.16351559933445675  nm
+misalignment_naive_bias_abs_Lq_d0_nm 0.21827882498818987 0.005679589987515236 nm
+misalignment_naive_bias_abs_Lq_d10_nm 9.30431548872703 0.25794713925081736 nm
+misalignment_naive_bias_abs_Lq_d2_nm 1.6905061265720371 0.03770087222540079 nm
+misalignment_naive_bias_abs_Lq_d5_nm 4.202171075200668 0.097915839847002 nm
+misalignment_naive_bias_abs_center_d0_nm 0.17336842413478096 0.004668119226691617 nm
+misalignment_naive_bias_abs_center_d10_nm 7.708458376248982 0.15826624187523347 nm
+misalignment_naive_bias_abs_center_d2_nm 1.492398485529104 0.032618307750408186 nm
+misalignment_naive_bias_abs_center_d5_nm 3.7308132867355353 0.080253059058974 nm
+misalignment_naive_bias_over_delta_Lq 0.8619255218060017 0.012017093404049061 
+misalignment_naive_bias_over_delta_center 0.7546450672795735 0.009271382096601314 
+misalignment_naive_bias_over_delta_pop_Lq 0.8506956555160232 0.007422611269702287 
+misalignment_naive_bias_over_delta_pop_Lq_d10 0.8634718916670533 0.008103152564060795 
+misalignment_naive_bias_over_delta_pop_Lq_d2 0.802290740569161 0.005951053525910378 
+misalignment_naive_bias_over_delta_pop_Lq_d5 0.8073354973034009 0.006102368095990507 
+misalignment_naive_bias_over_delta_pop_center 0.7768263559835796 0.004970261219979847 
+misalignment_naive_bias_over_delta_pop_center_d10 0.7834885724752224 0.004946826593184678 
+misalignment_naive_bias_over_delta_pop_center_d2 0.7471281876667419 0.0052071443304492265 
+misalignment_naive_bias_over_delta_pop_center_d5 0.7549291969477022 0.005125354550241077 
+misalignment_naive_rmse_Lq_d0_nm 2.3910337939730892  nm
+misalignment_naive_rmse_Lq_d10_nm 8.978376198124852  nm
+misalignment_naive_rmse_Lq_d2_nm 2.737386254946354  nm
+misalignment_naive_rmse_Lq_d5_nm 4.161336154394361  nm
+misalignment_naive_rmse_center_d0_nm 1.8566798996029348  nm
+misalignment_naive_rmse_center_d10_nm 6.228370069068393  nm
+misalignment_naive_rmse_center_d2_nm 2.180384743801973  nm
+misalignment_naive_rmse_center_d5_nm 3.432906568913518  nm
+misalignment_naive_sigma_Lq_d0_nm 2.3888498377719456 0.004684967695882186 nm
+misalignment_naive_sigma_Lq_d10_nm 3.739476194885727 0.15980251782110427 nm
+misalignment_naive_sigma_Lq_d2_nm 2.4044909965667056 0.00842033777519147 nm
+misalignment_naive_sigma_Lq_d5_nm 2.5314192673265454 0.022380021042358495 nm
+misalignment_naive_sigma_center_d0_nm 1.8548493529576748 0.0034116125734762644 nm
+misalignment_naive_sigma_center_d10_nm 2.014604088132076 0.010877704753660062 nm
+misalignment_naive_sigma_center_d2_nm 1.8549015249243863 0.003453818980903791 nm
+misalignment_naive_sigma_center_d5_nm 1.8843164908047887 0.004368916413525515 nm
+misalignment_pop_n_patterns 4000  
+mle_efficiency_center 0.9912292806217669 0.005131253274748225 
+mle_nobg_bias_x_r2_nm -0.34445140228271487 0.0077024520320696345 nm
+mle_nobg_sigma_center_nm 1.3478067006827772 0.006660026179547173 nm
+mle_nobg_sigma_over_crb_limit_center 0.8397049526504217 0.004149301947314981 
+mle_nobg_sigma_over_s27_center 0.7477546229566587 0.0036949403517922497 
+mle_sbr10_sigma_over_crb_x15_N100 1.5116262832636163 0.029177594096373244 
+mle_sbr10_sigma_over_crb_x15_N1000 1.0042031326322736 0.005679346149280331 
+mle_sigma_center_sbr10_nm 1.9428675785187703 0.01005755764037069 nm
+photons_for_5nm_L50_limit_nobg 10.305327171796726  photons
+photons_for_5nm_L50_sbr10 15.367320522235445  photons
+photons_for_5nm_L50_sbr20 14.157103419797238  photons
+photons_for_5nm_L50_sbr5 17.933955450896335  photons
+photons_for_5nm_L50_sbr50 13.454365274139835  photons
+photons_for_5nm_L50_sbrinf 12.995619891953863  photons
+vectorial_lg_fwhm_curvature_nm 327.1411191076221  nm
+vectorial_lg_fwhm_diameter_nm 320.25564844151785  nm
+vectorial_peak_to_peak_diameter_nm 384.66623588354236  nm
+vectorial_zero_curvature_nm2 7.042221230445732e-05  nm^-2
+vectorial_zero_depth_correct 0.0  
+vectorial_zero_depth_linear 0.37164824493965715  
+vectorial_zero_depth_wrong_handedness 0.8452409316543332  
+zero_depth_transition_scale_nm 4.887044407823295  nm

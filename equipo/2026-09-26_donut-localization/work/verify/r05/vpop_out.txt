@@ -1,0 +1,18 @@
+center linear-response limit |bias|/delta = 0.7471 +- 0.0005
+Lq linear-response limit |bias|/delta = 0.8038 +- 0.0006
+center seed 101 P=20000: ratios 0.7478(0.0023) 0.7563(0.0023) 0.7867(0.0022) ; LSQ slope 0.7796 +- 0.0022 ; grid mismatches [0, 0, 0]
+   first    400 patterns: slope 0.7962
+   first   1000 patterns: slope 0.7757
+   first   4000 patterns: slope 0.7823
+   first  20000 patterns: slope 0.7796
+   per-pattern slope: median 0.8289, p99 1.3442, max 1.4109, skew-ish mean-median -0.0494
+center seed 202 P=20000: ratios 0.7448(0.0023) 0.7534(0.0023) 0.7839(0.0022) ; LSQ slope 0.7768 +- 0.0022 ; grid mismatches [0, 0, 0]
+center seed 303 P=20000: ratios 0.7457(0.0023) 0.7541(0.0023) 0.7839(0.0022) ; LSQ slope 0.7770 +- 0.0022 ; grid mismatches [0, 0, 0]
+Lq seed 101 P=20000: ratios 0.8054(0.0027) 0.8123(0.0028) 0.8679(0.0034) ; LSQ slope 0.8552 +- 0.0032 ; grid mismatches [0, 0, 0]
+   first    400 patterns: slope 0.8530
+   first   1000 patterns: slope 0.8532
+   first   4000 patterns: slope 0.8626
+   first  20000 patterns: slope 0.8552
+   per-pattern slope: median 0.8049, p99 2.0153, max 4.4047, skew-ish mean-median 0.0503
+Lq seed 202 P=20000: ratios 0.8072(0.0027) 0.8141(0.0028) 0.8686(0.0035) ; LSQ slope 0.8561 +- 0.0032 ; grid mismatches [0, 0, 0]
+Lq seed 303 P=20000: ratios 0.8035(0.0027) 0.8093(0.0027) 0.8614(0.0034) ; LSQ slope 0.8495 +- 0.0032 ; grid mismatches [0, 0, 0]

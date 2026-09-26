@@ -160,11 +160,12 @@ def main():
            mec="k", mew=0.3, ms=3.2, label="adaptive $L_k$", zorder=5)
     a.plot(C.ITER_N_TOTAL, d["no_recenter_sigma"], marker="x", ls="none", color="0.55", ms=4)
     a.annotate("no re-centring\n(search-disk artefact)", (C.ITER_N_TOTAL, d["no_recenter_sigma"]),
-               xytext=(1500, 7.0), fontsize=6, color="0.45", va="center",
+               xytext=(1500, 8.1), fontsize=6, color="0.45", va="center", ha="left",
                arrowprops=dict(arrowstyle="-", lw=0.5, color="0.55"))
     a.set_xscale("log")
     a.set_yscale("log")
-    a.set_ylim(0.08, 300)
+    a.set_ylim(0.08, 1000)       # head-room: the legend sits above the annotated artefact point
+    a.set_xlim(180, 1.5e4)       # keeps the "10000" tick label inside the panel
     a.set_xlabel(r"total photons $N_\mathrm{total}$")
     a.set_ylabel(r"localization precision $\sigma$ (nm)")
     a.legend(loc="upper right", fontsize=5.8, handlelength=1.5, borderaxespad=0.3)

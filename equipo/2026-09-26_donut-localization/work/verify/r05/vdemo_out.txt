@@ -1,0 +1,23 @@
+SBR_eps closed 2.907508   from sum I_LG(0)/(4 eps) 2.907508
+constant pedestal CRB 4.980611 / S31(SBR_eps) 4.980611 = 1.0000000
+gaussian pedestal CRB 5.007113 / S31(SBR_eps) 4.980611 = 1.0053210
+  r=0.001: const 4.980611 gauss 5.007113
+  r=0.01: const 4.980612 gauss 5.007114
+degradation L100 eps0.05: const 1.30023 gauss 1.30715 (registry 1.30023 / 1.30715)
+const pedestal + SBR=10 (beam conv.): numeric 5.428956  S31(SBR_eff) 5.428956
+LMS at [5, 0]: raw/corrected = 0.9090909 ; raw/background-free LMS = [0.90909091 0.90909091]
+LMS at [0, 3]: raw/corrected = 0.9090909 ; raw/background-free LMS = [1.         0.90909091]
+LMS at [4, -2]: raw/corrected = 0.9090909 ; raw/background-free LMS = [0.90909091 0.90909091]
+LMS at [20, 7]: raw/corrected = 0.9090909 ; raw/background-free LMS = [0.90909091 0.90909091]
+L=50 limit axes par 1.3798 perp 1.8025  sigma_lim 1.60510
+numeric limit (12 dirs, r=1e-3) 1.60510 ; point value 1.80247
+L=50 opposite/correct 92.4 linear/correct 38.0
+L=100 opposite/correct 27.0 linear/correct 11.5
+L=150 opposite/correct 15.8 linear/correct 6.7
+r_c/L at SBR=5: 0.192 (L=50) 0.186 (L=100)
+r_c/L at SBR=10: 0.136 (L=50) 0.132 (L=100)
+r_c/L at SBR=20: 0.096 (L=50) 0.093 (L=100)
+honest centre excess over floor: 3.018 SE ; ratio 1.094
+honest Lq excess over floor: 5.422 SE ; ratio 1.195
+population ratios with MC weights -> slope 0.7622
+Masullo L=150 fwhm360: 3.1673

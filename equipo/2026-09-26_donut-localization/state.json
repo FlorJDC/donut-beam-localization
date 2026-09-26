@@ -676,112 +676,298 @@
    "source": "verifier"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "D1: _paperstyle.cached stores a sha256[:16] of all upper-case _paperconfig constants (paths excluded) + caller params + quick flag in each npz and recomputes on mismatch or missing key; tests TestCacheInvalidation (6) incl. changing MIS.n_patterns",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "D2: --quick writes only paper/figures/quick/, data/quick/ (summaries and paper_numbers.json with top-level quick=true) and paper/generated/quick/numbers.tex; reproduce.py --quick left the sha256 of every paper/figures/*.pdf, data/*.json and numbers.tex unchanged; check_provenance rejects a final paper_numbers.json containing 'quick'",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "D3: check_provenance flattens brace-less '\\input name', tolerates whitespace in '\\src {k}' / '\\pnum {k}', errors on '\\pnum{ k}', skips macro parameters (#1, ##1), and requires every \\pnum/\\pnumse key to be covered by some \\src{e} whose provenance entry has it in number_keys or as detail; 18 new tests in tests/test_check_provenance.py (28 total, all pass)",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "D3/h: check_provenance fails on a claim with empty numbers or a paper_numbers key in no claim; on the real project: 39 claims, 217 numbers, 178 tags/entries, 'all checks pass', exit 0",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "D4: numbers.tex fallback is \\textbf{??\\detokenize{#1}??}; with Tectonic a document using \\pnum{no_such_key}, \\pnumse{no_such_key} and \\pnum in math compiles (exit 0, no 'Missing $'), while the old macro exits 1",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "Constants moved to _paperconfig (N_REP_BIAS0=40000, MLE_RADIUS_CENTRE_OVER_L=1, MLE_RADIUS_SWEEP_OVER_L=2, EPS_TRANSITION=0.002) and used by compute_paper_numbers.py, fig_5_estimators.py and fig_7_zero_depth.py; the full --no-cache regeneration changed no value",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "Population (noise-free) naive-MLE bias, 4000 patterns, seed 42, L=100, SBR=10: |bias|/delta = 0.7471/0.7549/0.7835 (centre) and 0.8023/0.8073/0.8635 (L/4,0) for delta=2/5/10 (SE ~0.005-0.008); unweighted LSQ slope through the origin 0.7768+-0.0050 (centre) and 0.8507+-0.0074 (L/4,0); keys misalignment_naive_bias_over_delta_pop_* and misalignment_pop_n_patterns=4000",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "With the same first 400 patterns as the 400x200 MC, the noise-free naive |bias| (centre 1.492/3.759/7.760, L/4 1.654/4.158/9.151 nm) matches the MC (1.492/3.731/7.708 and 1.691/4.202/9.304) within 1 MC SE; the (L/4,0) MC slope spread (0.814-0.862) is pattern sampling (population slope 0.896/0.876/0.851 over 400/1000/4000 patterns)",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "New demo keys: lms_sbr10_shrink_factor=0.9090909 (=10/11), eps_constant_pedestal_over_s31_L100_eps0p05=1.0000000000000004, eps_gaussian_pedestal_over_s31_L100_eps0p05=1.00532, eps_constant_pedestal_sbr_eff_L100_eps0p05=2.90751",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "claims.json: 39 claims (37 verified, 1 pending-r4-verification, 1 superseded), every claim has numbers, all 217 keys covered, 15 pending-r3 set to verified round 3, caveats in English with no non-ASCII",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "Regeneration: make_all_figures --no-cache 8/8 OK (17m48s), all fig*_summary.json identical to the pre-round versions; compute_paper_numbers 217 keys (376 s): 0 of the 204 existing keys changed value/SE/unit, 13 new; 149 shared summary keys match the registry",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "pending",
+   "status": "claimed:pending",
    "text": "Checks: unittest discover 218 tests OK (38.0 s, TECTONIC set); tests.test_acceptance 8/8 OK; check_provenance exit 0 'all checks pass'; sha256 tests/test_acceptance.py = 7d198853...2303 unchanged",
    "round": 4,
    "source": "worker-1"
   },
   {
-   "status": "verified",
+   "status": "claimed:verified",
    "text": "paper/main.tex (revtex4-2) with 14 section files compiles with Tectonic to paper/main.pdf, 13 pages, no errors, no overfull boxes, 0 undefined references/citations, no '??' in the PDF text",
    "round": 4,
    "source": "writer"
   },
   {
-   "status": "verified",
+   "status": "claimed:verified",
    "text": "python scripts/check_provenance.py (stricter \\pnum->\\src rule) -> 'provenance: 178 tag(s), 178 entry(ies), 0 error(s), 0 warning(s)'; 'claims: 39, numbers: 217, provenance entries: 178'; 'all checks pass'",
    "round": 4,
    "source": "writer"
   },
   {
-   "status": "verified",
+   "status": "claimed:verified",
    "text": "python -m unittest tests.test_acceptance -> Ran 8 tests, OK (after the manuscript was filled)",
    "round": 4,
    "source": "writer"
   },
   {
-   "status": "verified",
+   "status": "claimed:verified",
    "text": "Every \\pnum{k}/\\pnumse{k} in the flattened manuscript (166 distinct keys) is followed by \\src{k} whose provenance entry has number_keys [k] and detail k; no computed value is typed by hand; misalignment_naive_bias_over_delta_Lq (superseded) is not cited",
    "round": 4,
    "source": "writer"
   },
   {
-   "status": "unclear",
+   "status": "claimed:unclear",
    "text": "Captions in the tex and structure/figures.json (W1, 11:28) agree in content by my reading; an independent caption-vs-PDF check (r5 verifier) is still needed, and main.pdf must be recompiled after W1's final figure regeneration",
    "round": 4,
    "source": "writer"
   },
   {
-   "status": "unclear",
+   "status": "claimed:unclear",
    "text": "Population misalignment slopes (misalignment_naive_bias_over_delta_pop_*) are cited by key as the main estimate but are pending-r4-verification; the centre value 0.777 (unweighted LSQ) differs from the MC weighted slope 0.755 +- 0.009 by ~2.4 SE",
    "round": 4,
    "source": "writer"
+  },
+  {
+   "status": "verified",
+   "text": "Fresh clone of https://github.com/FlorJDC/donut-beam-localization (HEAD c90a402 = local HEAD) on Windows/Python 3.8.6: unittest discover 218 OK (1 skip, no Tectonic), tests.test_acceptance 8/8 OK, check_provenance exit 0 (178 tags, 39 claims, 217 numbers), sha256 tests/test_acceptance.py = 7d198853...2303 (guard matches)",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "reproduce.py --quick --no-latex on the fresh clone: 5/5 steps OK in 162 s; sha256 of every tracked file unchanged; quick outputs only in git-ignored paper/figures/quick, data/quick, paper/generated/quick (r4 D2 fix confirmed)",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Full regeneration of fig1 and fig7 on the fresh clone reproduces the committed products: summaries identical in content (CRLF only), PDFs pixel-identical (only CreationDate differs)",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Clone hygiene: no docs/private, no data/mc or quick outputs, no *.npz, no third-party paper PDFs (only our 8 figures, main.pdf and 2 r03 draft compilations); no author-private content found by git grep",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "README paths, commands, figure table and numbers match structure/figures.json and data/paper_numbers.json; 149 shared summary keys identical to the registry",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "references.bib: 9 entries, all cited; authors/titles/years/journals/volumes/pages/DOIs present agree with the PDFs' first pages; no invented field",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "README Quick start 'pip install -e .' (README.md:19) fails with the pip 20.2.1 bundled with Python 3.8.6 ('editable mode currently requires a setup.py based build'); works after 'python -m pip install --upgrade pip'. Install is not needed because tests/scripts add src to sys.path. Fix the README or add a setup.py shim",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "Fig. 4(d) captions (structure/figures.json fig4; crb_center.tex caption, main.pdf p.7) say triangles mark MINFLUX 13 photons with the S27 point value, but scripts/fig_4_scaling.py:174-175 never plots mf_s27; no such triangle in the figure",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "Fig. 8 captions (figures.json fig8 'naive sigma changes little, so its loss of accuracy is bias'; nonidealities.tex:159 'the loss of the naive estimator is bias') are false at (L/4,0): naive sigma 2.389 -> 3.74+-0.16 nm at delta=10 (+57%), 5.02 nm at delta=15; restrict to the centre as the body text (nonidealities.tex:112-120) does",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "Fig. 5(d) captions (figures.json fig5; estimators.tex:66) say the background-free MLE bias points toward the centre, but the plotted bias changes sign near x0~9 nm (+0.18 nm at x0=12 nm); qualify to x0 <~ 8 nm",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "misalignment_naive_bias_over_delta_pop_center (0.7768) is cited in the abstract and fig8 caption while its claim in structure/claims.json is 'pending-r4-verification'; it needs r5 verifier confirmation before delivery (OBJECTIVE: only verified results in the manuscript); check_provenance/acceptance do not enforce claim status",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "state.json not advanced past round 3 (no r4 history, last_acceptance still 'vacuous', 12 r4 claims 'claimed:pending', local uncommitted edit); must be updated before freezing",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Hygiene items (non-blocking): .gitignore lacks *.egg-info/, venv/, build/, dist/; scripts/apply-to-existing.{sh,ps1} are stray template installers; 611 scratch fixture files under equipo/.../work/verify/r03/scratch; README structure omits paper/main.pdf, OBJECTIVE*.md, job.*, environment.yml; \\pnumse prints 4 sig. digits (abstract '0.9912 +- 0.005131'); figure PDFs/JSON not byte-deterministic (CreationDate, CRLF)",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Minor caption gaps: figures.json fig2(f) says differences are relative to LG300 though the grey curve is vectorial/LG327.1; fig3(f) dashed fwhm=360 curve not mentioned; fig6(a) annotation abuts legend and '10000' tick clipped; fig4(d) dashed 9x9 no-bkg line indistinguishable from the ideal line. Bib incomplete (no volume/pages for Masullo2022, Caprile2022, Stefani2023, Lopez2023; no DOI for Masullo2022, Caprile2022)",
+   "round": 5,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "M2-pop: misalignment_naive_bias_over_delta_pop_center = 0.7768 +- 0.0050 and _pop_Lq = 0.8507 +- 0.0074 (4000 patterns) reproduced independently (own LG/TCP/Eq. S30 model, naive MLE on expected counts by Fisher scoring, grid-checked): three independent 20000-pattern seeds give 0.7796/0.7768/0.7770 (+-0.0022) and 0.8552/0.8561/0.8495 (+-0.0032); pooled 0.7778+-0.0013 and 0.8536+-0.0018",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M2-pop-ratios: per-delta population ratios |bias|/delta = 0.7471/0.7549/0.7835 (centre) and 0.8023/0.8073/0.8635 (L/4,0) for delta=2/5/10 reproduced (own 0.745-0.748/0.753-0.756/0.784-0.787 and 0.804-0.807/0.809-0.814/0.861-0.869); exact linear-response limit 0.7471+-0.0005 (centre) and 0.8038+-0.0006 (L/4,0); |bias|/delta grows with delta",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M2-pop-convergence: at (L/4,0) the per-pattern slope is right-skewed (median 0.805, p99 2.0, max 4.4), so 400-pattern running means fluctuate by ~+-0.02; the worker's 0.896/0.876/0.851 (400/1000/4000) is consistent with sampling; 4000 patterns are converged at the quoted SE (+-0.9 %), and the SE std(per-pattern slope)/sqrt(P) is meaningful (between-seed spread at 20000 matches +-0.0032)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M2-pop-vs-MC: the centre MC weighted slope 0.7546+-0.0093 vs population 0.7768 is explained by inverse-variance weighting (MC weights applied to the population ratios give 0.762) plus 400-pattern sampling; not a contradiction",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "M2-worker-400: 'with the same first 400 patterns as the 400x200 MC the noise-free naive |bias| matches the MC within 1 MC SE' - not reproduced (requires the worker's seed-42 pattern stream)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M2-demo: eps_constant_pedestal_sbr_eff_L100_eps0p05 = 2.907508; eps_constant_pedestal_over_s31_L100_eps0p05 = 1.0000000 (numeric CRB 4.980611 = S31(SBR_eps)); eps_gaussian_pedestal_over_s31_L100_eps0p05 = 1.0053210 (5.007113/4.980611); constant pedestal + SBR=10 (beam convention) numeric 5.428956 = S31(SBR_eff); own finite-difference Fisher",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M2-lms: lms_sbr10_shrink_factor = 0.9090909 = 10/11; the expected uncorrected LMS equals s times the background-free LMS at (5,0), (4,-2), (20,7) (own Eq. S50 implementation)",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M1-appendix: master formula A2, S27 point value, central term 16e^x/(3L^2), alpha/beta, sigma_lim^2 = L^2/(8Ng^2)(3g^2+e^x)/(3g^2+2e^x), rho=2/sqrt5 and L^2/(10N) for x->0, rho ~ (2/sqrt5)(1-9x/40), ellipse ratio sqrt(3/5), S31 via b=S/(4SBR), r_c, SBR_eps, SBR_eff combination, gaussian-pedestal F ratio, first-order ratio 1+3x^2/7, multiphoton F=2Nc^2g^2/R^2 - all re-derived by hand and correct",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M1-conventions: manuscript uses fwhm = Eq. S17 size parameter (ring diameter fwhm/sqrt(ln2)=360.3 nm), L = diameter, SBR total/total (camera SBR_c per pixel, 500/81=6.173), CRB = sqrt(tr F^-1/2) = Eq. S13, 'centre CRB' = r->0 limit unless stated; all backlog caveats (L exponent range, 2L search radius, honest-at-floor only at centre, N=250 bootstrap, adaptive 97 %, slope excludes -0.5, Caprile F=1, 0.78 only eps<~0.01, SBR=10 convention, superefficiency reported) are present; 0.862 and 0.79 not cited",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M1-pdf: paper/main.pdf (13 pp.) is newer than all sections, numbers.tex and paper_numbers.json; check_provenance 'all checks pass' (178/178); figures 1-4, 6-8 match their captions; no private/unpublished data in the paper",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "M1-vectorial.tex:32-33 'wrong hand CRB two orders of magnitude larger, linear more than one order' - Table I gives factors 92/27/16 (opposite) and 38/11.5/6.7 (linear) for L=50/100/150; fix: 'by factors 16-90 and 7-40 (L=150-50 nm)'",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "M1-fig5-caption (estimators.tex:66 and figures.json fig5 d) 'bias ... toward the centre' - panel (d) is negative only for x0<~8 nm and +0.18 nm (away from the centre) at x0=12 nm; restrict to x0<~8 nm and note the sign change",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "M1-estimators.tex:35-38 'the linearized estimators ... their sigma falls below the CRB' - in Fig. 5(b) the mLMS has sigma/CRB ~1.3 >1 for x0<~12 nm and a small outward bias at 5-15 nm; the plotted LMS/mLMS include the 1/s correction, so 'shrinkage' must not read as the 1/s shrinkage; restrict to x0>~15 nm and say 'linearization compression'",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "M1-methods.tex:9-11 'enough repetitions for a statistical error below 2 %' except misalignment - mle_nobg_bias_x_r2_nm (2.2 %) and adaptive_frac_outside_next_radius (6 %) exceed 2 % and are not misalignment keys (they are correctly quoted with \\pnumse); reword",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "M1-nonidealities.tex:97-101 the MC-vs-population slope difference attributed to weighting 'and the MC noise floor' - the floor would raise the MC slope, which is lower (0.755 vs 0.777); the difference is weighting (0.762 with MC weights) plus 400-pattern sampling",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "M1-wording (not wrong numbers, but overstated or ambiguous; fixes in r05-verifier.md): vectorial:26-28 'few percent at the largest L' (Fig. 2f reaches ~11 % at 250 nm); vectorial:28-31 curvature justification (overall curvature cancels); crb_center:20 'isotropic'; model:50-52 SBR held fixed at every position not stated; nonidealities:103-106 honest centre bias 9 % (3 SE) above floor called 'at the floor'; abstract:23 and discussion:21 'about 0.7768' (ratio 0.747-0.784, LSQ 78 % weighted by delta=10; conditions missing); abstract (iii)/(iv) conditions missing; discussion:56-59 'all absent'; open_points:28-30 now verified; open_points:18-21 overstated (agree ~2 % except F=1); crb_center:67-69, 99-101; SE formatting with 4 significant figures",
+   "round": 5,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "M3: every \\cite checked against notes A/B and spot-checked in the PDFs (Balzarotti p.6 <0.2 %, p.13 Eq. S13, pp.35/44 beta=1.27/3.8; Masullo SI Table 1 0.94/1.96/3.16; Stefani 2023 scale invariance; Lopez 2023 'same direction of the phase ramp'); no misattribution or invented claim; minor wording: handedness formalization is the project's own, TCP is S24 up to rotation/relabelling, 'Most analyses ... [1]' overgeneralizes (Ref. [1] experiments used a measured PSF), Masullo column's SBR=5/N=500 are inferred",
+   "round": 5,
+   "source": "verifier"
   }
  ],
  "plan": [

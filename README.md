@@ -13,15 +13,29 @@ entry saying how to reproduce it. A checker enforces this.
 Requirements: Python >= 3.8 with numpy, scipy and matplotlib (numba is optional). Tested on
 Windows with Python 3.8, numpy 1.24, scipy 1.10 and matplotlib 3.7.
 
+No installation of the package is needed: the tests and every script put `src/` on `sys.path`
+themselves, so numpy, scipy and matplotlib are all you need (`pip install -r requirements.txt`,
+or `conda env create -f environment.yml`).
+
 ```sh
 git clone https://github.com/FlorJDC/donut-beam-localization.git
 cd donut-beam-localization
-pip install -e .                          # or: pip install -r requirements.txt
+pip install -r requirements.txt           # dependencies only; donutloc itself is not installed
 
 python -m unittest discover -s tests      # unit tests (about a minute)
 python scripts/reproduce.py --quick       # fast smoke run: reduced Monte Carlo, separate outputs
 python scripts/reproduce.py               # full reproduction (about 25 minutes on a laptop)
 sh scripts/reproduce.sh                   # same, from a POSIX shell
+```
+
+To import `donutloc` from elsewhere, install it in editable mode. The project is configured by
+`pyproject.toml` only (no `setup.py`), which old pip versions cannot install in editable mode:
+the pip 20.2 bundled with Python 3.8.6 fails with "editable mode currently requires a setup.py
+based build". Upgrade pip first:
+
+```sh
+python -m pip install --upgrade pip
+pip install -e .
 ```
 
 `scripts/reproduce.py` runs, in order: the unit tests, `make_all_figures.py --no-cache`,
@@ -33,7 +47,13 @@ used.
 
 `--quick` writes only to `paper/figures/quick/`, `data/quick/` and `paper/generated/quick/`
 (git-ignored). The quick numbers file carries `"quick": true`, and `check_provenance.py` rejects
-such a file in the final location. A quick run can never overwrite the paper's products.
+such a file in the final location. A quick run can never overwrite the paper's products. Its last
+two steps (provenance check and acceptance test) still check the committed final products, not
+the quick ones.
+
+Regeneration is byte-deterministic: figure PDFs carry no creation or modification date, and the
+JSON files are written with sorted keys and LF line endings, so rerunning a script on unchanged
+inputs leaves `git status` clean.
 
 ## Repository structure
 
@@ -63,12 +83,19 @@ scripts/
 tests/                 unit tests + tests/test_acceptance.py (hash-pinned definition of "done")
 data/                  paper_numbers.json, fig*_summary.json, iterative_sweep.json (data/mc/: cache)
 structure/             claims.json (claim -> numbers -> status) and figures.json (figure -> script -> caption)
-paper/                 main.tex (revtex4-2), sections/, references.bib, provenance.json,
-                       generated/numbers.tex, figures/
+paper/                 main.pdf (the compiled manuscript: start here), main.tex (revtex4-2),
+                       sections/, references.bib, provenance.json, generated/numbers.tex, figures/
 docs/derivations/      derivation of the centre CRB of the TCP
 docs/literature/       notes extracted from the published literature (equations and page numbers)
 papers/README.md       the reference list (the PDFs are not redistributed)
-equipo/2026-09-26_donut-localization/   the audit trail of how the study was produced (see below)
+OBJECTIVE.md           the author's statement of the study: questions R1-R5 and the deliverable
+OBJECTIVE.template.md  the blank template OBJECTIVE.md was written from
+pyproject.toml, requirements.txt, environment.yml   package metadata and dependencies (pip / conda)
+LICENSE, CITATION.cff  MIT licence and citation metadata
+equipo/2026-09-26_donut-localization/   the audit trail of how the study was produced (see below):
+                       intent.md, state.json (ledger), inbox.jsonl, reports/, work/
+job.cmd, job.sh        launchers of the agent-team `job` CLI (Windows / POSIX); jobs/ holds its
+                       local, git-ignored job data
 agent-team/, AGENTS.md, CLAUDE.md, .claude/, .agent-team/   the agent-team methodology and tooling
 ```
 
@@ -92,13 +119,13 @@ Code changes are not detected, so the final products are always regenerated with
 | Id | Script | Question | What it shows |
 |---|---|---|---|
 | fig1 | `fig_1_schematic.py` | R1 | LG vs vectorial donut profiles, the quadratic zero and its curvature, TCP geometry |
-| fig2 | `fig_2_vectorial.py` | R1 | Vectorial donut: handedness and linear polarization (zero depth 0 / 0.845 / 0.372), centre CRB vs L against LG beams |
+| fig2 | `fig_2_vectorial.py` | R1 | Vectorial donut: handedness and linear polarization (zero depth 0 / 0.845 / 0.372), centre CRB vs L against LG beams; the wrong hand raises the centre CRB 16-90x and linear polarization 7-40x (L = 150-50 nm) |
 | fig3 | `fig_3_crb_maps.py` | R2 | CRB maps of the TCP; the discontinuity at the centre (r -> 0 limit vs the Eq. S27 point value) and its removal by background |
 | fig4 | `fig_4_scaling.py` | R2 | Scaling of the centre CRB with L, N and SBR; MINFLUX vs camera (ideal and pixelated) |
-| fig5 | `fig_5_estimators.py` | R3 | MLE, LMS and mLMS bias and sigma/CRB inside and outside the TCP; background-free MLE superefficiency and bias |
+| fig5 | `fig_5_estimators.py` | R3 | MLE, LMS and mLMS bias and sigma/CRB inside and outside the TCP (the linearized estimators fall below the CRB only beyond x0 ~ 15 nm, by compression); background-free MLE superefficiency and bias |
 | fig6 | `fig_6_iterative.py` | R4 | Iterative MINFLUX vs photon budget against the ideal camera; per-iteration precision |
 | fig7 | `fig_7_zero_depth.py` | R5 | Finite zero depth: optimal L, validity of L_opt ~ 0.78 fwhm sqrt(eps), off-centre CRB minimum |
-| fig8 | `fig_8_misalignment.py` | R5 | TCP misalignment: bias and precision of the naive vs the honest MLE |
+| fig8 | `fig_8_misalignment.py` | R5 | TCP misalignment: bias and precision of the naive vs the honest MLE; mean naive bias 0.75-0.78 δ at the centre and ~0.80-0.86 δ at (L/4, 0) for δ = 2-10 nm (L = 100 nm, SBR = 10) |
 
 The questions (from `OBJECTIVE.md`): R1 beam model (scalar LG vs vectorial donut), R2
 Cramer-Rao bound (maps, closed forms, scaling, camera comparison), R3 estimators (MLE vs
@@ -113,7 +140,11 @@ from a bootstrap for standard deviations. All parameters come from `scripts/_pap
 (seed 42), and the file is fully regenerated, deterministically, by
 `scripts/compute_paper_numbers.py`. The same script writes `paper/generated/numbers.tex`, which
 defines `\pnum{key}` (value) and `\pnumse{key}` (standard error). An unknown key typesets as a
-visible `??key??` marker.
+visible `??key??` marker. Formatting (`fmt_value` / `fmt_value_se` in
+`compute_paper_numbers.py`, unit-tested): a value without SE gets 4 significant figures with
+trailing zeros kept (`1.600`), scientific notation below 1e-3 and from 1e5; a value with SE has
+the SE rounded to 1-2 significant figures and the value rounded to the same decimal place
+(`0.991 ± 0.005`).
 
 `structure/claims.json` groups the keys into claims. Each claim records its statement, numbers,
 script, figure, question, verification status and caveat. Every key belongs to at least one
@@ -162,6 +193,11 @@ The team produced one deliverable and stopped after each round for the author's 
   - `reports/`: what each role wrote in each round.
 - **Provenance rule.** No number in the text is typed by hand. It is `\pnum{key}\src{key}`,
   checked by `scripts/check_provenance.py`, and the acceptance test runs that check.
+
+The repository was created from the agent-team template (`agent-team-template`), which provides
+`agent-team/`, `AGENTS.md`, `CLAUDE.md`, `.claude/`, `.agent-team/`, `job.cmd`/`job.sh` and
+`OBJECTIVE.template.md`. The template's own installer scripts (`apply-to-existing.*`) are not
+part of this study and were removed.
 
 The literature notes in `docs/literature/` cite equations and pages of published papers. The
 PDFs themselves are not redistributed (see `papers/README.md`).

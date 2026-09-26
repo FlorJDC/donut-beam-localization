@@ -24,6 +24,22 @@ import compute_paper_numbers as cpn  # noqa: E402
 import make_all_figures as maf  # noqa: E402
 
 
+def _text(path):
+    """Read a text file and close it (no ResourceWarning)."""
+    with io.open(path, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _bytes(path):
+    with open(path, "rb") as fh:
+        return fh.read()
+
+
+def _json(path):
+    with io.open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 class _TmpDirs(unittest.TestCase):
     """Redirect _paperconfig.MC / DATA / FIGDIR to a temporary tree."""
 
@@ -118,13 +134,13 @@ class TestQuickOutputs(_TmpDirs):
         spath = S.write_summary("figX")
         self.assertEqual(os.path.dirname(path), os.path.join(C.FIGDIR, "quick"))
         self.assertEqual(os.path.dirname(spath), os.path.join(C.DATA, "quick"))
-        self.assertTrue(json.load(open(spath))["quick"])
+        self.assertTrue(_json(spath)["quick"])
         self.assertFalse(os.path.exists(os.path.join(C.FIGDIR, "figX_test.pdf")))
         self.assertFalse(os.path.exists(os.path.join(C.DATA, "figX_summary.json")))
         S.set_quick(False)
         fig = plt.figure()
         self.assertEqual(os.path.dirname(S.savefig(fig, "figX_test")), C.FIGDIR)
-        self.assertNotIn("quick", json.load(open(S.write_summary("figX"))))
+        self.assertNotIn("quick", _json(S.write_summary("figX")))
         S._SUMMARY.clear()
 
     def test_parse_args_sets_quick(self):
@@ -160,10 +176,10 @@ class TestQuickOutputs(_TmpDirs):
         self.assertEqual(seen, [True])
         self.assertFalse(os.path.exists(final_json))
         self.assertFalse(os.path.exists(final_tex))
-        d = json.load(open(q_json))
+        d = _json(q_json)
         self.assertIs(d["quick"], True)
-        self.assertIn("pnum@a_key", io.open(q_tex, encoding="utf-8").read())
-        self.assertNotIn("pnum@quick", io.open(q_tex, encoding="utf-8").read())
+        self.assertIn("pnum@a_key", _text(q_tex))
+        self.assertNotIn("pnum@quick", _text(q_tex))
 
     def test_default_quick_paths_are_not_the_final_ones(self):
         self.assertNotEqual(os.path.abspath(cpn.QUICK_NUMBERS_PATH),
@@ -174,17 +190,17 @@ class TestQuickOutputs(_TmpDirs):
         """End to end on the real tree: fig_1 --quick must not modify the final PDF/summary."""
         pdf = os.path.join(ROOT, "paper", "figures", "fig1_schematic.pdf")
         summ = os.path.join(ROOT, "data", "fig1_summary.json")
-        before = {p: (os.path.getmtime(p), open(p, "rb").read()) for p in (pdf, summ)
+        before = {p: (os.path.getmtime(p), _bytes(p)) for p in (pdf, summ)
                   if os.path.exists(p)}
         proc = subprocess.run([sys.executable, os.path.join(SCRIPTS, "fig_1_schematic.py"),
                                "--quick"], cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         for p, (mt, content) in before.items():
             self.assertEqual(os.path.getmtime(p), mt, p)
-            self.assertEqual(open(p, "rb").read(), content, p)
+            self.assertEqual(_bytes(p), content, p)
         self.assertTrue(os.path.exists(os.path.join(ROOT, "paper", "figures", "quick",
                                                     "fig1_schematic.pdf")))
-        q = json.load(open(os.path.join(ROOT, "data", "quick", "fig1_summary.json")))
+        q = _json(os.path.join(ROOT, "data", "quick", "fig1_summary.json"))
         self.assertIs(q["quick"], True)
 
 
@@ -231,6 +247,97 @@ class TestNumbersTexFallback(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class TestNumberFormatting(unittest.TestCase):
+    """Formatting rules of paper/generated/numbers.tex (compute_paper_numbers, round 5)."""
+
+    def test_value_without_se_keeps_trailing_zeros(self):
+        f = cpn.fmt_value
+        self.assertEqual(f(3), "3")
+        self.assertEqual(f(np.int64(7)), "7")
+        self.assertEqual(f(True), "1")
+        self.assertEqual(f(1.6), "1.600")
+        self.assertEqual(f(1.0), "1.000")
+        self.assertEqual(f(5.0), "5.000")
+        self.assertEqual(f(0.075), "0.07500")
+        self.assertEqual(f(1.60509557), "1.605")
+        self.assertEqual(f(-0.34445140228), "-0.3445")
+        self.assertEqual(f(1000.0), "1000")          # no trailing '.'
+        self.assertEqual(f(300.0), "300")            # exact parameter, not '300.0'
+        self.assertEqual(f(300.5), "300.5")
+        self.assertEqual(f(13.0), "13.00")           # small integral floats keep 4 figures
+        self.assertEqual(f(99.0), "99.00")
+        self.assertEqual(f(1234.56), "1235")
+        self.assertEqual(f(12345.6), "12346")
+        self.assertEqual(f(0.0), "0")
+
+    def test_value_without_se_scientific(self):
+        f = cpn.fmt_value
+        self.assertEqual(f(7.04e-5), r"\ensuremath{7.040\times10^{-5}}")
+        self.assertEqual(f(2.5e6), r"\ensuremath{2.500\times10^{6}}")
+        self.assertEqual(f(float("inf")), r"\ensuremath{\infty}")
+
+    def test_se_rounding_one_or_two_figures(self):
+        g = cpn.fmt_value_se
+        self.assertEqual(g(0.9912292806, 0.005131253), ("0.991", "0.005"))
+        self.assertEqual(g(0.5077392662, 0.002682729), ("0.508", "0.003"))
+        self.assertEqual(g(1.9428675785, 0.010057558), ("1.943", "0.010"))   # leading 10 -> 2 fig.
+        self.assertEqual(g(0.1605612539, 0.000848353), ("0.1606", "0.0008"))
+        self.assertEqual(g(0.0265, 0.0016061678), ("0.0265", "0.0016"))
+        self.assertEqual(g(3.7394761949, 0.159802518), ("3.74", "0.16"))
+        self.assertEqual(g(9.3043154887, 0.257947139), ("9.3", "0.3"))
+        self.assertEqual(g(-0.3444514023, 0.007702452), ("-0.344", "0.008"))
+        self.assertEqual(g(1.0, 0.0096), ("1.000", "0.010"))                  # rounds up to 0.010
+        self.assertEqual(g(1234.5, 37.0), ("1230", "40"))
+        self.assertEqual(cpn.se_decimals(0.0249), 3)    # 2 figures: 0.025
+        self.assertEqual(cpn.se_decimals(0.025), 2)     # 1 figure: 0.03
+
+    def test_se_edge_cases(self):
+        g = cpn.fmt_value_se
+        self.assertEqual(g(1.0, 0.0), ("1.000", "0"))
+        self.assertEqual(g(4, 0.5), ("4", "0.5000"))
+        v, e = g(7.04e-5, 3e-6)
+        self.assertEqual(v, r"\ensuremath{7.0\times10^{-5}}")
+        self.assertEqual(e, r"\ensuremath{0.3\times10^{-5}}")
+
+    def test_numbers_tex_uses_the_pair(self):
+        num = {"a": {"value": 0.9912292806, "se": 0.005131253, "unit": "", "script": "s",
+                     "description": "d"},
+               "b": {"value": 1.6, "unit": "", "script": "s", "description": "d"}}
+        t = cpn.numbers_tex(num)
+        self.assertIn(r"\csname pnum@a\endcsname{0.991}", t)
+        self.assertIn(r"\csname pnumse@a\endcsname{0.005}", t)
+        self.assertIn(r"\csname pnum@b\endcsname{1.600}", t)
+        self.assertNotIn("pnumse@b", t)
+
+
+class TestDeterministicOutputs(unittest.TestCase):
+    """Figure PDFs and JSON summaries are byte-identical on regeneration (round 5)."""
+
+    def test_savefig_and_summary_are_byte_identical(self):
+        import matplotlib.pyplot as plt
+        tmp = tempfile.mkdtemp(prefix="determ_")
+        saved = {k: getattr(C, k) for k in ("DATA", "FIGDIR")}
+        try:
+            C.DATA = os.path.join(tmp, "data")
+            C.FIGDIR = os.path.join(tmp, "fig")
+            S.set_quick(False)
+            blobs = []
+            for _ in range(2):
+                fig, ax = plt.subplots()
+                ax.plot([0, 1], [1, 0])
+                pdf = S.savefig(fig, "det")
+                S.report("det_key", 1.5, "nm", se=0.1)
+                js = S.write_summary("figdet")
+                blobs.append((_bytes(pdf), _bytes(js)))
+            self.assertEqual(blobs[0], blobs[1])
+            self.assertNotIn(b"CreationDate", blobs[0][0])
+            self.assertNotIn(b"\r\n", blobs[0][1])
+        finally:
+            for k, v in saved.items():
+                setattr(C, k, v)
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 class TestReproduce(unittest.TestCase):
 
     def test_step_order(self):
@@ -256,7 +363,7 @@ class TestReproduce(unittest.TestCase):
     def test_dry_run_and_shell_wrapper(self):
         import reproduce
         self.assertEqual(reproduce.main(["--dry-run", "--no-latex"]), 0)
-        sh = io.open(os.path.join(SCRIPTS, "reproduce.sh"), encoding="utf-8").read()
+        sh = _text(os.path.join(SCRIPTS, "reproduce.sh"))
         self.assertIn("scripts/reproduce.py", sh)
 
 
@@ -265,7 +372,7 @@ class TestSharedConstants(unittest.TestCase):
     def test_no_duplicated_literals(self):
         """rb=40000, the MLE disk radii and eps=0.002 live only in _paperconfig."""
         for name in ("compute_paper_numbers.py", "fig_5_estimators.py", "fig_7_zero_depth.py"):
-            src = io.open(os.path.join(SCRIPTS, name), encoding="utf-8").read()
+            src = _text(os.path.join(SCRIPTS, name))
             self.assertNotIn("40000", src, name)
             self.assertNotIn("search_radius=2.0 * L", src, name)
             self.assertNotIn("np.sqrt(0.002", src, name)

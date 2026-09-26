@@ -1059,7 +1059,7 @@
  },
  "lit_masullo_table": {
   "reproduce": "Masullo, Lopez, Stefani, Biophys. Rep. 2 (2022), Supplemental Information p. 9 (transcribed in docs/literature/A_minflux_theory.md, Sec. 8.2 check 4)",
-  "statement": "Published MINFLUX centre precision (N=500, SBR=5): 0.94 / 1.96 / 3.16 nm for L = 50 / 100 / 150 nm",
+  "statement": "Published MINFLUX centre precision 0.94 / 1.96 / 3.16 nm for L = 50 / 100 / 150 nm (Supplementary Table 1, column 2, 'precision at the center'); the legend states no SBR or N for this column: SBR=5, N=500 and fwhm=360 nm are inferred by us from the other columns",
   "type": "source"
  },
  "lms_center_analytic": {
@@ -1089,7 +1089,7 @@
  "lms_sbr_shrink": {
   "detail": "TestLMS",
   "reproduce": "tests/test_estimators.py",
-  "statement": "Without the 1/s factor the LMS with background shrinks the estimate by exactly s = SBR/(SBR+1) at any position",
+  "statement": "Without the 1/s factor the expectation of the LMS with background is exactly s = SBR/(SBR+1) times that of the background-free LMS at any position (the constant term cancels because sum_k b_k = 0)",
   "type": "check"
  },
  "misalignment_crb_honest_Lq_d10_nm": {
@@ -1315,6 +1315,15 @@
   ],
   "reproduce": "scripts/compute_paper_numbers.py",
   "statement": "rmse of the naive MLE at the centre, delta=10; L=100, N=500, SBR=10, 400 patterns x 200 reps, seed 42",
+  "type": "script"
+ },
+ "misalignment_naive_sigma_Lq_d0_nm": {
+  "detail": "misalignment_naive_sigma_Lq_d0_nm",
+  "number_keys": [
+   "misalignment_naive_sigma_Lq_d0_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mean sigma of the naive MLE at (L/4, 0), delta=0 (SE between patterns); L=100, N=500, SBR=10, 400 patterns x 200 reps, seed 42",
   "type": "script"
  },
  "misalignment_naive_sigma_Lq_d10_nm": {

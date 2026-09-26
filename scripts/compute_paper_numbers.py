@@ -40,10 +40,41 @@ QUICK_TEX_PATH = os.path.join(C.ROOT, "paper", "generated", C.QUICK_DIRNAME, "nu
 
 
 # ---------------------------------------------------------------------------- tex formatting
-def _fmt(v):
-    """Format a number for LaTeX: ints as ints, else 4 significant digits (scientific
-    notation for |v| < 1e-3 or >= 1e5)."""
-    if isinstance(v, bool):
+# Number formatting rules for paper/generated/numbers.tex (tested in tests/test_paper_tooling.py):
+#
+#   * ints (and bools) print as ints: ``3``.
+#   * a value WITHOUT a standard error prints with ``SIG_FIGS`` = 4 significant figures and keeps
+#     its trailing zeros (``1.600``, ``1.000``, ``0.07500``); 1e4 <= |v| < 1e5 prints as an
+#     integer (``12346``); an exactly integral float with 100 <= |v| < 1e5 (a set parameter such
+#     as fwhm = 300.0 nm) prints as an integer (``300``, not ``300.0``); |v| < 1e-3 or
+#     |v| >= 1e5 prints in scientific notation (``7.040\times10^{-5}``).
+#   * a value WITH a standard error: the SE is rounded to 2 significant figures when its two
+#     leading digits are 10-24, otherwise to 1 (``0.0101 -> 0.010``, ``0.005131 -> 0.005``), and
+#     the value is rounded to the same decimal place (``0.99123 +- 0.005131 -> 0.991 +- 0.005``).
+#     ``\pnum{k}`` and ``\pnumse{k}`` of such a key both use this pair, so a value is never quoted
+#     with more digits than its SE supports.  If |v| is in the scientific range, value and SE
+#     share the value's power of ten.  A zero or non-finite SE falls back to the value-only rule.
+SIG_FIGS = 4
+
+
+def _sci_range(a):
+    return a != 0.0 and (a < 1e-3 or a >= 1e5)
+
+
+def _sci(mant, exp):
+    return r"\ensuremath{%s\times10^{%d}}" % (mant, exp)
+
+
+def _fixed(v, decimals):
+    """``v`` rounded to ``decimals`` decimal places (negative: tens, hundreds, ...), as text."""
+    if decimals <= 0:
+        return "%d" % int(round(v, decimals))
+    return "%.*f" % (decimals, v)
+
+
+def fmt_value(v, sig=SIG_FIGS):
+    """Format a value without SE (see the rules above)."""
+    if isinstance(v, (bool, np.bool_)):
         return "%d" % int(v)
     if isinstance(v, (int, np.integer)):
         return "%d" % int(v)
@@ -53,13 +84,44 @@ def _fmt(v):
     if v == 0.0:
         return "0"
     a = abs(v)
-    if a < 1e-3 or a >= 1e5:
-        m, e = ("%.3e" % v).split("e")
-        return r"\ensuremath{%s\times10^{%d}}" % (m, int(e))
-    s = "%.4g" % v
-    if "e" in s:                      # 1e4 <= |v| < 1e5
-        s = "%.0f" % v
-    return s
+    if v.is_integer() and 100 <= a < 1e5:
+        return "%d" % int(v)          # exact parameters such as fwhm = 300.0 nm print as '300'
+    if _sci_range(a):
+        m, e = ("%.*e" % (sig - 1, v)).split("e")
+        return _sci(m, int(e))
+    s = "%#.*g" % (sig, v)           # '#' keeps trailing zeros
+    if "e" in s:                      # 1e4 <= |v| < 1e5 with sig=4
+        return "%.0f" % v
+    return s.rstrip(".")               # '1000.' -> '1000'
+
+
+def se_decimals(se):
+    """Decimal place to which an SE is rounded: 2 significant figures if its two leading digits
+    are 10-24, else 1.  Returns the number of decimals (negative for tens, hundreds, ...)."""
+    se = abs(float(se))
+    e = int(np.floor(np.log10(se)))
+    lead = se / 10.0 ** (e - 1)       # in [10, 100)
+    nsig = 2 if round(lead, 6) < 25 else 1
+    return nsig - 1 - e
+
+
+def fmt_value_se(v, se):
+    """Return ``(value_text, se_text)`` for a value with a standard error (rules above)."""
+    if isinstance(v, (bool, np.bool_, int, np.integer)) or se is None:
+        return fmt_value(v), (None if se is None else fmt_value(se))
+    v, se = float(v), abs(float(se))
+    if not (np.isfinite(v) and np.isfinite(se)) or se == 0.0:
+        return fmt_value(v), fmt_value(se)
+    if _sci_range(abs(v)):
+        exp = int(np.floor(np.log10(abs(v))))
+        scale = 10.0 ** exp
+        d = max(se_decimals(se / scale), 0)
+        return _sci("%.*f" % (d, v / scale), exp), _sci("%.*f" % (d, se / scale), exp)
+    d = se_decimals(se)
+    return _fixed(v, d), _fixed(se, d)
+
+
+_fmt = fmt_value   # backwards-compatible name
 
 
 def numbers_tex(numbers):
@@ -76,9 +138,11 @@ def numbers_tex(numbers):
         e = numbers[k]
         if not isinstance(e, dict):          # metadata such as "quick": true
             continue
-        lines.append("\\expandafter\\def\\csname pnum@%s\\endcsname{%s}" % (k, _fmt(e["value"])))
-        if "se" in e and e["se"] is not None:
-            lines.append("\\expandafter\\def\\csname pnumse@%s\\endcsname{%s}" % (k, _fmt(e["se"])))
+        se = e.get("se")
+        val, set_ = fmt_value_se(e["value"], se)
+        lines.append("\\expandafter\\def\\csname pnum@%s\\endcsname{%s}" % (k, val))
+        if se is not None:
+            lines.append("\\expandafter\\def\\csname pnumse@%s\\endcsname{%s}" % (k, set_))
     return "\n".join(lines) + "\n"
 
 
@@ -436,8 +500,9 @@ def iterative_section(R, quick):
     elif not os.path.exists(SWEEP_PATH):
         import run_iterative_sweep
         d = run_iterative_sweep.run_sweep(quick=False)
-        with open(SWEEP_PATH, "w", encoding="utf-8") as fh:
-            json.dump(d, fh, indent=1)
+        with open(SWEEP_PATH, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(d, fh, indent=1, sort_keys=True)
+            fh.write("\n")
     else:
         with open(SWEEP_PATH, encoding="utf-8") as fh:
             d = json.load(fh)
@@ -516,8 +581,8 @@ def compute(quick=False):
 
 def write(numbers, numbers_path=NUMBERS_PATH, tex_path=TEX_PATH):
     os.makedirs(os.path.dirname(numbers_path), exist_ok=True)
-    with open(numbers_path, "w", encoding="utf-8") as fh:
-        json.dump(dict(sorted(numbers.items())), fh, indent=1)
+    with open(numbers_path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(numbers, fh, indent=1, sort_keys=True)
         fh.write("\n")
     os.makedirs(os.path.dirname(tex_path), exist_ok=True)
     with open(tex_path, "w", encoding="utf-8", newline="\n") as fh:

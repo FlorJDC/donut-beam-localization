@@ -17,9 +17,10 @@ $L_{\mathrm{opt}}$ for the measured zero depth (Sec.~\ref{sec:nonideal}); polari
 of the donut \cite{Lopez2023} comes before any other refinement.
 
 \emph{2. Misalignment with a nominal model.} A displacement $\delta$ of the zeros that is ignored
-by the estimator produces a bias of order
-\pnum{misalignment_naive_bias_over_delta_pop_center}\src{misalignment_naive_bias_over_delta_pop_center}$\,\delta$
-at the centre and larger off-centre. At $\delta=10$\,nm and $N=500$ the bias at the centre
+by the estimator produces a mean bias of
+\pnum{misalignment_naive_bias_over_delta_pop_center_d2}\src{misalignment_naive_bias_over_delta_pop_center_d2}--\pnum{misalignment_naive_bias_over_delta_pop_center_d10}\src{misalignment_naive_bias_over_delta_pop_center_d10}$\,\delta$
+at the centre ($\delta=2$--$10$\,nm, $L=100$\,nm) and larger at $(L/4,0)$
+(\pnum{misalignment_naive_bias_over_delta_pop_Lq_d2}\src{misalignment_naive_bias_over_delta_pop_Lq_d2}--\pnum{misalignment_naive_bias_over_delta_pop_Lq_d10}\src{misalignment_naive_bias_over_delta_pop_Lq_d10}$\,\delta$). At $\delta=10$\,nm and $N=500$ the bias at the centre
 (\pnum{misalignment_naive_bias_abs_center_d10_nm}\,$\pm$\,\pnumse{misalignment_naive_bias_abs_center_d10_nm}\src{misalignment_naive_bias_abs_center_d10_nm}\,nm)
 is several times the statistical precision
 (\pnum{misalignment_naive_sigma_center_d10_nm}\src{misalignment_naive_sigma_center_d10_nm}\,nm),
@@ -39,7 +40,7 @@ uniformly inside the pattern at $N=100$
 at $15$\,nm from the centre), and the linearized LMS estimators are strongly biased off-centre.
 In iterative MINFLUX the search disk and the re-centring are part of the result; a heuristic
 $L$ schedule based on the centre CRB leaves a fraction
-\pnum{adaptive_frac_outside_next_radius}\src{adaptive_frac_outside_next_radius} of emitters
+\pnum{adaptive_frac_outside_next_radius}\,$\pm$\,\pnumse{adaptive_frac_outside_next_radius}\src{adaptive_frac_outside_next_radius} of emitters
 outside the next pattern.
 
 \emph{5. Definitions.} Without background the centre CRB depends on its definition by the factor
@@ -53,7 +54,10 @@ then below the percent level (Table~\ref{tab:vectorial}). With the default $\fwh
 discrepancy grows with $L$, reaching a CRB ratio of
 \pnum{crb_vec_over_lg300_L150_N100}\src{crb_vec_over_lg300_L150_N100} at $L=150$\,nm.
 
-Iterative MINFLUX reaches a small fraction of the camera precision for the same photons
-(\pnum{iterative_ratio_min}\src{iterative_ratio_min}--\pnum{iterative_ratio_max}\src{iterative_ratio_max})
-in our idealized setting; the effects above, all absent from that simulation, set how much of
-this advantage survives in an experiment.
+Iterative MINFLUX reaches an error
+\pnum{iterative_ratio_min}\src{iterative_ratio_min}--\pnum{iterative_ratio_max}\src{iterative_ratio_max}
+times that of the ideal camera for the same photons in our idealized setting; the zero depth,
+the misalignment and (except for one run with $\sbr=10$, which gives
+\pnum{iterative_sbr10_sigma_nm}\,$\pm$\,\pnumse{iterative_sbr10_sigma_nm}\src{iterative_sbr10_sigma_nm}\,nm
+at $N_{\mathrm{tot}}=1000$) the background were absent from that simulation, and they set how
+much of this advantage survives in an experiment.

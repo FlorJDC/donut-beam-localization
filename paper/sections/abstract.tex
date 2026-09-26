@@ -1,7 +1,7 @@
 \begin{abstract}
 We present a reproducible simulation study of the localization of single fluorescent emitters
 with donut-shaped excitation beams in the triangular coordinate pattern (TCP) of MINFLUX: three
-donut zeros on a circle of diameter $L$ plus a central exposure. Every number quoted is produced
+donut zeros on a circle of diameter $L$ plus a central exposure. Every computed number is produced
 by a script and was reproduced by an independent verifier. (i)~At the TCP centre the
 Cram\'er--Rao bound (CRB) is discontinuous without background: the $r\to0$ limit lies below the
 point value at $r=0$ (Balzarotti Eq.~S27), with ratio $2/\sqrt5$ for a quadratic zero; for
@@ -15,13 +15,16 @@ donut with matched zero curvature (CRB ratio
 the wrong handedness fills the zero to
 \pnum{vectorial_zero_depth_wrong_handedness}\src{vectorial_zero_depth_wrong_handedness} of the
 ring maximum. (iii)~With $\sbr=10$ the maximum-likelihood estimator (MLE) is efficient at the
-centre ($\sigma/\crb=\pnum{mle_efficiency_center}\pm\pnumse{mle_efficiency_center}$\src{mle_efficiency_center});
-without background it is biased and superefficient. (iv)~Iterative MINFLUX with $1000$ photons
-reaches \pnum{iterative_sigma_nm}\src{iterative_sigma_nm}\,nm, a fraction
-\pnum{iterative_ratio_to_camera_N1000}\src{iterative_ratio_to_camera_N1000} of the ideal camera
-precision. (v)~A finite zero depth $\epsilon$ sets an optimal $L\propto\fwhm\sqrt{\epsilon}$, and
-a misaligned pattern analysed with the nominal model produces a bias of about
-\pnum{misalignment_naive_bias_over_delta_pop_center}\src{misalignment_naive_bias_over_delta_pop_center}
-times the displacement of the zeros at the centre, which an estimator using the true pattern
+centre ($L=50$\,nm, $N=100$;$\sigma/\crb=\pnum{mle_efficiency_center}\pm\pnumse{mle_efficiency_center}$\src{mle_efficiency_center});
+without background it is biased and superefficient. (iv)~Iterative MINFLUX with $1000$ photons and
+our protocol ($L$ reduced from $150$ to $25$\,nm, no background) reaches an error of
+\pnum{iterative_sigma_nm}\src{iterative_sigma_nm}\,nm,
+\pnum{iterative_ratio_to_camera_N1000}\src{iterative_ratio_to_camera_N1000} times that of an
+ideal camera. (v)~A finite zero depth $\epsilon$ sets an optimal $L\propto\fwhm\sqrt{\epsilon}$, and
+a misaligned pattern analysed with the nominal model produces, at the centre, a
+mean bias of
+\pnum{misalignment_naive_bias_over_delta_pop_center_d2}\src{misalignment_naive_bias_over_delta_pop_center_d2}--\pnum{misalignment_naive_bias_over_delta_pop_center_d10}\src{misalignment_naive_bias_over_delta_pop_center_d10}
+times the displacement $\delta$ of the zeros ($\delta=2$--$10$\,nm, $L=100$\,nm, $\sbr=10$),
+which an estimator using the true pattern
 removes.
 \end{abstract}

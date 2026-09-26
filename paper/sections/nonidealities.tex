@@ -85,7 +85,8 @@ $\delta=2$, $5$, $10$\,nm) is
 \pnum{misalignment_naive_bias_over_delta_pop_center}\,$\pm$\,\pnumse{misalignment_naive_bias_over_delta_pop_center}\src{misalignment_naive_bias_over_delta_pop_center}
 at the centre and
 \pnum{misalignment_naive_bias_over_delta_pop_Lq}\,$\pm$\,\pnumse{misalignment_naive_bias_over_delta_pop_Lq}\src{misalignment_naive_bias_over_delta_pop_Lq}
-at $(L/4,0)$ (SE from the sampling of patterns). The ratio $|\text{bias}|/\delta$ grows with $\delta$, i.e.\ the bias is not exactly
+at $(L/4,0)$ (SE from the sampling of patterns); both were reproduced by an independent
+computation with other seeds. The ratio $|\text{bias}|/\delta$ grows with $\delta$, i.e.\ the bias is not exactly
 linear: at the centre it is
 \pnum{misalignment_naive_bias_over_delta_pop_center_d2}\src{misalignment_naive_bias_over_delta_pop_center_d2},
 \pnum{misalignment_naive_bias_over_delta_pop_center_d5}\src{misalignment_naive_bias_over_delta_pop_center_d5}
@@ -97,25 +98,27 @@ and \pnum{misalignment_naive_bias_over_delta_pop_Lq_d10}\src{misalignment_naive_
 for $\delta=2$, $5$, $10$\,nm. As a complement, the MC slope at the centre (weighted least
 squares through the origin over the same $\delta$ values, noisy estimates) is
 \pnum{misalignment_naive_bias_over_delta_center}\,$\pm$\,\pnumse{misalignment_naive_bias_over_delta_center}\src{misalignment_naive_bias_over_delta_center};
-it differs from the population estimate in its weighting of the $\delta$ values and includes the
-MC noise floor, so the population value is the one we use.
+it differs from the population estimate mainly through its inverse-variance weighting, which
+favours $\delta=2$\,nm, where $|\text{bias}|/\delta$ is smallest, and through the sampling of
+only $400$ patterns, so the population value is the one we use.
 
 The honest estimator removes the bias. At the centre its mean $|\text{bias}|$ at $\delta=10$\,nm,
 \pnum{misalignment_honest_bias_abs_center_d10_nm}\,$\pm$\,\pnumse{misalignment_honest_bias_abs_center_d10_nm}\src{misalignment_honest_bias_abs_center_d10_nm}\,nm,
-is at the MC noise floor $\sigma\sqrt{\pi/(2R)}$ expected from $R=200$ repetitions alone,
-\pnum{misalignment_mc_floor_center_d10_nm}\src{misalignment_mc_floor_center_d10_nm}\,nm. At
-$(L/4,0)$ it is slightly above the floor
+is close to the MC noise floor $\sigma\sqrt{\pi/(2R)}$ expected from $R=200$ repetitions alone,
+\pnum{misalignment_mc_floor_center_d10_nm}\src{misalignment_mc_floor_center_d10_nm}\,nm, but
+slightly above it, by about three SE. At $(L/4,0)$ it is further above the floor
 (\pnum{misalignment_honest_bias_abs_Lq_d10_nm}\,$\pm$\,\pnumse{misalignment_honest_bias_abs_Lq_d10_nm}\src{misalignment_honest_bias_abs_Lq_d10_nm}\,nm
 against \pnum{misalignment_mc_floor_Lq_d10_nm}\src{misalignment_mc_floor_Lq_d10_nm}\,nm), so
-``honest at the floor'' holds exactly only at the centre.
+``honest at the floor'' holds, approximately, only at the centre.
 
-\emph{The loss is bias.} The naive $\sigma$ at the centre changes little, from
+\emph{At the centre the loss is bias.} The naive $\sigma$ at the centre changes little, from
 \pnum{misalignment_naive_sigma_center_d0_nm}\,$\pm$\,\pnumse{misalignment_naive_sigma_center_d0_nm}\src{misalignment_naive_sigma_center_d0_nm}\,nm
 at $\delta=0$ to
 \pnum{misalignment_naive_sigma_center_d10_nm}\,$\pm$\,\pnumse{misalignment_naive_sigma_center_d10_nm}\src{misalignment_naive_sigma_center_d10_nm}\,nm
 at $\delta=10$\,nm, while its rmse grows to
 \pnum{misalignment_naive_rmse_center_d10_nm}\src{misalignment_naive_rmse_center_d10_nm}\,nm
-[Fig.~\ref{fig:misalignment}(b,c)]. At $(L/4,0)$ the naive $\sigma$ also grows,
+[Fig.~\ref{fig:misalignment}(b,c)]. At $(L/4,0)$ the naive $\sigma$ also grows, from
+\pnum{misalignment_naive_sigma_Lq_d0_nm}\src{misalignment_naive_sigma_Lq_d0_nm}\,nm at $\delta=0$
 to \pnum{misalignment_naive_sigma_Lq_d10_nm}\,$\pm$\,\pnumse{misalignment_naive_sigma_Lq_d10_nm}\src{misalignment_naive_sigma_Lq_d10_nm}\,nm
 at $\delta=10$\,nm, with a large dispersion between patterns, and the rmse reaches
 \pnum{misalignment_naive_rmse_Lq_d10_nm}\src{misalignment_naive_rmse_Lq_d10_nm}\,nm. The honest
@@ -156,7 +159,11 @@ $\delta=15$\,nm (dotted). The main slope estimate is the noise-free population v
 at the centre and
 \pnum{misalignment_naive_bias_over_delta_pop_Lq}\src{misalignment_naive_bias_over_delta_pop_Lq}
 at $(L/4,0)$, growing with $\delta$. (b)~$\sigma$ and (c)~rmse versus $\delta$, with the CRB of
-the true pattern: the loss of the naive estimator is bias; the honest $\sigma$ follows the CRB at
+the true pattern: at the centre the naive $\sigma$ changes little and its loss is bias, whereas
+at $(L/4,0)$ the naive $\sigma$ also grows, from
+\pnum{misalignment_naive_sigma_Lq_d0_nm}\src{misalignment_naive_sigma_Lq_d0_nm} to
+\pnum{misalignment_naive_sigma_Lq_d10_nm}\src{misalignment_naive_sigma_Lq_d10_nm}\,nm at
+$\delta=10$\,nm; the honest $\sigma$ follows the CRB at
 the centre and lies slightly above it at $(L/4,0)$.}
 \label{fig:misalignment}
 \end{figure*}

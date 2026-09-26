@@ -6,9 +6,11 @@ MINFLUX), with NumPy and SciPy only. Each figure has its own script
 (\nolinkurl{scripts/fig_*.py}); a single script, \nolinkurl{scripts/compute_paper_numbers.py}, writes
 the registry \nolinkurl{data/paper_numbers.json}, from which every number in this paper is typeset
 through generated macros; no computed result is typed by hand (only input parameters and
-exact constants are). All MC runs use the seed $42$ and enough
-repetitions for a statistical error below $2\%$; where the dispersion is intrinsic (between
-random misalignment patterns) the number is quoted with its SE. The closed forms of
+exact constants are). All MC runs use the seed $42$. The central
+results have a statistical error below $2\%$; the others are quoted with their SE, namely the
+misalignment quantities (where the dispersion between random patterns is intrinsic), the bias
+of the background-free MLE at $\rr=(2,0)$\,nm\src{mle_nobg_bias_x_r2_nm} and the fraction of
+emitters left outside the next pattern by the adaptive $L$ schedule\src{adaptive_frac_outside_next_radius}. The closed forms of
 App.~\ref{app:derivation} are checked against a numerical Fisher computation by
 \nolinkurl{scripts/verify_crb_closed_forms.py} and by unit tests. A reproduction script in
 \nolinkurl{scripts/} runs, in order, the tests, the figures, the number registry and the provenance

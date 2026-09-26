@@ -153,7 +153,9 @@ def main():
     a = ax[1, 1]
     cam_ideal = camera.crb_camera_ideal(C.SIGMA_PSF, N)
     a.loglog(N, cam_ideal, color=S.COLORS["cam"], label=r"camera, ideal $\sigma_{PSF}/\sqrt{N}$")
-    a.loglog(N, d["cam_pix_N"], color=S.COLORS["cam"], ls="--", lw=0.9, label="camera 9x9 px, no bkg.")
+    # open squares: the pixelated no-background curve lies about 4 % above the ideal line
+    a.loglog(N, d["cam_pix_N"], color=S.COLORS["cam"], ls="--", lw=0.7, marker="s", ms=2.4, mfc="w",
+             mew=0.5, markevery=2, label="camera 9x9 px, no bkg.")
     a.loglog(N, d["cam_pixbg_N"], color=S.COLORS["cam"], ls=":", lw=1.0,
              label=r"camera 9x9 px, SBR$_c$ = 500 per px")
     a.loglog(N, d["sbr10_N"], color=S.COLORS["sbr"], label="MINFLUX, SBR = 10")
@@ -172,10 +174,12 @@ def main():
     # exact pixelated value at N = 400 (the interpolated one is only for plotting)
     n5["cam_pix"] = _n_for(camera.crb_camera(C.SIGMA_PSF, 400.0, pixel=C.CAM_PIXEL, n_pix=C.CAM_NPIX), 400.0)
     for k, col in (("cam_ideal", S.COLORS["cam"]), ("cam_pixbg", S.COLORS["cam"]), ("mf_lim", S.COLORS["lg"]),
-                   ("mf_sbr10", S.COLORS["sbr"])):
-        a.plot(n5[k], TARGET, "v", color=col, ms=3.5, zorder=5)
+                   ("mf_s27", S.COLORS["lms"]), ("mf_sbr10", S.COLORS["sbr"])):
+        a.plot(n5[k], TARGET, "v", color=col, ms=3.0, mec="w", mew=0.3, zorder=5)
     a.text(n5["mf_lim"] * 0.8, TARGET * 0.72, "%.1f" % n5["mf_lim"], fontsize=5.5, ha="center", va="top",
            color=S.COLORS["lg"])
+    a.text(n5["mf_s27"] * 1.3, TARGET * 0.72, "%.0f" % n5["mf_s27"], fontsize=5.5, ha="center", va="top",
+           color=S.COLORS["lms"])
     a.text(n5["mf_sbr10"] * 1.25, TARGET * 1.12, "%.1f" % n5["mf_sbr10"], fontsize=5.5, ha="center", va="bottom",
            color=S.COLORS["sbr"])
     a.text(n5["cam_ideal"] * 0.85, TARGET * 0.72, "%.0f" % n5["cam_ideal"], fontsize=5.5, ha="center", va="top")

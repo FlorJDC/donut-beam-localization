@@ -17,8 +17,8 @@ tends to a finite matrix of fixed norm along $\rhat\rhat^{T}$. The limit $r\to0$
 \rho\equiv\frac{\sigma_{\lim}}{\sigma_{\mathrm{pt}}}=\sqrt{\frac{3g^2+e^{x}}{3g^2+2e^{x}}}.
 \label{eq:limit}
 \end{equation}
-It does not depend on the direction of approach, so it is a well-defined isotropic ``centre
-CRB''. For $L=50$\,nm, $N=100$ and $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm the numerical limit
+It does not depend on the direction of approach, so it is a well-defined, direction-independent
+``centre CRB'' (the limiting error ellipse itself is anisotropic, see below). For $L=50$\,nm, $N=100$ and $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm the numerical limit
 of Eq.~\eqref{eq:crb} (12 directions at $|\rr|=10^{-3}$\,nm) is
 \pnum{crb_center_lg_L50_N100_nm}\src{crb_center_lg_L50_N100_nm}\,nm and the closed form gives
 \pnum{crb_center_lg_L50_N100_closed_nm}\src{crb_center_lg_L50_N100_closed_nm}\,nm, while the
@@ -38,8 +38,8 @@ With finite $\fwhm$ the ratio is not conserved: at $\fwhm=\pnum{fwhm_nm}\src{fwh
 $150$\,nm [Fig.~\ref{fig:crbmaps}(f)], because the peripheral term scales as $g^2$ while the
 central one scales as $e^{x}$.
 
-\emph{Origin of the discontinuity.} The central term tends to $(\beta/N)\,\rhat\rhat^{T}$, which
-has a limit in norm but not as a matrix; equivalently $\sqrt{p_3}\propto|\rr|$ is a cone, so the
+\emph{Origin of the discontinuity.} The central term tends to $(\beta/N)\,\rhat\rhat^{T}$
+($\alpha$ and $\beta$ are defined in Eq.~\eqref{eq:alphabeta}), which has a limit in norm but not as a matrix; equivalently $\sqrt{p_3}\propto|\rr|$ is a cone, so the
 differentiability of $\sqrt{p}$ required by the Cram\'er--Rao theorem fails exactly at $r=0$\src{deriv_discontinuity}. The central exposure contributes only radial information, of the same
 size at any distance (a quadratic zero is scale invariant), and a zero count is informative.
 The limiting error ellipse is therefore anisotropic: $\sigma_\parallel=(\alpha+\beta)^{-1/2}$
@@ -64,9 +64,10 @@ limit \pnum{crb_center_sbr10_limit_L50_N100_nm}\src{crb_center_sbr10_limit_L50_N
 [Fig.~\ref{fig:crbmaps}(e)]. The two limits do not commute\src{deriv_noncommuting}:
 $\lim_{\sbr\to\infty}\lim_{r\to0}\crb=\sigma_{\mathrm{pt}}$ whereas
 $\lim_{r\to0}\lim_{\sbr\to\infty}\crb=\sigma_{\lim}$; the central term switches on over a radius
-$r_c\propto\sbr^{-1/2}$ that shrinks to a point [Fig.~\ref{fig:scaling}(c)]. At realistic SBR
-this radius is a sizeable fraction of $L$, and Eq.~\eqref{eq:s31} is then the relevant centre
-value.
+$r_c\propto\sbr^{-1/2}$ that shrinks to a point [Fig.~\ref{fig:scaling}(c)]. To leading order
+$r_c\simeq(\sqrt3L/4)\,e^{-x/2}/\sqrt{\sbr}$ (App.~\ref{app:derivation}): at realistic SBR it is
+not small compared with $L$ (where the leading-order estimate is only indicative), and
+Eq.~\eqref{eq:s31} is then the relevant centre value.
 
 \subsection{Maps and scaling}
 Figure~\ref{fig:crbmaps}(a--d) shows the CRB over the field of view for $L=50$ and $100$\,nm,
@@ -96,9 +97,11 @@ $10$ and $5$; with the background-free limit it would be
 Eq.~\eqref{eq:s31} gives \pnum{crb_center_sbr5_N500_fwhm360_L50_nm}\src{crb_center_sbr5_N500_fwhm360_L50_nm},
 \pnum{crb_center_sbr5_N500_fwhm360_L100_nm}\src{crb_center_sbr5_N500_fwhm360_L100_nm} and
 \pnum{crb_center_sbr5_N500_fwhm360_L150_nm}\src{crb_center_sbr5_N500_fwhm360_L150_nm}\,nm for
-$L=50$, $100$, $150$\,nm when $\fwhm=\pnum{fwhm_masullo_nm}\src{fwhm_masullo_nm}$\,nm, which
-reproduces the MINFLUX column of the comparison table of Masullo \textit{et al.}
-\cite{Masullo2022}\src{lit_masullo_table}; with $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm the same
+$L=50$, $100$, $150$\,nm when $\fwhm=\pnum{fwhm_masullo_nm}\src{fwhm_masullo_nm}$\,nm. These
+match, up to rounding in the last digit at $L=150$\,nm, the MINFLUX centre-precision column of
+Supplementary Table~1 of Masullo \textit{et al.} \cite{Masullo2022}\src{lit_masullo_table};
+that table legend states no SBR or $N$ for this column, so $\sbr=5$, $N=500$ and this $\fwhm$
+are our inference from the other columns. By contrast, with $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm the same
 formula gives \pnum{crb_center_sbr5_N500_fwhm300_L50_nm}\src{crb_center_sbr5_N500_fwhm300_L50_nm},
 \pnum{crb_center_sbr5_N500_fwhm300_L100_nm}\src{crb_center_sbr5_N500_fwhm300_L100_nm} and
 \pnum{crb_center_sbr5_N500_fwhm300_L150_nm}\src{crb_center_sbr5_N500_fwhm300_L150_nm}\,nm. The
@@ -125,7 +128,8 @@ the point value of Eq.~\eqref{eq:s27}
 circle), which excludes the central exposure with $p=0$; with $\sbr=10$ the CRB is continuous
 (Eq.~\eqref{eq:s31}, \pnum{crb_center_sbr10_L50_N100_nm}\src{crb_center_sbr10_L50_N100_nm}\,nm).
 (f)~Ratio of the limit to the point value versus $L$, closed form (lines) and numerical Fisher
-computation (circles); it tends to $2/\sqrt5$ only for a quadratic zero ($L\ll\fwhm$).}
+computation (circles), with the closed form for
+$\fwhm=\pnum{fwhm_masullo_nm}\src{fwhm_masullo_nm}$\,nm dashed; it tends to $2/\sqrt5$ only for a quadratic zero ($L\ll\fwhm$).}
 \label{fig:crbmaps}
 \end{figure*}
 
@@ -143,8 +147,8 @@ and Eq.~\eqref{eq:s31} with $\sbr=10$. (c)~CRB versus SBR ($L=50$\,nm, $N=100$):
 the point value equals the limit (Eq.~\eqref{eq:s31}) and, as $\sbr\to\infty$, tends to the
 point value of Eq.~\eqref{eq:s27}, not to the background-free limit. (d)~MINFLUX ($L=50$\,nm)
 versus a camera ($\sigma_{\mathrm{PSF}}=100$\,nm): continuum limit $\sigma_{\mathrm{PSF}}/\sqrt N$
-and a $9\times9$ window of $100$\,nm pixels, without background and with $\sbr_c=500$ defined
-per pixel (total SBR \pnum{camera_sbr_perpixel_to_total}\src{camera_sbr_perpixel_to_total});
+and a $9\times9$ window of $100$\,nm pixels, without background (dashed, nearly coincident with
+the continuum line) and with $\sbr_c=500$ defined per pixel (total SBR \pnum{camera_sbr_perpixel_to_total}\src{camera_sbr_perpixel_to_total});
 triangles mark the photons needed for $5$\,nm: $400$ for the ideal camera
 (\pnum{camera_ideal_N400_nm}\src{camera_ideal_N400_nm}\,nm at $N=400$),
 \pnum{camera_photons_for_5nm_perpixel_sbr500}\src{camera_photons_for_5nm_perpixel_sbr500} for

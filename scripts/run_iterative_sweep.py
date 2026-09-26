@@ -158,8 +158,9 @@ def main(argv=None):
     out = run_sweep(quick=a.quick)
     path = a.out or (QUICK_PATH if a.quick else FINAL_PATH)
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, indent=1)
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(out, fh, indent=1, sort_keys=True)
+        fh.write("\n")
     s, s5 = out["slope_all"], out["slope_N_ge_500"]
     print("slope all   = %.4f  (95%% CI %.4f .. %.4f)" % (s["value"], *s["ci95"]))
     print("slope N>=500= %.4f  (95%% CI %.4f .. %.4f)" % (s5["value"], *s5["ci95"]))

@@ -24,13 +24,23 @@ $\fwhm=\pnum{vectorial_lg_fwhm_diameter_nm}\src{vectorial_lg_fwhm_diameter_nm}$\
 Sec.~\ref{sec:crb}, $N=100$, no background), with the vectorial beams evaluated exactly (no interpolation grid). The
 curvature-matched LG donut reproduces the vectorial CRB to the ratios listed in the last rows
 of the table, i.e.\ to a fraction of a percent up to $L=150$\,nm; the default LG donut with
-$\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm overestimates it by a few percent at the largest $L$
-[Fig.~\ref{fig:vectorial}(e,f)]. This is expected: the centre CRB depends only on the beam
-profile within a distance $L/2$ of each zero [Eq.~\eqref{eq:master} and the curvature of the
-central zero, App.~\ref{app:derivation}], where the vectorial profile is close to quadratic with
-curvature $c$. A
-filled zero, on the other hand, destroys the MINFLUX advantage: with the wrong hand the centre
-CRB is two orders of magnitude larger, and with linear polarization more than one order.
+$\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm overestimates it, with a ratio vectorial/LG of
+\pnum{crb_vec_over_lg300_L150_N100}\src{crb_vec_over_lg300_L150_N100} at $L=150$\,nm and a
+difference that keeps growing at larger $L$ [Fig.~\ref{fig:vectorial}(e,f)]. The overall
+curvature of the beam cancels in the probabilities $p_i$: any exactly quadratic profile gives the
+same CRB. The centre CRB is set by how the profile departs from quadratic at a distance $L/2$
+from each zero [Eq.~\eqref{eq:master}, App.~\ref{app:derivation}]; with the peak normalized to
+one, the curvature-matched LG donut happens to reproduce this departure for the vectorial beam
+to a fraction of a percent. A filled zero, on the other hand, destroys the MINFLUX advantage, by
+a factor that depends on $L$ (Table~\ref{tab:vectorial}): with the wrong hand the centre CRB
+rises from \pnum{crb_center_vec_correct_L50_N100_nm}\src{crb_center_vec_correct_L50_N100_nm} to
+\pnum{crb_center_vec_opposite_L50_N100_nm}\src{crb_center_vec_opposite_L50_N100_nm}\,nm at
+$L=50$\,nm and from \pnum{crb_center_vec_correct_L150_N100_nm}\src{crb_center_vec_correct_L150_N100_nm}
+to \pnum{crb_center_vec_opposite_L150_N100_nm}\src{crb_center_vec_opposite_L150_N100_nm}\,nm at
+$L=150$\,nm, and with linear polarization to
+\pnum{crb_center_vec_linear_L50_N100_nm}\src{crb_center_vec_linear_L50_N100_nm} and
+\pnum{crb_center_vec_linear_L150_N100_nm}\src{crb_center_vec_linear_L150_N100_nm}\,nm,
+respectively; the relative loss is largest at small $L$.
 
 \begin{table}[b]
 \caption{Centre CRB (nm; $r\to0$ limit, $N=100$, no background) of the TCP for the vectorial
@@ -77,10 +87,11 @@ polarization. (d)~Profiles through the zero: the zero depth $I(0)/I_{\max}$ is
 \pnum{vectorial_zero_depth_wrong_handedness}\src{vectorial_zero_depth_wrong_handedness} for the
 opposite hand and \pnum{vectorial_zero_depth_linear}\src{vectorial_zero_depth_linear} for linear
 polarization. (e)~Centre CRB ($r\to0$ limit, $N=100$, no background) of the TCP versus $L$; all
-vectorial beams are evaluated exactly. (f)~Relative CRB difference with respect to the LG donut
-with $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm, and between the vectorial donut and the
-curvature-matched LG ($\fwhm=\pnum{vectorial_lg_fwhm_curvature_nm}\src{vectorial_lg_fwhm_curvature_nm}$\,nm);
-the latter ratio is \pnum{crb_vec_over_lgcurv_L150_N100}\src{crb_vec_over_lgcurv_L150_N100} at
+vectorial beams are evaluated exactly. (f)~Relative CRB differences: the vectorial donut and
+the curvature-matched LG with respect to the LG donut with
+$\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm, and (grey) the vectorial donut with respect to the
+curvature-matched LG ($\fwhm=\pnum{vectorial_lg_fwhm_curvature_nm}\src{vectorial_lg_fwhm_curvature_nm}$\,nm),
+not to the LG with $\fwhm=\pnum{fwhm_nm}\src{fwhm_nm}$\,nm; the latter CRB ratio is \pnum{crb_vec_over_lgcurv_L150_N100}\src{crb_vec_over_lgcurv_L150_N100} at
 $L=150$\,nm.}
 \label{fig:vectorial}
 \end{figure*}

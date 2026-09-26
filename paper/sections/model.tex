@@ -20,12 +20,14 @@ The vectorial donut is computed with the Richards--Wolf (Debye) integral for an 
 objective \cite{Caprile2022}: a Gaussian beam with a $0$--$2\pi$ vortex phase $e^{i\phi}$ and
 circular polarization, focused with wavelength $\lambda=640$\,nm, numerical aperture
 $\mathrm{NA}=1.4$, refractive index $n=1.518$ and filling factor $5/3$; the intensity is
-$|E_x|^2+|E_y|^2+|E_z|^2$. We call ``correct'' the handedness for which the product of the
-topological charge and the photon spin is $+1$ \cite{Lopez2023,Caprile2022}. Figure~\ref{fig:schematic}(a,b)
+$|E_x|^2+|E_y|^2+|E_z|^2$. We call ``correct'' the handedness for which the circular polarization
+rotates in the same sense as the phase ramp \cite{Lopez2023,Caprile2022}; in our formulation,
+the product of the topological charge and the photon spin is $+1$. Figure~\ref{fig:schematic}(a,b)
 compares the profiles.
 
 \subsection{Triangular coordinate pattern}
-Following Balzarotti Eq.~S24 \cite{Balzarotti2017}, the TCP has $K=4$ exposures with zeros at
+Following Balzarotti Eq.~S24 \cite{Balzarotti2017}, up to a global rotation and a relabelling
+of the exposures (centre last), the TCP has $K=4$ exposures with zeros at
 \begin{equation}
 \begin{gathered}
 \bb_k=\frac{L}{2}\,(\cos\varphi_k,\sin\varphi_k),\qquad \varphi_k=\frac{\pi}{2}+\frac{2\pi k}{3},\\
@@ -49,7 +51,10 @@ p_i(\rr)=\frac{\sbr}{\sbr+1}\,p_i^{(0)}(\rr)+\frac{1}{\sbr+1}\,\frac1K,
 \end{equation}
 where the second form (Balzarotti Eq.~S30) adds a background equal in all exposures. The SBR is
 the total signal over the total background summed over the $K$ exposures at the emitter position
-(Eq.~S29), so it depends on the position and on the pattern. When the beam carries a pedestal
+(Eq.~S29), so for a fixed background it depends on the position and on the pattern. In all our
+simulations, however, we hold the SBR fixed at the quoted value at every position (Eq.~S30 with
+constant SBR), which implies a position-dependent background; with a fixed background the SBR
+would instead vary with position (Eq.~S29) and, at the centre, fall as $L$ decreases (Eq.~S32). When the beam carries a pedestal
 (finite zero depth, Sec.~\ref{sec:nonideal}) the SBR refers to the signal of the full beam,
 pedestal included. For the camera (Sec.~\ref{sec:camera}) we use Balzarotti's $\sbr_c$, total
 signal over the background \emph{per pixel}.
