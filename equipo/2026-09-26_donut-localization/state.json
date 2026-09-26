@@ -32,7 +32,104 @@
   ]
  },
  "base_commit": null,
- "claims": [],
+ "claims": [
+  {
+   "status": "verified",
+   "text": "Suite completa: python -m unittest discover -s tests -> Ran 84 tests, OK (skipped=1, aceptación por falta de data/paper_numbers.json), Python 3.8.6; hash de tests/test_acceptance.py = 7d198853...2303 intacto",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Integración make_model -> fisher: crb_limit(make_model(tcp_centers(L), make_beam(fwhm))) == test_acceptance._crb_center (rel. 0.0) y == closed_forms.crb_tcp_center_limit (<=2.3e-9) para (L,fwhm) en {(50,300),(100,300),(50,360),(150,250)}; L=50,fwhm=300: 1.6050956 nm (límite), 1.8024719 nm (puntual = S27)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Convención de SBR/eps coincide entre photons (sbr sobre la señal total del haz) y closed_forms.crb_tcp_center_eps(sbr_ref='beam'): <=5e-10 para eps en {0.002,0.05}, modelos constant/gaussian, SBR en {inf,5}; con eps>0 límite = puntual (continuo)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "estimators.lms (general, Jacobiano numérico, con make_model) == lms_tcp a 1e-8 con y sin SBR=10; lms_tcp tiene el signo y la escala correctos (recupera r=(0.5,-0.3) de conteos esperados)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "MLE vía make_model en el centro, L=50, N=100, 5000 reps, semilla 42: SBR=10 eficiencia 0.996+-0.010; sin fondo 0.837+-0.008 (superficiente), consistente con los números de Worker B; ~0.9 s por corrida; sigma_err es conservador (bootstrap 0.015 vs 0.0195)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "scripts/verify_crb_closed_forms.py: exit 0, 89 checks exactos pasan (max rel. 2.1e-7 punto, 2.2e-7 límite), columna de paquete activa",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "fisher.crb/crb_map con p_min=1e-12 por defecto: crb_map(p, linspace(-2,2,5), [0.0], 100) da [1.619,1.609,1.802,1.609,1.619]; el píxel del origen salta al valor puntual S27 (+12%) para r<=1e-5 nm; trampa para los mapas de R2 (documentado pero sin test ni salvaguarda)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "estimators.mle con tol<=0 se cuelga: _pattern_search divide s hasta 0.0 y s<tol nunca se cumple (mle([10,10,10,1], p, 50., tol=0.0) matado a los 20 s); falta validar tol>0",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "estimators.mle, memoria: el chunk fijo de 4096 no escala con el tamaño G de la grilla; search_radius=50, grid_step=0.2 -> G=196321 -> 6.4 GB por chunk (grid_step=0.5 -> 1.0 GB)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "closed_forms.crb_tcp_center_limit con power no entero 1<c<2 devuelve el valor puntual (el docstring dice c>=2); con c=1.1 la definición numérica del proyecto (r0=1e-3) da 3.4038 frente a 3.4823 de la forma cerrada (-2.3%); menor: declarar o restringir",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Falta en la suite un test de integración photons.make_model -> fisher/estimators/montecarlo -> closed_forms/_crb_center; hoy solo lo ejercitan el script de verificación y el script de revisión (ítem 1 del backlog de R2)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "montecarlo.rmse usa la normalización por eje sqrt(mean|dr|^2/2); el plan pedía la Eq. 4.2 de Masullo, que nadie verificó (el texto no está en docs/literature)",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Probabilidades NaN en campo lejano (haz gaussiano a r=6000 nm: p=[nan]*4) y fisher.crb devuelve inf en silencio; conteos negativos aceptados en silencio por mle; menores",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "El orquestador fijó 'mle_efficiency_center' con SBR=10 en nombre de la autora después de que el caso sin fondo cayó fuera de la banda; el test de aceptación no cambió, pero la autora debería confirmarlo explícitamente",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Contra el intent aún faltan (previsto para R2-R5): data/paper_numbers.json, compute_paper_numbers.py, structure/*.json, fig_*.py, check_provenance.py, dona vectorial, MINFLUX iterativo, CRB de cámara, escalamientos, paper/ y README",
+   "round": 1,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Privacidad: ningún archivo versionable nuevo (src, tests, scripts, docs/derivations, reportes) contiene material del trabajo no publicado de la autora; inbox.jsonl solo nombra la ruta privada y hace una afirmación genérica",
+   "round": 1,
+   "source": "code-reviewer"
+  }
+ ],
  "plan": [],
  "backlog": [],
  "history": [],

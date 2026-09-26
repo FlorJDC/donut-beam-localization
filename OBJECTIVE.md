@@ -58,6 +58,9 @@ Decisiones que el equipo toma y declara en el manuscrito:
   para N fotones multinomiales: F = N Σ_i ∇p_i ∇p_iᵀ / p_i.
 - En el centro exacto del TCP la exposición central tiene p = 0 (cero perfecto, sin fondo):
   el CRB "en el centro" se define como el límite r → 0 (es isótropo para el TCP simétrico).
+- La eficiencia del MLE que exige la definición de terminado (`mle_efficiency_center`) se mide
+  con SBR = 10: sin fondo el modelo no es regular en el centro (p_centro ∝ r²) y el MLE resulta
+  sesgado y "superficiente"; ese comportamiento se reporta aparte como resultado.
 - Parámetros ópticos por defecto: λ = 640 nm, NA = 1.4, n = 1.518 (ajustables).
 - Monte Carlo: semilla fija (42) registrada en cada salida; número de repeticiones suficiente
   para que el error estadístico de cada número citado sea < 2 %.
