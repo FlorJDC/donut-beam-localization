@@ -2,7 +2,7 @@
  "id": "2026-09-26_donut-localization",
  "type": "feature+derive",
  "status": "active",
- "round": 2,
+ "round": 3,
  "rounds_budget": 5,
  "worker_count": 3,
  "team": {
@@ -428,23 +428,270 @@
    "text": "W13 — Misalignment (L=100, N=500, SBR=10, all 4 zeros displaced by delta in random directions, 20 patterns x 200 reps): naive MLE centre bias 1.45/3.81/7.76 nm (own draw) vs honest 0.16–0.20 (MC floor ≈0.17); naive sigma 1.84->2.02: the loss is bias. The claimed 1.58/4.01/8.31 are inside the ±10% pattern-sampling spread (population means from noise-free MLE 1.49±0.15 / 3.78±0.35 / 7.84±0.72 over 20-pattern draws, ≈0.75 delta).",
    "round": 2,
    "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "r2 fix misalignment_study.sigma_se: re-run original scenario (delta=10, centre, 20x200) gives SE between patterns 0.0454/0.0538 vs within 0.0144/0.0156 (honest/naive); tests test_misalignment_sigma_se_between_patterns and _formula_exact cover it",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "r2 fix fisher.crb zero_policy='limit' with array N: crb(p,[0,0],[100,400],'limit') = [1.60510,0.80255] = crb_limit at each N, shape (2,); paired (2,2)x(2,) and grid cases correct; TestLimitPolicyBroadcastN",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "r2 fix l_schedule docstring: now states centre CRB 3.47 underestimates real 4.26 nm and ~97% coverage (2.65% outside); tested and matched by adaptive_frac_outside_next_radius=0.0265+-0.0016",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "r2 fix linear vectorial beam: harmonic tabulation default gives CRB(7,3)=62.35509 and crb_limit=60.77420 identical to mode='exact' (<1e-9); also exact to ~1e-10 for pol_angle=0.7, charge=2, eps=0.01 at rho_max=300; cartesian path warns",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Bootstrap SE (montecarlo.bootstrap_sigma_se, error_stats, run_mc sigma_se_boot, iterative sigma_se) implemented and tested (Gaussian +-10%, heavy tails, NaN rows, reproducibility); resolves r2 unclear on iterative SE",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Suite 177 tests OK (38.9 s); acceptance 8/8 OK; test_acceptance.py sha256 7d198853...2303 unchanged; check_provenance prints 'all checks pass'",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "compute_paper_numbers.py is the sole writer of data/paper_numbers.json and numbers.tex; in-memory regeneration of all 204 keys (137 + 67 misalignment) reproduces the committed values and SEs bit for bit (seed 42, _paperconfig params)",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Figure summaries fig1-fig8 (fig8 regenerated, 400 patterns) agree exactly with paper_numbers.json on every shared key (fig8: 65 keys)",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "numbers.tex macro design (\\providecommand + \\ifcsname/\\csname) compiles under XeTeX (Tectonic) with article and the real revtex4-2 main.tex: \\pnum in text, math, \\section, \\caption and \\pnumse render correctly (1.605, 7.042x10^-5, 0.9912+-0.005131)",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "_paperstyle.cached has no cache invalidation (keyed only by name): observed this round, fig8 npz with n_patterns=50 was reused after _paperconfig.MIS changed to 400, so fig8 disagreed with paper_numbers (naive_sigma_Lq_d10 3.128 vs 3.739, -16%) until a manual --no-cache; same trap for fig2-fig7 on any _paperconfig change",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "--quick overwrites committed final outputs: fig scripts write the same paper/figures/fig*.pdf and data/fig*_summary.json in quick mode (make_all_figures --quick replaces all 8 and reports OK), and compute_paper_numbers.py --quick overwrites data/paper_numbers.json + numbers.tex with reduced MC and no 'quick' marker, undetectable by acceptance/check_provenance",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "check_provenance.py flatten misses brace-less \\input: '\\input sections/other' whose file contains \\src{nowhere} and \\pnum{zzz} passes (ok=True); and \\pnum{k} without any \\src/provenance entry passes, so a cited number can lack provenance",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "refuted",
+   "text": "numbers.tex fallback for an unknown key breaks compilation instead of showing a marker: \\pnum{no_such_key} -> '! Missing $ inserted' (underscore typeset in \\textbf{??#1??}); fix with \\detokenize{#1}",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Constants duplicated outside _paperconfig (rb=40000 bias reps, MLE search radii L/2L, eps=0.002 literal) in both compute_paper_numbers.py and fig_5_estimators.py; consistent today, but a one-sided edit would desynchronise figure and paper number",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "structure/claims.json: 4 claims with empty numbers, 34 paper_numbers keys referenced by no claim, 15 claims pending-r3-verification; misalignment |bias| (2.1-3.0%), naive_sigma_Lq_d10 (4.3%), mle_nobg_bias (2.2%) exceed 2% SE and must be cited with \\pnumse per the r3 inbox directive",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Missing vs OBJECTIVE for round 4: paper/sections/*.tex (input commented out), references.bib, provenance.json entries (currently {}), scripts/reproduce.sh, and README.md (still the agent-team template); acceptance provenance test passes only because the manuscript is empty",
+   "round": 3,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "X1-exponents: crb_exponent_L = 1.00435 (fit of the r->0 centre CRB over L=5,10,20,40 nm, N=100, fwhm=300; own Fisher 1.0043479) and crb_exponent_N = -0.5 exactly (N=100..1e4, L=50). Caveat: range-dependent (1.008 over 10-50, 1.073 over 25-150 nm); 'linear' only for L<<fwhm",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-analytic sample: 49 keys recomputed independently with 0 mismatches (rel <= 3.4e-7 for optimizations, <=2.3e-6 for vectorial quadrature): S27 1.80247, limit 1.60510, S31 1.96006, limit-ellipse axes 1.37977/1.80247 (L=50), sqrt(3/5), Masullo fwhm360 L150 3.16727, multiphoton c=2 1.76777, limit/point ratios L5/L150, V9 degradation, L_opt/crb_opt/ratio for eps=0.002/0.05/0.15, divergence 360.337, scale 4.887, photons-for-5nm (SBR20 14.157, limit 10.305), camera pixelated 5.2045/3.2916, per-pixel SBR 4.9642/591.43, total-SBR 437.12, ideal 3.1623, adaptive_iter0_crb 3.46995, crb_all_photons_L25 0.25094, vectorial D_pp 384.666, curvature 7.0422e-5, fwhm 327.141/320.256, zero depths 0/0.371648/0.845241, linear CRB 60.774/38.061/35.723, correct L150 5.33104, opposite L100 89.588, vec/LGcurv L150 0.99619",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-vectorial_linear_beam_harmonic_table: package harmonic linear beam gives CRB(7,3)=62.35509 and crb_limit=60.77420 (L=50,N=100) vs my independent direct 2D Richards-Wolf 62.35500/60.77419 (rel 1.4e-6/2.7e-7; test settings rho_max=120,n_theta=401: 5.7e-6/4.5e-6); linear_method='cartesian' warns (UserWarning) and is +7.43 %/-3.30 %. The '~1e-9' is vs the package's own mode='exact'; vs an independent quadrature ~1e-6",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-crb_limit_array_N_fix: fisher.crb(p,[0,0],array([100,400]),zero_policy='limit') -> shape (2,) [1.605096,0.802548] = my independent limits and crb_limit at each N; r (2,2) with N (2,) pairs correctly; mismatched shapes raise ValueError",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-bootstrap_se: montecarlo.bootstrap_sigma_se equals sigma/(2sqrtR) within 4 % for Gaussian errors (R=500, 5000) and agrees with my own bootstrap; for iterative MINFLUX at N=250 the bootstrap SE greatly exceeds the Gaussian one (mine 0.0278 vs 0.0059; theirs 0.0137 vs 0.0058). Caveat: at N=250 the distribution is extremely heavy-tailed (kurtosis 43 in my sample), so the bootstrap SE there is itself unstable (factor 2 between draws)",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-misalignment_sigma_se_fix: package sigma_se is now the between-pattern SE (20x200, delta=10: sigma_se/sigma_se_within = 3.1-8.3); my independent 400x200 between-pattern SEs agree with the registry's (e.g. naive centre d10 0.0108 vs 0.0109)",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-mle_efficient_center_sbr10: own MC (10^4 reps, own seed, disk radius L) sigma=1.9339+-0.0100 nm, efficiency 0.9867+-0.0051 vs registry 0.9912+-0.0051 (z=-0.63); within the 0.9-1.2 band",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-mle_superefficient_nobg: own MC sigma/CRB_limit=0.8416+-0.0042 (reg. 0.8397), sigma/S27=0.7495+-0.0038 (reg. 0.7478), sigma 1.3509 (reg. 1.3478); bias_x at r=(2,0) = -0.3267+-0.0077 nm with 4e4 reps (reg. -0.3445+-0.0077, z=+1.6)",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-mle_offcenter_sbr10_tail: sigma/CRB at r=(15,0), SBR=10, disk radius 2L: N=100 1.520+-0.031 (reg. 1.512+-0.029), N=1000 1.0067+-0.0058 (reg. 1.0042); outlier tail confirmed (2.8 % of errors >5 CRB, robust MAD sigma 0.98 CRB). Caveat: protocol-dependent (disk radius 50 nm gives 1.456+-0.024); the disk radius must be stated",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-lms_center_equals_s27: own MC LMS no background at centre sigma/S27=0.9969+-0.0049 (reg. 1.0000), sigma/CRB_limit=1.1195+-0.0056 (reg. 1.1229)",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-iterative_beats_camera: own iterative loop (docstring protocol, 10^4 reps, own seeds) N=1000 sigma=0.5110+-0.0029 (reg. 0.5077+-0.0027), ratio to camera 0.1616 (reg. 0.1606); SBR=10 0.6102+-0.0032 (reg. 0.6165, z=-1.4); camera 3.1623 and CRB all photons at L=25 0.25094 exact",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-iterative_photon_scaling (resolves W11): own sigmas at N=250..8000 agree (|z|<=1.0); slope N>=500 = -0.5197+-0.0025, CI95 [-0.5244,-0.5147] (reg. -0.5148 [-0.5196,-0.5096], z=-1.35); full range -0.5426+-0.0051 [-0.5527,-0.5335] (reg. -0.5365, z=-1.04); both exclude -0.5; ratio to camera 0.157-0.186 (reg. 0.158-0.183). Caveat: the full-range slope and the N=250 SE are driven by a heavy tail at N=250",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-iterative_adaptive_rule: schedule [150,25,25,25], sigma=0.4755+-0.0023 (reg. 0.4795+-0.0027, z=-1.15); iteration-0 real error 4.229 (reg. 4.264) vs centre CRB 3.470; fraction outside 12.5 nm 0.0258+-0.0016 (reg. 0.0265), only 94.1 % within 3*3.47 nm, so ~97 % not 99 %",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-iterative_no_recenter: recenter=False final sigma 8.256+-0.044 (reg. 8.145+-0.045) with per-iteration 4.25/3.37/3.19/8.26, i.e. it worsens in the last iteration (L=25, disk 18.75 nm < spread 37.5 nm): a search-disk artefact, as the caveat says",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-misalignment centre (400 patterns x 200 reps, own model): naive |bias| 0.173/1.477/3.748/7.786 nm for delta=0/2/5/10 (reg. 0.173/1.492/3.731/7.708, |z|<0.4); honest 0.173/0.168/0.182/0.165 at the MC floor 0.164; naive bias/delta slope 0.7559+-0.0095 (reg. 0.7546+-0.0093); noise-free population 0.746/0.755/0.784 per delta; sigma and rmse agree; delta=0 gives identical estimates",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "X1-misalignment_naive_bias_over_delta_Lq = 0.862+-0.012: two independent 400x200 draws give 0.8135+-0.0123 and 0.836+-0.012, and the noise-free population over 4000 patterns gives 0.794/0.802/0.871 per delta (population ~0.83). The quoted SE understates the spread between pattern draws (heavy-tailed |bias| at delta=10), and the ratio grows with delta (nonlinear). 'Larger than at the centre, ~0.83-0.86' holds; 0.862+-0.012 is not reproduced at its quoted precision. Pool draws or widen the SE",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X1-misalignment_loss_is_bias: naive sigma centre 1.851/1.861/1.893/2.021 vs rmse 1.853/2.182/3.457/6.300 (loss dominated by bias); honest sigma and all L/4 sigmas agree with the registry (|z|<=1.5). Caveat: at (L/4,0) the honest sigma is 1-2.4 % above the honest CRB for delta<=10 (8 % at 15), and the honest |bias| at delta=10 (0.27) is ~5 sigma above the MC floor (0.23): 'honest at floor / follows CRB' is exact only at the centre",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X2-summaries: all 149 keys shared between data/fig1..8_summary.json and data/paper_numbers.json are identical (one fig5 SE differs at 1.7e-15 rel); renamed duplicates (fig5_mle_sigma_center_sbr10_nm, fig5_mle_nobg_*_N100, fig6_iterative_sigma_N*, fig6_ratio_to_camera_N1000) match; fig8 regenerated at 07:26 with n_patterns=400, and its 65 shared keys match",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X2-figures 1-4 and 7: PDFs exist and were inspected visually; the axes, legends and marked values (1.802/1.605/1.960 nm, zero depths 0/0.845/0.372, slope 1.004 over 5-40 nm, divergence at 360 nm, 400/591/10.3/15.4 photons, L_opt stars, 0.78 only for eps<~0.01, 4.9 nm scale) match captions, numbers and backlog caveats. Minor: fig7(c) y label lacks (nm); the fig4(d) 13.0 marker is unlabelled",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "X2-fig8 caption (structure/figures.json): says '50 patterns x 200 repetitions' and 'line ~0.75 delta', but the figure and data use 400 patterns and the drawn line is '0.76 delta' (fit over 7 deltas incl. 15); the (L/4,0) slope (~0.86 per the r3 inbox decision) is neither drawn nor mentioned; the caveat of claims.json misalignment_naive_bias still refers to the superseded 0.79",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "X2-fig5 caption: describes panels (a)-(c) and puts the r=(2,0) bias (-0.34 nm) in (c), but the figure has 4 panels and that bias is panel (d); the caption also omits the MLE outlier bump (sigma/CRB ~1.5 at x0=10-20 nm) visible in (b)",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "X2-fig6 and fig7 captions are still worded as a plan ('inset or side panel', 'where shown', 'Optional:') and do not describe fig6 (b) sigma/sigma_camera 0.183->0.158 or (c) sigma per iteration vs L_k; no numerical contradiction (the artefact point is grey and labelled); they need rewriting in R4",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X3-checks: python scripts/check_provenance.py -> 'all checks pass', exit 0 (vacuous: stub paper, 0 tags, 0 entries); python -m unittest tests.test_acceptance -v -> 8 tests OK; unittest discover -> 177 tests OK; sha256 of tests/test_acceptance.py = 7d1988...2303 intact",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "X3-check_provenance correctly fails (scratch --root copies) on: unknown \\pnum, unresolved \\src, \\pnumse without se, bad number_keys, missing reproduce file, numbers.tex out of sync, a bad \\pnum after an escaped \\%, a missing \\input file, a claim with an unknown number, nested inputs, a circular \\input; correctly ignores a commented-out \\pnum",
+   "round": 3,
+   "source": "verifier"
+  },
+  {
+   "status": "refuted",
+   "text": "X3-check_provenance holes: '\\input sections/hidden' (no braces, valid TeX) is not flattened, so its bad \\pnum and \\src pass (exit 0); '\\src {key}' with a space is not recognized as a tag, so an unresolved key passes; \\pnum inside a user macro gives a false error on '#1' and the real key is not checked. Low risk for plain \\pnum{k}\\src{k} writing, but should be closed (whitespace-tolerant regexes, brace-less \\input)",
+   "round": 3,
+   "source": "verifier"
   }
  ],
  "plan": [
   "R1: núcleo del paquete (beams/patterns/photons), inferencia (fisher/estimators/montecarlo), derivación CRB centro TCP",
-  "R2: dona vectorial, CRB de cámara, drivers (iterativo, eps×L, desalineación), fixes R1"
+  "R2: dona vectorial, CRB de cámara, drivers (iterativo, eps×L, desalineación), fixes R1",
+  "R3: figuras 1-8, pipeline de números (204 claves), claims.json, check_provenance, fixes R2"
  ],
  "backlog": [
-  "FIX (refuted r2): misalignment_study sigma_se ignora varianza entre patrones (usar SE entre patrones)",
-  "FIX (refuted r2): fisher.crb zero_policy='limit' falla con N array y r escalar",
-  "FIX (refuted r2): docstring l_schedule adaptivo ('99%' falso; kappa usa CRB central)",
-  "FIX (refuted r2): make_vectorial_beam lineal interpolado (grid 5 nm) sesga el CRB 3-7% sin warning -> warning/test o grid fino",
-  "SE del iterativo: usar bootstrap (sigma/(2sqrtR) subestima ~16%)",
-  "W11 unclear: pendiente iterativo vs N -> más reps (>=3000) o reportar rango -0.52..-0.55 y cociente 0.155-0.19",
-  "Texto: Caprile F=1 (428 vs 401 nm) no concuerda; SBR de cámara por píxel (500/81); W9 con límite r->0 da 10.3 fotones; eps=0 CRB monótono solo L<360 nm; L_opt≈0.78 fwhm sqrt(eps) solo eps<~0.01; sesgo ingenuo ≈0.75 delta; recenter=False 8 nm es artefacto del disco de búsqueda",
-  "paper_numbers: crb_exponent_L con L<<fwhm (p.ej. 5..40 nm); camera_sigma_nm = ideal sigma_PSF/sqrt(N) declarado; mle_efficiency_center con SBR=10",
-  "R3: compute_paper_numbers.py, structure/figures.json+claims.json, scripts/check_provenance.py (envoltorio, imprime 'all checks pass'), fig_*.py (>=6) + make_all_figures.py, mapas CRB, MC MLE vs LMS/mLMS en el FOV",
-  "R4: paper/main.tex + sections + references.bib + provenance.json, compilar con tectonic; R5: README, reproduce.sh, CITATION.cff, revisión final + aceptación"
+  "FIX (refuted r3): _paperstyle.cached sin invalidación por config (clave debe incluir hash de parámetros); regenerar todo con --no-cache al final",
+  "FIX (refuted r3): --quick pisa salidas finales (figuras, summaries, paper_numbers, numbers.tex): escribir a rutas separadas o marcar",
+  "FIX (refuted r3): check_provenance: \\input sin llaves, '\\src {k}' con espacio, \\pnum en macros; y \\pnum{k} sin \\src/provenance debe fallar",
+  "FIX (refuted r3): numbers.tex fallback \\detokenize{#1}",
+  "FIX (refuted r3): leyenda fig8 (400 patrones, 0.76 δ, falta L/4) y claims.json caveat 0.79; leyenda fig5 (panel d, bump de outliers); reescribir leyendas fig6/fig7 como descripción; unidad del eje fig7(c)",
+  "Pendiente L/4: estimación poblacional sin ruido (decisión inbox r4); nuevas claves en paper_numbers",
+  "Constantes duplicadas fuera de _paperconfig (40000 reps, radios de búsqueda, eps=0.002): mover a _paperconfig",
+  "Caveats para el texto: exponente L solo para L<<fwhm (1.07 en 25-150); x0=15 outlier depende del radio de búsqueda (declararlo); honesto 'en el piso' solo en el centro (en L/4 1-2.4% sobre CRB); SE bootstrap a N=250 inestable (cola pesada)",
+  "R4: paper/main.tex + sections + references.bib + provenance.json con \\pnum{k}\\src{k}; compilar con tectonic; README (inglés, estilo pta), reproduce.sh, CITATION.cff; claims.json completo",
+  "R5: regeneración total --no-cache, revisión final independiente del manuscrito, aceptación"
  ],
  "history": [
   {
@@ -468,15 +715,26 @@
    },
    "checks": "passed",
    "acceptance": "skip"
+  },
+  {
+   "round": 3,
+   "summary": "8 figuras, registro de 204 números reproducible bit a bit, claims.json, check_provenance; W11 resuelta (pendiente iterativo N>=500 ≈ -0.515..-0.520, excluye -0.5); desalineación con 400 patrones. Defectos de herramientas (caché, --quick, huecos de procedencia) y leyendas a corregir en R4.",
+   "claims": {
+    "verified": 29,
+    "refuted": 7,
+    "unclear": 5
+   },
+   "checks": "passed",
+   "acceptance": "passed (vacuous provenance)"
   }
  ],
  "last_checks": {
   "passed": true,
-  "detail": "142 tests OK (1 skipped: acceptance); 89 closed-form checks pass"
+  "detail": "177 tests OK; acceptance 8/8 OK (provenance vacuous: paper stub)"
  },
  "last_acceptance": {
-  "passed": false,
-  "detail": "SKIP: data/paper_numbers.json does not exist yet"
+  "passed": true,
+  "detail": "8/8 OK, but test_manuscript_provenance_passes is vacuous until the manuscript exists"
  },
  "writer_seen_verified": 0
 }

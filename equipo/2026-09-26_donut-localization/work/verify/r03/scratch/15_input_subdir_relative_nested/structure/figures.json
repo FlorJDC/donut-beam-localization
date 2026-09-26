@@ -1,0 +1,58 @@
+[
+ {
+  "id": "fig1_schematic",
+  "pdf": "paper/figures/fig1_schematic.pdf",
+  "script": "scripts/fig_1_schematic.py",
+  "question": "R1",
+  "caption": "Beam model and TCP geometry. (a) Normalized radial profiles of the scalar LG01 donut (fwhm = 300 nm, Balzarotti Eq. S17), the LG donut with the curvature of the vectorial zero (fwhm = 327.14 nm) and the vectorial Richards-Wolf vortex donut with circular polarization of the correct hand (lambda = 640 nm, NA = 1.4, n = 1.518, filling 5/3); dotted lines mark the ring radii (LG 300: 180.2 nm; vectorial: 192.3 nm, peak-to-peak diameter 384.67 nm). (b) I/rho^2 near the zero on a log radius axis: all zeros are quadratic, and the curvature-matched LG agrees with the vectorial profile to within 1 % for rho <= 100 nm. (c) TCP: three donut zeros (x) on a circle of diameter L (dashed; L = 100 nm shown for visibility) plus a central exposure (+); the map is the intensity of exposure 0."
+ },
+ {
+  "id": "fig2_vectorial",
+  "pdf": "paper/figures/fig2_vectorial.pdf",
+  "script": "scripts/fig_2_vectorial.py",
+  "question": "R1",
+  "caption": "Vectorial donut. (a-c) Focal-plane intensity, normalized to the ring maximum, for circular polarization of the correct hand, of the opposite hand, and for linear (x) polarization. (d) Profiles through the zero: the zero depth I(0)/I_max is 0 for the correct hand, 0.845 for the opposite hand and 0.372 for linear polarization. (e) Centre CRB (r -> 0 limit, N = 100, no background) of the TCP vs L; all vectorial beams are evaluated exactly (no interpolation grid). (f) Relative CRB difference with respect to the LG donut with fwhm = 300 nm: the curvature-matched LG (fwhm = 327.14 nm) reproduces the vectorial CRB to within 0.4 % for L <= 150 nm."
+ },
+ {
+  "id": "fig3_crb_maps",
+  "pdf": "paper/figures/fig3_crb_maps.pdf",
+  "script": "scripts/fig_3_crb_maps.py",
+  "question": "R2",
+  "caption": "CRB maps and the discontinuity at the TCP centre (fwhm = 300 nm, N = 100). (a-d) CRB over the field of view |x|, |y| <= L for L = 50 and 100 nm, without background and with SBR = 10 (log colour scale, contours in nm; pixels on a perfect zero take the r -> 0 limit). (e) Cuts through the centre along x and y for L = 50 nm: without background the r -> 0 limit (1.605 nm) lies below the point value at r = 0 of Balzarotti Eq. S27 (1.802 nm), which excludes the central exposure with p = 0; with SBR = 10 the CRB is continuous (Eq. S31, 1.960 nm). (f) Ratio of the limit to the point value vs L, closed form (lines) and numerical Fisher computation (circles); it tends to 2/sqrt(5) only for a quadratic zero (L << fwhm)."
+ },
+ {
+  "id": "fig4_scaling",
+  "pdf": "paper/figures/fig4_scaling.pdf",
+  "script": "scripts/fig_4_scaling.py",
+  "question": "R2",
+  "caption": "Scaling of the centre CRB and comparison with camera localization. (a) CRB vs L (N = 100, no background): r -> 0 limit (numerical and closed form) and Eq. S27 point value; the log-log slope fitted over L = 5-40 nm (shaded, L << fwhm) is 1.004. With a perfect zero the CRB increases monotonically only for L < 360 nm (ring diameter fwhm/sqrt(ln2)), diverges there and decreases beyond (dotted). (b) CRB vs N for L = 50 nm: slope -1/2 for the limit, Eq. S27 and Eq. S31 with SBR = 10. (c) CRB vs SBR (L = 50 nm, N = 100): for finite SBR the point value equals the limit (Eq. S31) and tends to the S27 point value, not to the background-free limit, as SBR -> infinity. (d) MINFLUX (L = 50 nm) vs an ideal camera (sigma_PSF = 100 nm): continuum limit sigma_PSF/sqrt(N) and a 9 x 9 window of 100 nm pixels, without background and with SBR_c = 500 defined per pixel (total SBR = 500/81); triangles mark the photons needed for 5 nm (camera 400 and 591; MINFLUX 10.3 with the r -> 0 limit, 13.0 with the S27 point value, 15.4 with SBR = 10)."
+ },
+ {
+  "id": "fig5_estimators",
+  "pdf": "paper/figures/fig5_estimators.pdf",
+  "script": "scripts/fig_5_estimators.py",
+  "question": "R3",
+  "caption": "Estimators vs the CRB (L = 50 nm, N = 100, seed 42). (a) Bias and (b) sigma/CRB vs emitter position along x from the centre to L (inside and outside the TCP) for the MLE, the LMS and the modified LMS with SBR = 10; the centre point uses N_rep = 10000 repetitions and equals mle_efficiency_center. (c) Background-free MLE at the centre: sigma divided by the r -> 0 CRB limit vs N (superefficiency, about 0.84; about 0.75 relative to Eq. S27), a consequence of the non-regular model p_centre ~ r^2, and the bias toward the centre at r = (2, 0) nm (about -0.34 nm)."
+ },
+ {
+  "id": "fig6_iterative",
+  "pdf": "paper/figures/fig6_iterative.pdf",
+  "script": "scripts/fig_6_iterative.py",
+  "question": "R4",
+  "caption": "Iterative MINFLUX vs camera localization. Final precision (sigma +- bootstrap SE) vs total photon budget for 4 iterations with L reduced from 150 to 25 nm (equal photon split, recentring, MLE, no background), compared with the ideal camera sigma_PSF/sqrt(N) and with the fitted log-log slope; inset or side panel: sigma per iteration vs L_k; points with SBR = 10 and with the adaptive L schedule. The run without recentring is not physics: where shown, it is greyed out and labelled as an artefact of the truncated search disk."
+ },
+ {
+  "id": "fig7_zero_depth",
+  "pdf": "paper/figures/fig7_zero_depth.pdf",
+  "script": "scripts/fig_7_zero_depth.py",
+  "question": "R5",
+  "caption": "Finite zero depth. Centre CRB vs L (Gaussian pedestal, N = 100, fwhm = 300 nm) for eps = 0.002, 0.01, 0.05, 0.15 and eps = 0, with the optimal L marked; with eps = 0 the CRB is monotonic only for L < 360 nm. Second panel: L_opt/(fwhm sqrt(eps)) vs eps, showing that the rule L_opt ~ 0.78 fwhm sqrt(eps) holds only for eps <~ 0.01. Optional: the off-centre CRB minimum for eps = 0.002, whose transition scale (4.9 nm) is a scale, not the position of the minimum."
+ },
+ {
+  "id": "fig8_misalignment",
+  "pdf": "paper/figures/fig8_misalignment.pdf",
+  "script": "scripts/fig_8_misalignment.py",
+  "question": "R5",
+  "caption": "TCP misalignment (L = 100 nm, N = 500, SBR = 10; all four zeros displaced by delta in random directions, 50 patterns x 200 repetitions). |bias| of the naive MLE (nominal pattern) and of the honest MLE (true pattern) vs delta, with the Monte Carlo noise floor and the line ~0.75 delta; sigma and rmse vs delta and the honest CRB. Error bars use the between-pattern standard error."
+ }
+]

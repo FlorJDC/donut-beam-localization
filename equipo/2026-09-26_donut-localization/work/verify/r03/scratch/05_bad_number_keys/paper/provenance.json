@@ -1,0 +1,1 @@
+{"crb_center_lg_L50_N100_nm": {"statement": "centre CRB", "type": "script", "reproduce": "scripts/compute_paper_numbers.py", "number_keys": ["bogus_key"]}}
