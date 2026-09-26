@@ -131,7 +131,8 @@ def crb(p_fn, r, N, zero_policy="point", limit_r0=1e-3, limit_n_dir=12, **kw):
     **kw : forwarded to :func:`fisher_matrix` (``h``, ``p_min``); ``p_min`` (default 1e-12) is also
         the threshold that flags a zero for ``"limit"``.
 
-    Returns shape ``r.shape[:-1]``. A singular Fisher matrix gives ``inf``; undefined
+    Returns shape ``broadcast(r.shape[:-1], shape(N))`` (both policies; ``r`` and ``N`` are
+    broadcast together, e.g. one point and an array of N). A singular Fisher matrix gives ``inf``; undefined
     probabilities (NaN from ``p_fn``, e.g. far-field underflow without background) give NaN.
     """
     if zero_policy not in _ZERO_POLICIES:
@@ -146,11 +147,13 @@ def crb(p_fn, r, N, zero_policy="point", limit_r0=1e-3, limit_n_dir=12, **kw):
     zero = np.any(P <= p_min, axis=-1)                    # NaN compares False -> stays NaN
     if not np.any(zero):
         return out
-    shape = r.shape[:-1]
-    flat = np.array(out, dtype=float).reshape(-1)
+    # r and N broadcast together (e.g. one point, several N): work on the common shape
+    Narr = np.asarray(N, dtype=float)
+    shape = np.broadcast_shapes(r.shape[:-1], Narr.shape)
+    flat = np.array(np.broadcast_to(out, shape), dtype=float).reshape(-1)
     zf = np.broadcast_to(zero, shape).reshape(-1)
-    pts = r.reshape(-1, 2)[zf]                                       # (M, 2)
-    Nz = np.broadcast_to(np.asarray(N, dtype=float), shape).reshape(-1)[zf]
+    pts = np.broadcast_to(r, shape + (2,)).reshape(-1, 2)[zf]        # (M, 2)
+    Nz = np.broadcast_to(Narr, shape).reshape(-1)[zf]
     ang = 2.0 * np.pi * np.arange(int(limit_n_dir)) / int(limit_n_dir)
     ring = pts[:, None, :] + float(limit_r0) * np.stack([np.cos(ang), np.sin(ang)], axis=-1)
     vals = crb(p_fn, ring, Nz[:, None], zero_policy="point", h=float(limit_r0) * 1e-2, p_min=0.0)

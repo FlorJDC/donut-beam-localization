@@ -177,10 +177,80 @@ class TestErrorStats(unittest.TestCase):
         np.testing.assert_allclose(st["bias"], [0.0, 0.0])
         var = 4.0 / 3.0
         self.assertAlmostEqual(st["sigma"], np.sqrt(var))
-        self.assertAlmostEqual(st["sigma_se"], np.sqrt(var) / 4.0)
+        self.assertAlmostEqual(st["sigma_se_gauss"], np.sqrt(var) / 4.0)
+        self.assertTrue(np.isfinite(st["sigma_se"]) and st["sigma_se"] > 0)   # bootstrap
+        self.assertAlmostEqual(ex.error_stats(est, np.array([0.0, 1.0]), n_boot=0)["sigma_se"],
+                               np.sqrt(var) / 4.0)
         self.assertAlmostEqual(st["rmse"], 1.0)
         with self.assertRaises(ValueError):
             ex.error_stats(est[:1], [0.0, 0.0])
+
+
+class TestR3Fixes(unittest.TestCase):
+
+    def test_error_stats_bootstrap_matches_gaussian_formula(self):
+        rng = np.random.default_rng(11)
+        e = rng.normal(0.0, 2.0, size=(3000, 2))
+        st = ex.error_stats(e, [0.0, 0.0])
+        self.assertAlmostEqual(st["sigma_se"] / st["sigma_se_gauss"], 1.0, delta=0.10)
+
+    def test_iterative_returns_bootstrap_se(self):
+        out = ex.iterative_minflux(1000, n_rep=300)
+        self.assertIn("sigma_se_gauss", out)
+        self.assertEqual(out["sigma_se_iter"].shape, (4,))
+        self.assertAlmostEqual(out["sigma_se"], out["sigma_se_iter"][-1])
+        self.assertTrue(0.5 < out["sigma_se"] / out["sigma_se_gauss"] < 3.0)
+
+    def test_misalignment_sigma_se_between_patterns(self):
+        """R2 refuted scenario: delta = 10 at the centre, 20 patterns x 200 reps.  The old formula
+        (now sigma_se_within) ignored the pattern-to-pattern variance (2.6x / 3.6x too small)."""
+        m = ex.misalignment_study([10.0], L=100.0, N=500, sbr=10, n_patterns=20, n_rep=200,
+                                  positions=[(0.0, 0.0)])
+        for est in ("honest", "naive"):
+            se, within = m[est]["sigma_se"][0, 0], m[est]["sigma_se_within"][0, 0]
+            self.assertAlmostEqual(within, m[est]["sigma_mean"][0, 0] / (2 * np.sqrt(200 * 20)))
+            self.assertGreater(se, 1.5 * within, est)
+
+    def test_misalignment_sigma_se_formula_exact(self):
+        """sigma_se = std over patterns (ddof 1) of per-pattern sigmas / sqrt(P), recomputed
+        independently with the documented seeding (default_rng(seed) for the patterns,
+        SeedSequence(seed) for the MC seeds)."""
+        from donutloc import beams, estimators, montecarlo, patterns, photons
+        P, R, L, N, d = 3, 60, 100.0, 500, 5.0
+        m = ex.misalignment_study([d], L=L, N=N, sbr=10, n_patterns=P, n_rep=R,
+                                  positions=[(0.0, 0.0)], seed=42)
+        beam = beams.make_beam("donut", fwhm=300.0)
+        ideal = patterns.tcp_centers(L)
+        p_naive = photons.make_model(ideal, beam, sbr=10)
+        rng = np.random.default_rng(42)
+        seeds = np.random.SeedSequence(42).generate_state(P).reshape(P, 1)
+        sig = []
+        for j in range(P):
+            p_true = photons.make_model(patterns.perturb_centers(ideal, d, rng=rng), beam, sbr=10)
+            o = montecarlo.run_mc(lambda C: estimators.mle(C, p_naive, search_radius=0.75 * L),
+                                  p_true, [0.0, 0.0], N, R, seed=int(seeds[j, 0]), n_boot=0)
+            sig.append(o["sigma"])
+        sig = np.array(sig)
+        self.assertAlmostEqual(m["naive"]["sigma_mean"][0, 0], sig.mean(), places=10)
+        self.assertAlmostEqual(m["naive"]["sigma_se"][0, 0], sig.std(ddof=1) / np.sqrt(P),
+                               places=10)
+        one = ex.misalignment_study([d], n_patterns=1, n_rep=20, positions=[(0.0, 0.0)])
+        self.assertTrue(np.isnan(one["naive"]["sigma_se"][0, 0]))
+
+    def test_adaptive_schedule_coverage_is_about_97_percent(self):
+        """R2 refuted docstring: with the defaults the next pattern radius L_1/2 contains ~97 %
+        of the emitters (not 99 %), because sigma_k is the centre CRB and underestimates the
+        real error of iteration 0 (emitters up to L0/4 off-centre)."""
+        Nk = np.array([250, 250, 250, 250])
+        L = ex.l_schedule(4, 150.0, rule="adaptive", N_k=Nk)
+        self.assertAlmostEqual(L[1], 25.0)
+        it0 = ex.iterative_minflux(250, L_schedule=[150.0], n_rep=3000)
+        err = np.hypot(*(it0["estimates"] - it0["r_true"]).T)
+        outside = float(np.mean(err > L[1] / 2.0))
+        self.assertTrue(0.015 < outside < 0.045, outside)
+        self.assertGreater(it0["sigma"], 1.1 * it0["crb_center_iter"][0])
+        self.assertIn("97 %", ex.l_schedule.__doc__)
+        self.assertNotIn("99 % probability", ex.l_schedule.__doc__)
 
 
 if __name__ == "__main__":

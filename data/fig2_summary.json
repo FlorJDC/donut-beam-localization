@@ -1,0 +1,102 @@
+{
+ "crb_center_lg300_L100_N100_nm": {
+  "unit": "nm",
+  "value": 3.363411105379956
+ },
+ "crb_center_lg300_L150_N100_nm": {
+  "unit": "nm",
+  "value": 5.486472241660276
+ },
+ "crb_center_lg300_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.6050955712820285
+ },
+ "crb_center_lgcurv_L100_N100_nm": {
+  "unit": "nm",
+  "value": 3.3296434944519775
+ },
+ "crb_center_lgcurv_L150_N100_nm": {
+  "unit": "nm",
+  "value": 5.351442244023537
+ },
+ "crb_center_lgcurv_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.6012359544414494
+ },
+ "crb_center_vec_correct_L100_N100_nm": {
+  "unit": "nm",
+  "value": 3.3232386650742742
+ },
+ "crb_center_vec_correct_L150_N100_nm": {
+  "unit": "nm",
+  "value": 5.3310411221245735
+ },
+ "crb_center_vec_correct_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.600414754550864
+ },
+ "crb_center_vec_linear_L100_N100_nm": {
+  "unit": "nm",
+  "value": 38.06131070805538
+ },
+ "crb_center_vec_linear_L150_N100_nm": {
+  "unit": "nm",
+  "value": 35.72298430646498
+ },
+ "crb_center_vec_linear_L50_N100_nm": {
+  "unit": "nm",
+  "value": 60.77420112870313
+ },
+ "crb_center_vec_opposite_L100_N100_nm": {
+  "unit": "nm",
+  "value": 89.58836687703429
+ },
+ "crb_center_vec_opposite_L150_N100_nm": {
+  "unit": "nm",
+  "value": 84.1967269259482
+ },
+ "crb_center_vec_opposite_L50_N100_nm": {
+  "unit": "nm",
+  "value": 147.88600722506212
+ },
+ "crb_vec_over_lg300_L100_N100": {
+  "unit": "",
+  "value": 0.9880560422003055
+ },
+ "crb_vec_over_lg300_L150_N100": {
+  "unit": "",
+  "value": 0.9716701164811385
+ },
+ "crb_vec_over_lg300_L50_N100": {
+  "unit": "",
+  "value": 0.9970837769320952
+ },
+ "crb_vec_over_lgcurv_L100_N100": {
+  "unit": "",
+  "value": 0.9980764218786861
+ },
+ "crb_vec_over_lgcurv_L150_N100": {
+  "unit": "",
+  "value": 0.9961877338914108
+ },
+ "crb_vec_over_lgcurv_L50_N100": {
+  "unit": "",
+  "value": 0.9994871462333158
+ },
+ "vectorial_lg_fwhm_curvature_nm": {
+  "unit": "nm",
+  "value": 327.1411191076221
+ },
+ "vectorial_zero_depth_correct": {
+  "unit": "",
+  "value": 0.0
+ },
+ "vectorial_zero_depth_linear": {
+  "unit": "",
+  "value": 0.37164824493965715
+ },
+ "vectorial_zero_depth_wrong_handedness": {
+  "unit": "",
+  "value": 0.8452409316543332
+ }
+}

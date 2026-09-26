@@ -169,5 +169,54 @@ class TestBeam(unittest.TestCase):
         self.assertAlmostEqual(out["crb_vectorial"][0] / out["crb_lg_curvature"][0], 1.0, delta=0.01)
 
 
+class TestLinearBeamHarmonic(unittest.TestCase):
+    """R2 refuted: bilinear Cartesian table biased the linear-pol CRB (+7.4 % at (7,3)).
+    Reference (n = 1.518, L = 50, N = 100, mode='exact'): CRB(7,3) = 62.36, crb_limit = 60.77."""
+
+    @classmethod
+    def setUpClass(cls):
+        from donutloc import fisher
+        cls.fisher = fisher
+        o = dict(polarization="linear", n_theta=401)
+        cls.bh = staticmethod(v.make_vectorial_beam(rho_max=120.0, **o))
+        cls.be = staticmethod(v.make_vectorial_beam(mode="exact", **o))
+        cls.c = patterns.tcp_centers(50.0)
+
+    def test_harmonic_matches_exact_intensity(self):
+        rng = np.random.default_rng(0)
+        pts = rng.uniform(-80, 80, size=(50, 2))
+        np.testing.assert_allclose(self.bh(pts[:, 0], pts[:, 1]), self.be(pts[:, 0], pts[:, 1]),
+                                   rtol=1e-6)
+        self.assertEqual(float(self.bh(200.0, 0.0)), 0.0)
+        self.assertEqual(self.bh.linear_method, "harmonic")
+
+    def test_crb_within_half_percent_of_exact(self):
+        f = self.fisher
+        ph = photons.make_model(self.c, self.bh)
+        pe = photons.make_model(self.c, self.be)
+        r = np.array([7.0, 3.0])
+        a, b = float(f.crb(ph, r, 100)), float(f.crb(pe, r, 100))
+        la, lb = f.crb_limit(ph, 100), f.crb_limit(pe, 100)
+        self.assertAlmostEqual(a / b, 1.0, delta=5e-3)
+        self.assertAlmostEqual(la / lb, 1.0, delta=5e-3)
+        self.assertAlmostEqual(b, 62.36, delta=0.1)
+        self.assertAlmostEqual(lb, 60.77, delta=0.1)
+
+    def test_cartesian_warns_and_is_biased(self):
+        import warnings
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            bc = v.make_vectorial_beam(rho_max=120.0, grid_step=5.0, polarization="linear",
+                                       n_theta=401, linear_method="cartesian")
+        self.assertTrue(any(issubclass(x.category, UserWarning) for x in w))
+        f = self.fisher
+        a = float(f.crb(photons.make_model(self.c, bc), np.array([7.0, 3.0]), 100))
+        b = float(f.crb(photons.make_model(self.c, self.be), np.array([7.0, 3.0]), 100))
+        self.assertGreater(abs(a / b - 1.0), 0.02)
+        with self.assertRaises(ValueError):
+            v.make_vectorial_beam(rho_max=50.0, polarization="linear", n_theta=101,
+                                  linear_method="bogus")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -8,7 +8,7 @@ estimator on all of them at once and returns bias / spread / RMSE statistics
 
 import numpy as np
 
-__all__ = ["run_mc", "sample_counts_from_p"]
+__all__ = ["run_mc", "sample_counts_from_p", "bootstrap_sigma_se", "sigma_of_errors"]
 
 
 def sample_counts_from_p(p, N, n_rep, rng, mode="multinomial"):
@@ -26,7 +26,46 @@ def sample_counts_from_p(p, N, n_rep, rng, mode="multinomial"):
     raise ValueError("mode must be 'multinomial' or 'poisson'")
 
 
-def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial"):
+def sigma_of_errors(errors):
+    """Per-axis sigma of an error sample ``errors`` (R, 2): sqrt((var_x + var_y)/2), ddof=1."""
+    e = np.asarray(errors, dtype=float)
+    return float(np.sqrt(0.5 * e.var(axis=0, ddof=1).sum()))
+
+
+def bootstrap_sigma_se(errors, n_boot=1000, seed=42, return_samples=False, max_block=2 ** 22):
+    """Nonparametric bootstrap standard error of ``sigma = sqrt((var_x + var_y)/2)`` (ddof=1).
+
+    ``errors``: (R, 2) array of estimation errors (or estimates: sigma is shift invariant).
+    The R rows are resampled with replacement ``n_boot`` times (``np.random.default_rng(seed)``)
+    and the sample std (ddof=1) of the ``n_boot`` bootstrap sigmas is returned.  Unlike the
+    Gaussian formula ``sigma / (2 sqrt R)`` it is valid for heavy-tailed / heteroscedastic error
+    distributions (e.g. the iterative MINFLUX errors, whose kurtosis exceeds the Gaussian one).
+    Non-finite rows are dropped first.  With ``return_samples=True`` returns
+    ``(se, sigma_boot)``.  Work is done in blocks of at most ``max_block`` resampled rows.
+    """
+    e = np.asarray(errors, dtype=float)
+    if e.ndim != 2 or e.shape[1] != 2:
+        raise ValueError("errors must have shape (R, 2), got %r" % (e.shape,))
+    e = e[np.all(np.isfinite(e), axis=1)]
+    R = e.shape[0]
+    n_boot = int(n_boot)
+    if R < 2:
+        raise ValueError("need at least 2 finite rows")
+    if n_boot < 2:
+        raise ValueError("n_boot must be >= 2")
+    rng = np.random.default_rng(seed)
+    out = np.empty(n_boot)
+    chunk = max(1, int(max_block) // R)
+    for i0 in range(0, n_boot, chunk):
+        m = min(chunk, n_boot - i0)
+        idx = rng.integers(0, R, size=(m, R))
+        s = e[idx]                                     # (m, R, 2)
+        out[i0:i0 + m] = np.sqrt(0.5 * s.var(axis=1, ddof=1).sum(axis=1))
+    se = float(out.std(ddof=1))
+    return (se, out) if return_samples else se
+
+
+def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial", n_boot=1000):
     """Monte Carlo of ``estimator`` at the true position ``r_true``.
 
     Parameters
@@ -55,6 +94,9 @@ def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial"):
                       Gaussian sample the std of a sample std is sigma/sqrt(2n); pooling the two
                       axes (2 n_valid values) gives sigma/sqrt(4 n_valid).  (R1 used the
                       conservative sigma/sqrt(2 n_valid), sqrt(2) too large.)
+      ``sigma_se_boot`` bootstrap standard error of ``sigma`` (:func:`bootstrap_sigma_se`,
+                      ``n_boot`` resamples, default 1000, seed = ``seed``); robust to
+                      non-Gaussian errors.  ``n_boot=0`` skips it (NaN).
       ``n_rep``, ``n_valid`` (finite estimates used in the statistics), ``seed``,
       ``estimates`` (n_rep, 2), ``counts`` (n_rep, K).
     """
@@ -78,6 +120,8 @@ def run_mc(estimator, p_fn, r_true, N, n_rep, seed=42, mode="multinomial"):
         "sigma": sigma,
         "rmse": rmse,
         "sigma_err": sigma / (2.0 * np.sqrt(n_valid)),
+        "sigma_se_boot": (bootstrap_sigma_se(e, n_boot=n_boot, seed=seed) if int(n_boot) >= 2
+                          else float("nan")),
         "n_rep": int(n_rep),
         "n_valid": n_valid,
         "seed": seed,

@@ -1,0 +1,34 @@
+{
+ "fig1_tcp_L_nm": {
+  "unit": "nm",
+  "value": 100.0
+ },
+ "fig1_vec_vs_lgcurv_max_rel_dev_rho_le_100nm": {
+  "unit": "",
+  "value": 0.008111552501078645
+ },
+ "fwhm_nm": {
+  "unit": "nm",
+  "value": 300.0
+ },
+ "lg_ring_diameter_nm": {
+  "unit": "nm",
+  "value": 360.33672263593496
+ },
+ "vectorial_lg_fwhm_curvature_nm": {
+  "unit": "nm",
+  "value": 327.1411191076221
+ },
+ "vectorial_lg_fwhm_diameter_nm": {
+  "unit": "nm",
+  "value": 320.25564844151785
+ },
+ "vectorial_peak_to_peak_diameter_nm": {
+  "unit": "nm",
+  "value": 384.66623588354236
+ },
+ "vectorial_zero_curvature_nm2": {
+  "unit": "nm^-2",
+  "value": 7.042221230445732e-05
+ }
+}

@@ -1,0 +1,98 @@
+{
+ "L_opt_eps0p002_nm": {
+  "unit": "nm",
+  "value": 10.484412357992904
+ },
+ "L_opt_eps0p01_nm": {
+  "unit": "nm",
+  "value": 23.280315521660803
+ },
+ "L_opt_eps0p05_nm": {
+  "unit": "nm",
+  "value": 50.336650731671014
+ },
+ "L_opt_eps0p15_nm": {
+  "unit": "nm",
+  "value": 80.80970073749592
+ },
+ "L_opt_over_fwhm_sqrt_eps_eps0p002": {
+  "unit": "",
+  "value": 0.7814619578870331
+ },
+ "L_opt_over_fwhm_sqrt_eps_eps0p01": {
+  "unit": "",
+  "value": 0.7760105173886934
+ },
+ "L_opt_over_fwhm_sqrt_eps_eps0p05": {
+  "unit": "",
+  "value": 0.7503744853045394
+ },
+ "L_opt_over_fwhm_sqrt_eps_eps0p15": {
+  "unit": "",
+  "value": 0.6954991670407265
+ },
+ "L_opt_over_fwhm_sqrt_eps_small_eps_limit": {
+  "unit": "",
+  "value": 0.7827744007471789
+ },
+ "crb_opt_eps0p002_nm": {
+  "unit": "nm",
+  "value": 0.745815349969247
+ },
+ "crb_opt_eps0p01_nm": {
+  "unit": "nm",
+  "value": 1.6786740447081847
+ },
+ "crb_opt_eps0p05_nm": {
+  "unit": "nm",
+  "value": 3.878413877135987
+ },
+ "crb_opt_eps0p15_nm": {
+  "unit": "nm",
+  "value": 7.28668178071284
+ },
+ "eps0_crb_divergence_L_nm": {
+  "unit": "nm",
+  "value": 360.33672263593496
+ },
+ "fig7_crb_eps0_L50_nm": {
+  "unit": "nm",
+  "value": 1.6050955712820285
+ },
+ "fig7_eps0p002_L100_argmin_dir0_nm": {
+  "unit": "nm",
+  "value": 6.7
+ },
+ "fig7_eps0p002_L100_argmin_dir45_nm": {
+  "unit": "nm",
+  "value": 8.0
+ },
+ "fig7_eps0p002_L100_argmin_dir90_nm": {
+  "unit": "nm",
+  "value": 5.1000000000000005
+ },
+ "fig7_eps0p002_L100_crb_center_nm": {
+  "unit": "nm",
+  "value": 3.8768152713296367
+ },
+ "fig7_eps0p002_L100_crb_min_dir0_nm": {
+  "unit": "nm",
+  "value": 3.6087208488975233
+ },
+ "fig7_eps0p002_L100_crb_min_dir45_nm": {
+  "unit": "nm",
+  "value": 3.533122173854114
+ },
+ "fig7_eps0p002_L100_crb_min_dir90_nm": {
+  "unit": "nm",
+  "value": 3.693657711554198
+ },
+ "fig7_eps_dense_min": {
+  "unit": "",
+  "value": 0.0001
+ },
+ "zero_depth_transition_scale_nm": {
+  "unit": "nm",
+  "value": 4.887044407823295
+ }
+}

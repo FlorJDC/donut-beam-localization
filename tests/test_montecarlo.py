@@ -122,5 +122,53 @@ class TestMLEEfficiency(unittest.TestCase):
         self.assertLess(time.time() - t, 30.0)
 
 
+class TestBootstrap(unittest.TestCase):
+
+    def test_gaussian_matches_formula(self):
+        rng = np.random.default_rng(1)
+        for R in (500, 4000):
+            e = rng.normal(0.0, 3.0, size=(R, 2))
+            s = mc.sigma_of_errors(e)
+            se = mc.bootstrap_sigma_se(e, n_boot=1000, seed=42)
+            self.assertAlmostEqual(se / (s / (2 * np.sqrt(R))), 1.0, delta=0.10)
+
+    def test_heavy_tails_larger_than_gaussian_formula(self):
+        rng = np.random.default_rng(2)
+        R = 3000
+        e = rng.standard_t(4, size=(R, 2))
+        s = mc.sigma_of_errors(e)
+        self.assertGreater(mc.bootstrap_sigma_se(e, n_boot=800), 1.3 * s / (2 * np.sqrt(R)))
+
+    def test_reproducible_samples_and_shift_invariance(self):
+        rng = np.random.default_rng(3)
+        e = rng.normal(size=(300, 2))
+        a, sa = mc.bootstrap_sigma_se(e, n_boot=200, seed=5, return_samples=True)
+        b = mc.bootstrap_sigma_se(e + 7.0, n_boot=200, seed=5)
+        self.assertEqual(sa.shape, (200,))
+        self.assertAlmostEqual(a, b, places=10)
+        self.assertNotEqual(a, mc.bootstrap_sigma_se(e, n_boot=200, seed=6))
+        c = mc.bootstrap_sigma_se(e, n_boot=200, seed=5, max_block=1000)
+        self.assertAlmostEqual(a, c, places=12)
+
+    def test_errors_and_nan_rows(self):
+        with self.assertRaises(ValueError):
+            mc.bootstrap_sigma_se(np.zeros((10, 3)))
+        with self.assertRaises(ValueError):
+            mc.bootstrap_sigma_se(np.zeros((1, 2)))
+        with self.assertRaises(ValueError):
+            mc.bootstrap_sigma_se(np.zeros((10, 2)), n_boot=1)
+        e = np.random.default_rng(4).normal(size=(100, 2))
+        e2 = np.vstack([e, [[np.nan, 0.0]]])
+        self.assertAlmostEqual(mc.bootstrap_sigma_se(e2, n_boot=100),
+                               mc.bootstrap_sigma_se(e, n_boot=100), places=12)
+
+    def test_run_mc_has_bootstrap_se(self):
+        p = tcp_model(50.0)
+        res = mc.run_mc(lambda C: est.lms_tcp(C, 50.0, 300.0), p, [2.0, 1.0], 200, 2000)
+        self.assertAlmostEqual(res["sigma_se_boot"] / res["sigma_err"], 1.0, delta=0.2)
+        r0 = mc.run_mc(lambda C: est.lms_tcp(C, 50.0, 300.0), p, [2.0, 1.0], 200, 100, n_boot=0)
+        self.assertTrue(np.isnan(r0["sigma_se_boot"]))
+
+
 if __name__ == "__main__":
     unittest.main()

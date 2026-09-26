@@ -1,0 +1,135 @@
+{
+ "camera_sigma_nm": {
+  "unit": "nm",
+  "value": 3.1622776601683795
+ },
+ "fig6_crb_all_photons_L25_N1000_nm": {
+  "unit": "nm",
+  "value": 0.2509361567541259
+ },
+ "fig6_iterative_over_crb_all_photons_N1000": {
+  "unit": "",
+  "value": 2.023380260387178
+ },
+ "fig6_iterative_sigma_N1000_nm": {
+  "se": 0.0026827290924441322,
+  "unit": "nm",
+  "value": 0.507739266193721
+ },
+ "fig6_iterative_sigma_N2000_nm": {
+  "se": 0.001933114691159953,
+  "unit": "nm",
+  "value": 0.35440018821417946
+ },
+ "fig6_iterative_sigma_N250_nm": {
+  "se": 0.01374922165278263,
+  "unit": "nm",
+  "value": 1.15802458899663
+ },
+ "fig6_iterative_sigma_N4000_nm": {
+  "se": 0.0013213293986075526,
+  "unit": "nm",
+  "value": 0.24952128221278316
+ },
+ "fig6_iterative_sigma_N500_nm": {
+  "se": 0.004167482898628615,
+  "unit": "nm",
+  "value": 0.7358984629906175
+ },
+ "fig6_iterative_sigma_N8000_nm": {
+  "se": 0.0009500556451380786,
+  "unit": "nm",
+  "value": 0.17627377253391108
+ },
+ "fig6_n_rep": {
+  "unit": "",
+  "value": 10000
+ },
+ "fig6_ratio_to_camera_N1000": {
+  "se": 0.000848353427731987,
+  "unit": "",
+  "value": 0.160561253867469
+ },
+ "fig6_ratio_to_camera_N2000": {
+  "se": 0.0008645151715474333,
+  "unit": "",
+  "value": 0.158492582417125
+ },
+ "fig6_ratio_to_camera_N250": {
+  "se": 0.0021739428238648937,
+  "unit": "",
+  "value": 0.1830997643854856
+ },
+ "fig6_ratio_to_camera_N4000": {
+  "se": 0.0008356820877880765,
+  "unit": "",
+  "value": 0.15781111529561076
+ },
+ "fig6_ratio_to_camera_N500": {
+  "se": 0.0009318775056401448,
+  "unit": "",
+  "value": 0.16455189877846338
+ },
+ "fig6_ratio_to_camera_N8000": {
+  "se": 0.0008497556019744645,
+  "unit": "",
+  "value": 0.1576640552144642
+ },
+ "iterative_adaptive_sigma_nm": {
+  "se": 0.0027064022138170185,
+  "unit": "nm",
+  "value": 0.47954956650539093
+ },
+ "iterative_no_recenter_sigma_nm_ARTEFACT": {
+  "se": 0.04504230041289436,
+  "unit": "nm",
+  "value": 8.144742302880484
+ },
+ "iterative_ratio_max": {
+  "unit": "",
+  "value": 0.1830997643854856
+ },
+ "iterative_ratio_min": {
+  "unit": "",
+  "value": 0.1576640552144642
+ },
+ "iterative_ratio_to_camera_N1000": {
+  "se": 0.000848353427731987,
+  "unit": "",
+  "value": 0.160561253867469
+ },
+ "iterative_sbr10_sigma_nm": {
+  "se": 0.003272144622969625,
+  "unit": "nm",
+  "value": 0.6164818957983189
+ },
+ "iterative_sigma_nm": {
+  "se": 0.0026827290924441322,
+  "unit": "nm",
+  "value": 0.507739266193721
+ },
+ "iterative_slope_N_ge_500": {
+  "unit": "",
+  "value": -0.5148302737955811
+ },
+ "iterative_slope_N_ge_500_ci95_hi": {
+  "unit": "",
+  "value": -0.5096328822156363
+ },
+ "iterative_slope_N_ge_500_ci95_lo": {
+  "unit": "",
+  "value": -0.5195801016871089
+ },
+ "iterative_slope_all": {
+  "unit": "",
+  "value": -0.5365320215232086
+ },
+ "iterative_slope_all_ci95_hi": {
+  "unit": "",
+  "value": -0.5312136414547969
+ },
+ "iterative_slope_all_ci95_lo": {
+  "unit": "",
+  "value": -0.5423538157129608
+ }
+}

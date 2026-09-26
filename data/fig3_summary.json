@@ -1,0 +1,98 @@
+{
+ "crb_center_lg_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.6050955712820285
+ },
+ "crb_center_point_S27_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.8024719062965908
+ },
+ "crb_center_sbr10_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.9600587058960406
+ },
+ "crb_center_sbr10_limit_L50_N100_nm": {
+  "unit": "nm",
+  "value": 1.9600587033709
+ },
+ "fig3_map_center_L100_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 3.363411105379956
+ },
+ "fig3_map_center_L100_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 4.165446637051922
+ },
+ "fig3_map_center_L50_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 1.6050955712820285
+ },
+ "fig3_map_center_L50_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 1.9600587100365339
+ },
+ "fig3_map_max_inside_tcp_L100_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 9.664172632802941
+ },
+ "fig3_map_max_inside_tcp_L100_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 13.68276748522501
+ },
+ "fig3_map_max_inside_tcp_L50_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 5.249724132653883
+ },
+ "fig3_map_max_inside_tcp_L50_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 6.686261805403455
+ },
+ "fig3_map_min_L100_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 3.317536350427372
+ },
+ "fig3_map_min_L100_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 4.066428405906897
+ },
+ "fig3_map_min_L50_N100_nobkg_nm": {
+  "unit": "nm",
+  "value": 1.5919159871334552
+ },
+ "fig3_map_min_L50_N100_sbr10_nm": {
+  "unit": "nm",
+  "value": 1.940306323219389
+ },
+ "fig3_point0_numeric_rel_dev_S27": {
+  "unit": "",
+  "value": 2.1125594606985487e-09
+ },
+ "fig3_point0_numeric_rel_dev_S31_sbr10": {
+  "unit": "",
+  "value": 2.1124333393629513e-09
+ },
+ "fig3_ratio_numeric_vs_closed_max_rel_dev": {
+  "unit": "",
+  "value": 1.0176387066351822e-08
+ },
+ "limit_to_point_ratio_L100": {
+  "unit": "",
+  "value": 0.8780494058418923
+ },
+ "limit_to_point_ratio_L150": {
+  "unit": "",
+  "value": 0.8552671573299861
+ },
+ "limit_to_point_ratio_L5": {
+  "unit": "",
+  "value": 0.8943884373303029
+ },
+ "limit_to_point_ratio_L50": {
+  "unit": "",
+  "value": 0.8904968571447623
+ },
+ "limit_to_point_ratio_quadratic": {
+  "unit": "",
+  "value": 0.8944271909999159
+ }
+}

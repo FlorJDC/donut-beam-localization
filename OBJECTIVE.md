@@ -63,7 +63,9 @@ Decisiones que el equipo toma y declara en el manuscrito:
   sesgado y "superficiente"; ese comportamiento se reporta aparte como resultado.
 - Parámetros ópticos por defecto: λ = 640 nm, NA = 1.4, n = 1.518 (ajustables).
 - Monte Carlo: semilla fija (42) registrada en cada salida; número de repeticiones suficiente
-  para que el error estadístico de cada número citado sea < 2 %.
+  para que el error estadístico de cada número citado sea < 2 %; si la dispersión es
+  intrínseca (p. ej. entre patrones de desalineación al azar) y supera ese valor, el número se
+  cita con su error estándar explícito.
 
 
 DISCIPLINA

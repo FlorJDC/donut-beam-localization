@@ -208,5 +208,38 @@ class TestFarField(unittest.TestCase):
         self.assertTrue(np.isnan(sx) and np.isnan(sy) and np.isnan(iso))
 
 
+class TestLimitPolicyBroadcastN(unittest.TestCase):
+    """R2 refuted: crb(p, [0,0], array([100,400]), zero_policy='limit') raised ValueError."""
+
+    def test_one_point_array_N(self):
+        p = tcp_model(50.0)
+        N = np.array([100, 400])
+        got = fisher.crb(p, [0.0, 0.0], N, zero_policy="limit")
+        self.assertEqual(np.shape(got), (2,))
+        for i, n in enumerate(N):
+            self.assertAlmostEqual(got[i] / fisher.crb_limit(p, int(n)), 1.0, delta=1e-12)
+        self.assertAlmostEqual(got[0] / got[1], 2.0, delta=1e-12)          # 1/sqrt(N)
+        pt = fisher.crb(p, [0.0, 0.0], N)
+        self.assertEqual(np.shape(pt), (2,))
+        self.assertAlmostEqual(pt[0] / s27(50.0, 100, 300.0), 1.0, delta=1e-4)
+
+    def test_outer_broadcast_points_by_N(self):
+        p = tcp_model(50.0)
+        pts = np.array([[0.0, 0.0], [3.0, 1.0]])
+        N = np.array([[100], [400], [900]])
+        got = fisher.crb(p, pts, N, zero_policy="limit")
+        self.assertEqual(got.shape, (3, 2))
+        for i, n in enumerate((100, 400, 900)):
+            self.assertAlmostEqual(got[i, 0] / fisher.crb_limit(p, n), 1.0, delta=1e-12)
+            self.assertAlmostEqual(got[i, 1] / float(fisher.crb(p, [3.0, 1.0], n)), 1.0,
+                                   delta=1e-12)
+
+    def test_no_zero_with_array_N_unchanged(self):
+        p = tcp_model(50.0, sbr=10.0)
+        N = np.array([100, 400])
+        np.testing.assert_allclose(fisher.crb(p, [0.0, 0.0], N, zero_policy="limit"),
+                                   fisher.crb(p, [0.0, 0.0], N), rtol=1e-14)
+
+
 if __name__ == "__main__":
     unittest.main()

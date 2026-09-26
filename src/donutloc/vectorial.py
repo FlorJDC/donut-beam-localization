@@ -76,7 +76,7 @@ Quadrature: trapezoid in theta on ``n_theta`` points (default 801, note B sectio
 import numpy as np
 from scipy.special import jv
 from scipy.optimize import minimize_scalar, minimize
-from scipy.interpolate import RegularGridInterpolator
+from scipy.interpolate import RegularGridInterpolator, CubicSpline
 
 _LN2 = np.log(2.0)
 _POLS = ("circular", "linear")
@@ -405,8 +405,35 @@ def lg_equivalent_fwhm(beam_opts=None, match="curvature"):
     raise ValueError("match must be 'curvature' or 'diameter', got %r" % (match,))
 
 
+_N_HARM = 4          # |harmonic| of I(rho, phi) for linear pol.: field orders -1..3 -> I up to 4
+_M_PHI = 16          # azimuthal samples for the harmonic table (exact for |n| <= 7)
+
+
+def _harmonic_table(r, opt):
+    """Complex azimuthal harmonics of the (unnormalized) intensity on the radii ``r`` (1-D, nm):
+    ``h_n(rho) = (1/2pi) int I(rho, phi) e^{-i n phi} dphi`` for n = 0.._N_HARM, from ``_M_PHI``
+    equispaced phi samples (exact: I has a finite number of harmonics, |n| <= 4).  Returns
+    ``g`` of shape (n_harm+1, n_r) with ``g_n(rho^2) = h_n(rho) / rho^n``, so that
+    ``I(x, y) = g_0 + 2 Re sum_{n>=1} g_n(rho^2) (x + i y)^n`` exactly; ``g_n`` is a smooth
+    function of rho^2.  The rho = 0 node of n >= 1 is linearly extrapolated in rho^2 from
+    the next two nodes (``r[0]`` must be 0)."""
+    ph = 2.0 * np.pi * np.arange(_M_PHI) / _M_PHI
+    R, PH = np.meshgrid(r, ph, indexing="ij")
+    I = intensity(R * np.cos(PH), R * np.sin(PH), **opt)          # (n_r, M)
+    h = np.fft.fft(I, axis=1)[:, :_N_HARM + 1].T / _M_PHI          # (n_harm+1, n_r)
+    g = np.empty_like(h)
+    g[0] = h[0]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        for n in range(1, _N_HARM + 1):
+            g[n] = h[n] / r ** n
+    s2 = r * r
+    for n in range(1, _N_HARM + 1):
+        g[n, 0] = g[n, 1] - (g[n, 2] - g[n, 1]) * s2[1] / (s2[2] - s2[1])
+    return g
+
+
 def make_vectorial_beam(rho_max=1500.0, d_rho=1.0, eps=0.0, mode="interp", grid_step=5.0,
-                        fwhm_eps=None, **opt):
+                        fwhm_eps=None, linear_method="harmonic", **opt):
     """Vectorized beam ``f(x, y)`` with peak (ring maximum) 1, compatible with
     ``photons.make_model``.
 
@@ -423,15 +450,29 @@ def make_vectorial_beam(rho_max=1500.0, d_rho=1.0, eps=0.0, mode="interp", grid_
         to the diameter-matched LG fwhm (:func:`lg_equivalent_fwhm`, match="diameter").
     mode : "interp" (tabulated) or "exact" (evaluates the Bessel integrals at every call;
         slow for big arrays, exact for CRB computations; no rho_max cut).
+    linear_method : {"harmonic", "cartesian"}
+        Tabulation for ``polarization="linear"`` in ``mode="interp"``.
+
+        * ``"harmonic"`` (default): the linear-polarization intensity has a finite number of
+          azimuthal harmonics (the field carries e^{i p phi} with p = -1..3, so I carries
+          |n| <= 4; only even n are non-zero).  Writing
+          ``I(x, y) = g_0(rho^2) + 2 Re sum_{n=1}^{4} g_n(rho^2) (x + i y)^n``, the smooth radial
+          coefficients ``g_n`` are tabulated on the radial step ``d_rho`` and interpolated with
+          a cubic spline in ``rho^2`` (continuous gradient; a piecewise-linear table would give
+          piecewise-constant gradients and CRB errors of a few 0.1 %).  Intensity error
+          ~1e-6 relative; CRB within ~1e-4 of ``mode="exact"`` (tests/test_vectorial.py).
+        * ``"cartesian"``: bilinear interpolation of a 2-D Cartesian table of step
+          ``grid_step``.  **Biased for CRB computations** (piecewise-constant gradients: with
+          grid_step = 5, L = 50, N = 100 the CRB at (7, 3) is +7.4 % and the centre limit
+          -3.3 % off); emits a ``UserWarning``.  Kept only for backward compatibility.
     grid_step : float
-        Cartesian grid step (nm, <= 5 recommended) of the 2-D table for "linear" (interpolated with
-        ``scipy.interpolate.RegularGridInterpolator``, linear, 0 outside the square
+        Cartesian grid step (nm) of ``linear_method="cartesian"`` (0 outside the square
         ``|x|, |y| <= rho_max``).
     opt : focal-field options (``z``, ``wavelength``, ``NA``, ``n``, ``filling``,
         ``polarization``, ``handedness``, ``charge``, ``n_theta``, ``pol_angle``).
 
     The returned function carries attributes ``kind="vectorial"``, ``opts``, ``I_max``, ``eps``,
-    ``fwhm_eps``, ``mode``.
+    ``fwhm_eps``, ``mode``, ``linear_method``.
     """
     _split_opts(opt)
     opt.pop("method", None)
@@ -467,7 +508,39 @@ def make_vectorial_beam(rho_max=1500.0, d_rho=1.0, eps=0.0, mode="interp", grid_
         def base(x, y):
             s2 = np.asarray(x, float) ** 2 + np.asarray(y, float) ** 2
             return np.interp(s2, s_tab, I_tab, right=0.0)
-    else:
+    elif linear_method == "harmonic":
+        if not float(d_rho) > 0:
+            raise ValueError("d_rho must be > 0")
+        r = np.arange(0.0, rho_max + 0.5 * float(d_rho), float(d_rho))
+        if r.size < 3:
+            raise ValueError("rho_max / d_rho too small for the harmonic table")
+        s_tab = r * r
+        G = _harmonic_table(r, opt) / Imax                      # (n_harm+1, n_r) complex
+        Y = np.concatenate([G.real, G.imag], axis=0).T           # (n_r, 2 (n_harm+1))
+        spl = CubicSpline(s_tab, Y, axis=0, bc_type="not-a-knot", extrapolate=False)
+        s_max = s_tab[-1]
+        nh = _N_HARM + 1
+
+        def base(x, y):
+            x = np.asarray(x, float)
+            y = np.asarray(y, float)
+            s2 = x * x + y * y
+            inside = s2 <= s_max
+            V = spl(np.where(inside, s2, 0.0))                   # (..., 2 nh)
+            zc = x + 1j * y
+            out = V[..., 0].copy()
+            zn = np.ones_like(zc)
+            for n in range(1, nh):
+                zn = zn * zc
+                out = out + 2.0 * ((V[..., n] + 1j * V[..., nh + n]) * zn).real
+            return np.where(inside, out, 0.0)
+    elif linear_method == "cartesian":
+        import warnings
+        warnings.warn("make_vectorial_beam(polarization='linear', linear_method='cartesian'): "
+                      "bilinear Cartesian interpolation gives piecewise-constant gradients and "
+                      "biases the CRB by several % (e.g. +7.4 % at (7, 3), L=50, grid_step=5); "
+                      "use linear_method='harmonic' (default) or mode='exact'", UserWarning,
+                      stacklevel=2)
         if not float(grid_step) > 0:
             raise ValueError("grid_step must be > 0")
         g = np.arange(-rho_max, rho_max + 0.5 * grid_step, float(grid_step))
@@ -482,6 +555,9 @@ def make_vectorial_beam(rho_max=1500.0, d_rho=1.0, eps=0.0, mode="interp", grid_
             sh = np.broadcast(x, y).shape
             pts = np.stack([np.broadcast_to(x, sh).ravel(), np.broadcast_to(y, sh).ravel()], -1)
             return rgi(pts).reshape(sh)
+    else:
+        raise ValueError("linear_method must be 'harmonic' or 'cartesian', got %r"
+                         % (linear_method,))
 
     def f(x, y):
         out = base(x, y)
@@ -495,6 +571,7 @@ def make_vectorial_beam(rho_max=1500.0, d_rho=1.0, eps=0.0, mode="interp", grid_
     f.eps = eps
     f.fwhm_eps = fe
     f.mode = mode
+    f.linear_method = None if (circ or mode == "exact") else linear_method
     return f
 
 

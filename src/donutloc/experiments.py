@@ -14,7 +14,9 @@ Statistics convention (same as the CRB, Balzarotti2017 Eq. S13): for a set of er
 * ``bias  = mean(e)`` (2,),
 * ``sigma = sqrt((var_x + var_y)/2)`` (ddof = 1),
 * ``rmse  = sqrt(mean |e|^2 / 2)`` (per axis, includes bias),
-* standard error of sigma ``sigma_se = sigma / (2 sqrt(R))`` (two axes, Gaussian errors).
+* standard error of sigma ``sigma_se``: nonparametric bootstrap
+  (``montecarlo.bootstrap_sigma_se``); the Gaussian formula ``sigma / (2 sqrt(R))`` is kept as
+  ``sigma_se_gauss`` (it underestimates the SE for heavy-tailed errors, e.g. iterative MINFLUX).
 
 Camera reference: the ideal camera ``sigma_PSF / sqrt(N)`` with ``sigma_PSF = 100 nm``
 (Balzarotti2017 p. 1 and p. 32), computed inline.
@@ -42,11 +44,14 @@ def _default_beam(beam, fwhm=DEFAULT_FWHM):
     return beams.make_beam("donut", fwhm=fwhm) if beam is None else beam
 
 
-def error_stats(est, r_true):
+def error_stats(est, r_true, n_boot=1000, seed=DEFAULT_SEED):
     """Bias / sigma / rmse of estimates ``est`` (R, 2) w.r.t. ``r_true`` ((2,) or (R, 2)).
 
-    Returns a dict with ``bias`` (2,), ``bias_abs`` (|bias|), ``sigma``, ``rmse``, ``sigma_se``
-    (= sigma / (2 sqrt R)), ``bias_se`` (2,) (= std / sqrt R) and ``n``.
+    Returns a dict with ``bias`` (2,), ``bias_abs`` (|bias|), ``sigma``, ``rmse``,
+    ``sigma_se`` (bootstrap standard error of sigma, :func:`montecarlo.bootstrap_sigma_se` with
+    ``n_boot`` resamples and ``seed``; robust to heavy tails), ``sigma_se_gauss``
+    (= sigma / (2 sqrt R), valid only for Gaussian errors), ``bias_se`` (2,) (= std / sqrt R)
+    and ``n``.  ``n_boot=0`` skips the bootstrap and sets ``sigma_se = sigma_se_gauss``.
     """
     e = np.asarray(est, float) - np.asarray(r_true, float)
     R = e.shape[0]
@@ -55,12 +60,16 @@ def error_stats(est, r_true):
     bias = e.mean(axis=0)
     var = e.var(axis=0, ddof=1)
     sigma = float(np.sqrt(0.5 * var.sum()))
+    se_g = sigma / (2.0 * np.sqrt(R))
+    se_b = (montecarlo.bootstrap_sigma_se(e, n_boot=n_boot, seed=seed) if int(n_boot) >= 2
+            else se_g)
     return {
         "bias": bias,
         "bias_abs": float(np.hypot(bias[0], bias[1])),
         "bias_se": np.sqrt(var / R),
         "sigma": sigma,
-        "sigma_se": sigma / (2.0 * np.sqrt(R)),
+        "sigma_se": se_b,
+        "sigma_se_gauss": se_g,
         "rmse": float(np.sqrt(0.5 * np.mean(np.sum(e * e, axis=1)))),
         "n": int(R),
     }
@@ -102,10 +111,17 @@ def l_schedule(n_iter=4, L0=150.0, L_min=None, rule="fixed", N_k=None, beam=None
     * ``rule="fixed"``: geometric from ``L0`` to ``L_min``, ``L_k = L0 (L_min/L0)^(k/(n-1))``.
     * ``rule="adaptive"``: ``L_{k+1} = min(L_k, max(L_min, kappa * sigma_k))`` where
       ``sigma_k`` is the centre CRB (r -> 0 limit) of iteration k (TCP of diameter ``L_k``,
-      ``N_k[k]`` photons).  The default ``kappa = 6`` makes the next pattern radius
-      ``L_{k+1}/2 = 3 sigma_k``, which contains the true position with ~99 % probability for a
-      2D Gaussian error of per-axis sigma_k (radial 99 % quantile = 3.03 sigma).  This rule is
-      our own design choice: no iterative recipe is given in the sources
+      ``N_k[k]`` photons).  The default ``kappa = 6`` sets the next pattern radius to
+      ``L_{k+1}/2 = 3 sigma_k``.  Caveat: ``sigma_k`` is the *centre* CRB, which
+      **underestimates** the real error of iteration k, because the emitter is not at the
+      pattern centre (up to ``L0/4`` off-centre in iteration 0, where the CRB is larger) and the
+      MLE is not exactly efficient.  Measured with the defaults (``L0 = 150``, 4 x 250 photons,
+      no background, seed 42, 10^4 emitters; ``tests/test_experiments.py``): the centre CRB of
+      iteration 0 is 3.47 nm while the real per-axis error is 4.26 nm; ``3 sigma_k`` alone would
+      contain only ~94 % of the emitters, and with the ``L_min = 25 nm`` floor (``L_1/2 = 12.5``
+      nm) **~97 %** of the emitters (2.65 % outside) lie inside the next pattern radius -- not
+      the 99 % a 2D Gaussian of per-axis sigma_k would suggest.  This rule is our own design
+      choice: no iterative recipe is given in the sources
       (docs/literature/A_minflux_theory.md section 5).  The schedule is deterministic (same for
       every repetition).
 
@@ -163,8 +179,9 @@ def iterative_minflux(N_total, L_schedule=None, n_iter=4, L0=150.0, L_min=None,
     the model of the TCP centred on the origin evaluated at ``r - c``.  All repetitions are
     therefore simulated and estimated as one batch in pattern-relative coordinates.
 
-    Returns a dict with ``sigma``, ``bias``, ``rmse``, ``sigma_se`` (final, per axis, w.r.t. the
-    truth); per-iteration arrays ``L``, ``N_k``, ``sigma_iter``, ``rmse_iter``, ``bias_iter``,
+    Returns a dict with ``sigma``, ``bias``, ``rmse``, ``sigma_se`` (bootstrap, 1000 resamples),
+    ``sigma_se_gauss`` (final, per axis, w.r.t. the truth); per-iteration arrays ``L``, ``N_k``,
+    ``sigma_iter``, ``sigma_se_iter``, ``rmse_iter``, ``bias_iter``,
     ``crb_center_iter``, ``sbr_center``; ``camera_sigma = sigma_psf/sqrt(N_total)``,
     ``ratio_to_camera = sigma/camera_sigma``, ``crb_all_photons_Lmin`` (centre CRB if all
     N_total photons were spent at the last L), ``r_true``, ``estimates`` and ``params``.
@@ -226,12 +243,14 @@ def iterative_minflux(N_total, L_schedule=None, n_iter=4, L0=150.0, L_min=None,
     return {
         "sigma": fin["sigma"],
         "sigma_se": fin["sigma_se"],
+        "sigma_se_gauss": fin["sigma_se_gauss"],
         "bias": fin["bias"],
         "bias_abs": fin["bias_abs"],
         "rmse": fin["rmse"],
         "L": np.asarray(Ls, float),
         "N_k": Nk,
         "sigma_iter": np.array([s["sigma"] for s in stats]),
+        "sigma_se_iter": np.array([s["sigma_se"] for s in stats]),
         "rmse_iter": np.array([s["rmse"] for s in stats]),
         "bias_iter": np.array([s["bias"] for s in stats]),
         "crb_center_iter": crb_iter,
@@ -430,7 +449,12 @@ def misalignment_study(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr
     * ``bias_abs_se``: std over patterns / sqrt(n_patterns),
     * ``bias_chi2``: mean over patterns of |bias|^2 / (var_x/R + var_y/R); its expectation is
       1 for an unbiased estimator (sd ~ 1/sqrt(n_patterns)), >> 1 for a biased one,
-    * ``sigma_mean``: mean over patterns of sigma, ``sigma_se``: sigma_mean / (2 sqrt(R P)),
+    * ``sigma_mean``: mean over patterns of sigma,
+    * ``sigma_se``: standard error of ``sigma_mean`` = std over patterns of the per-pattern
+      sigmas / sqrt(n_patterns) (includes the pattern-to-pattern variance, which dominates;
+      NaN if n_patterns = 1),
+    * ``sigma_se_within``: the within-pattern Gaussian formula sigma_mean / (2 sqrt(R P)); it
+      ignores the between-pattern variance and underestimates the SE (kept for reference),
     * ``rmse``: sqrt(mean over patterns of rmse^2);
 
     plus ``crb_honest`` (n_d, n_pos): mean over patterns of the honest CRB (r -> r_true limit,
@@ -462,7 +486,8 @@ def misalignment_study(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr
 
     est_naive = make_est(p_naive)
     shape = (deltas.size, pos.shape[0])
-    keys = ("bias_abs_mean", "bias_abs_se", "bias_chi2", "sigma_mean", "sigma_se", "rmse")
+    keys = ("bias_abs_mean", "bias_abs_se", "bias_chi2", "sigma_mean", "sigma_se",
+            "sigma_se_within", "rmse")
     res = {m: {k: np.empty(shape) for k in keys} for m in ("honest", "naive")}
     crb_h = np.empty(shape)
     floor = np.empty(shape)
@@ -485,7 +510,7 @@ def misalignment_study(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr
                 if not np.array_equal(outs["honest"]["estimates"], outs["naive"]["estimates"]):
                     identical[i] = False
                 for m, o in outs.items():
-                    st = error_stats(o["estimates"], pos[q])
+                    st = error_stats(o["estimates"], pos[q], n_boot=0)
                     se2 = np.sum(st["bias_se"] ** 2)
                     acc[m]["b"].append(st["bias_abs"])
                     acc[m]["chi"].append(st["bias_abs"] ** 2 / se2 if se2 > 0 else np.nan)
@@ -500,7 +525,9 @@ def misalignment_study(displacement_list, L=100.0, N=500, fwhm=DEFAULT_FWHM, sbr
                                         if P > 1 else np.nan)
             res[m]["bias_chi2"][i] = acc[m]["chi"].mean(axis=0)
             res[m]["sigma_mean"][i] = acc[m]["s"].mean(axis=0)
-            res[m]["sigma_se"][i] = acc[m]["s"].mean(axis=0) / (2.0 * np.sqrt(R * P))
+            res[m]["sigma_se"][i] = (acc[m]["s"].std(axis=0, ddof=1) / np.sqrt(P)
+                                     if P > 1 else np.nan)
+            res[m]["sigma_se_within"][i] = acc[m]["s"].mean(axis=0) / (2.0 * np.sqrt(R * P))
             res[m]["rmse"][i] = np.sqrt(acc[m]["r2"].mean(axis=0))
         crb_h[i] = acc_crb / P
         floor[i] = res["honest"]["sigma_mean"][i] * np.sqrt(np.pi / (2.0 * R))
