@@ -1,0 +1,22 @@
+# Job data is created per-project by the `job` tool (jobs/) and by the interactive mode
+# (equipo/); it is local state, never part of the template. In a real project you may choose
+# to version it: delete these lines (transcripts can be large).
+jobs/*
+!jobs/.gitkeep
+equipo/*
+!equipo/.gitkeep
+
+# Filled-in objective: belongs to each concrete project, not to the template
+# (delete this line in your project if you want to version it).
+OBJECTIVE.md
+
+# Python / OS cruft
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local environment logs
+*.log
+
+# Local, uncommitted policy override next to the tool (the project policy is .agent-team/policy.json)
+agent-team/policy.json
