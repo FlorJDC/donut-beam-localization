@@ -54,7 +54,10 @@ the total signal over the total background summed over the $K$ exposures at the 
 (Eq.~S29), so for a fixed background it depends on the position and on the pattern. In all our
 simulations, however, we hold the SBR fixed at the quoted value at every position (Eq.~S30 with
 constant SBR), which implies a position-dependent background; with a fixed background the SBR
-would instead vary with position (Eq.~S29) and, at the centre, fall as $L$ decreases (Eq.~S32). When the beam carries a pedestal
+would instead vary with position (Eq.~S29) and, at the centre, fall as $L$ decreases (Eq.~S32).
+A background constant per exposure is the model of instrument-level simulators such as
+SimuFLUX \cite{MarinRies2026}; we compare the two choices for the estimators
+(Sec.~\ref{sec:estimators}) and for iterative MINFLUX (Sec.~\ref{sec:iterative}). When the beam carries a pedestal
 (finite zero depth, Sec.~\ref{sec:nonideal}) the SBR refers to the signal of the full beam,
 pedestal included. For the camera (Sec.~\ref{sec:camera}) we use Balzarotti's $\sbr_c$, total
 signal over the background \emph{per pixel}.

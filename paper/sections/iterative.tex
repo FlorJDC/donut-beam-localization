@@ -20,6 +20,21 @@ would give \pnum{iterative_crb_all_photons_L25_N1000_nm}\src{iterative_crb_all_p
 the iterations pay for their field of view with photons spent at large $L$
 [Fig.~\ref{fig:iterative}(a,c)].
 
+\emph{Fixed SBR versus a background constant per exposure.} The $\sbr=10$ run keeps the SBR
+fixed in every iteration. With a background constant per exposure at constant excitation power,
+the centre SBR falls approximately as $L^2$ (exactly as $L^2e^{-\ln2\,L^2/\fwhm^2}$, Eq.~S32): if it is $10$ in the first iteration ($L=150$\,nm) it is
+\pnum{bgphys_iter_matchL150_sbr_last}\src{bgphys_iter_matchL150_sbr_last} in the last one, and
+the final precision degrades to
+$\pnum{bgphys_iter_matchL150_sigma_nm}\pm\pnumse{bgphys_iter_matchL150_sigma_nm}$\src{bgphys_iter_matchL150_sigma_nm}\,nm
+at $N_{\mathrm{tot}}=1000$. If instead the background is set so that the SBR is $10$ in the
+last iteration ($L=25$\,nm; SBR \pnum{bgphys_iter_matchL25_sbr_first}\src{bgphys_iter_matchL25_sbr_first}
+in the first), the result,
+$\pnum{bgphys_iter_matchL25_sigma_nm}\pm\pnumse{bgphys_iter_matchL25_sigma_nm}$\src{bgphys_iter_matchL25_sigma_nm}\,nm,
+is close to the fixed-SBR value. A fixed SBR across iterations therefore describes a scheme in
+which the signal-to-background ratio at small $L$ is maintained, e.g.\ by raising the
+excitation power as $L$ shrinks, as in the example iteration sequences distributed with
+SimuFLUX\src{lit_simuflux_power_ramp} \cite{MarinRies2026}; at constant power the background dominates the last iterations.
+
 \emph{Photon scaling.} Over $N_{\mathrm{tot}}=250$, $500$, $1000$, $2000$, $4000$, $8000$ the
 final precision is \pnum{iterative_sigma_N250_nm}\src{iterative_sigma_N250_nm},
 \pnum{iterative_sigma_N500_nm}\src{iterative_sigma_N500_nm},

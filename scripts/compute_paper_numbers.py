@@ -561,6 +561,141 @@ def adaptive_coverage_section(R, quick):
           "centre CRB of iteration 0 used by the adaptive rule (underestimates the real error)")
 
 
+def physical_background_section(R, quick):
+    """Fixed SBR (Eq. S30, our default) vs a physical background constant per exposure (Eq. S28)
+    matched at the TCP centre (SBR_c = 10): fig 5 x-sweep points and the iterative protocol."""
+    from donutloc import beams, estimators, experiments, fisher, montecarlo, patterns, photons
+    L, N, sbr0 = C.L_REF, C.N_REF, C.SBR_MLE
+    beam = beams.make_beam("donut", fwhm=C.FWHM)
+    cen = patterns.tcp_centers(L)
+
+    def bg_for(centers):
+        # SBR_c = sum_i I_i(0) / (K b)  (Eq. S29 at the centre)
+        return float(photons.intensities(np.zeros(2), centers, beam).sum()) / (centers.shape[0] * sbr0)
+
+    bg = bg_for(cen)
+    models = {"fixed": photons.make_model(cen, beam, sbr=sbr0),
+              "phys": photons.make_model(cen, beam, bg_per_exposure=bg)}
+    reps = 1000 if quick else C.N_REP_MLE
+    rad = C.MLE_RADIUS_SWEEP_OVER_L * L
+    base = ("L=50, N=100, fwhm=300, %d reps, seed 42, bootstrap SE; 'phys' = background constant "
+            "per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position "
+            "(Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s "
+            "factor for SBR=10" % reps)
+    for x in C.BGPHYS_X:
+        r = np.array([x, 0.0])
+        xt = "x%d" % x
+        R.add("bgphys_sbr_%s" % xt, float(photons.sbr_at(r, cen, beam, bg)), "",
+              "SBR at r=(%g,0) with the physical background matched to SBR=10 at the centre "
+              "(L=50, fwhm=300)" % x)
+        for mk, p_fn in models.items():
+            crb = float(fisher.crb(p_fn, r, N))
+            R.add("bgphys_%s_crb_%s_nm" % (mk, xt), crb, "nm", "CRB at r=(%g,0); %s" % (x, base))
+            fns = {"mle": lambda c, p=p_fn: estimators.mle(c, p, search_radius=rad),
+                   "lms": lambda c: estimators.lms_tcp(c, L, C.FWHM, sbr=sbr0),
+                   "mlms": lambda c: estimators.mlms_tcp(c, L, C.FWHM, sbr=sbr0)}
+            for ek, fn in fns.items():
+                mc = montecarlo.run_mc(fn, p_fn, r, N, reps, seed=C.SEED, n_boot=0)
+                e = mc["estimates"] - r
+                s = montecarlo.sigma_of_errors(e)
+                se = montecarlo.bootstrap_sigma_se(e, n_boot=C.N_BOOT, seed=C.SEED)
+                R.add("bgphys_%s_%s_bias_x_%s_nm" % (mk, ek, xt), float(e[:, 0].mean()), "nm",
+                      "%s bias along x at r=(%g,0), %s background; %s" % (ek, x, mk, base),
+                      se=float(e[:, 0].std(ddof=1) / np.sqrt(e.shape[0])))
+                R.add("bgphys_%s_%s_sigma_over_crb_%s" % (mk, ek, xt), s / crb, "",
+                      "%s sigma/CRB at r=(%g,0), %s background; %s" % (ek, x, mk, base),
+                      se=se / crb)
+    # iterative protocol (fig 6) with a physical background matched at L0 or at L_min
+    ireps = 2000 if quick else C.ITER_N_REP
+    for Lm in C.BGPHYS_ITER_MATCH_L:
+        b_it = bg_for(patterns.tcp_centers(Lm))
+        kw = dict(C.ITER)
+        res = experiments.iterative_minflux(C.ITER_N_TOTAL, n_rep=ireps, seed=C.SEED,
+                                            sigma_psf=C.SIGMA_PSF, bg_per_exposure=b_it, **kw)
+        err = res["estimates"] - res["r_true"]
+        se = montecarlo.bootstrap_sigma_se(err, n_boot=C.N_BOOT, seed=C.SEED)
+        t = "L%d" % Lm
+        ib = ("iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, "
+              "MLE), N_tot=1000, %d reps, seed 42, with a background constant per exposure fixed "
+              "so that SBR=10 at the centre of the L=%g pattern" % (ireps, Lm))
+        R.add("bgphys_iter_match%s_sigma_nm" % t, float(res["sigma"]), "nm",
+              "final sigma; " + ib, se=se)
+        R.add("bgphys_iter_match%s_sbr_first" % t, float(res["sbr_center"][0]), "",
+              "centre SBR of the first iteration (L=150); " + ib)
+        R.add("bgphys_iter_match%s_sbr_last" % t, float(res["sbr_center"][-1]), "",
+              "centre SBR of the last iteration (L=25); " + ib)
+
+
+def misspecified_estimator_section(R):
+    """Noise-free (population) bias of estimators that ignore a constant zero pedestal or
+    misjudge the SBR: MLE / LMS applied to the EXPECTED counts N p_true(r) (as in
+    misalignment_population_bias).  L=50, fwhm=300, true SBR=10 (fixed-SBR convention)."""
+    from donutloc import beams, estimators, fisher, patterns, photons
+    L, N, sbr0 = C.L_REF, C.N_REF, C.SBR_MLE
+    cen = patterns.tcp_centers(L)
+    rad = 0.75 * L
+    b0 = beams.make_beam("donut", fwhm=C.FWHM)
+    p_naive = photons.make_model(cen, b0, sbr=sbr0)
+    base = ("noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), "
+            "L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 "
+            "with the 1/s factor of the assumed SBR")
+    honest_max = 0.0
+    for eps in C.NAIVE_EPS:
+        bt = beams.make_beam("donut", fwhm=C.FWHM, eps=eps, zero_model="constant")
+        p_true = photons.make_model(cen, bt, sbr=sbr0)
+        et = _tag(eps)
+        for x in C.NAIVE_X:
+            r = np.array([x, 0.0])
+            cnt = float(N) * np.asarray(p_true(r), float)
+            cnt0 = float(N) * np.asarray(p_naive(r), float)
+            xt = "x%d" % x
+            b = float(np.hypot(*(estimators.mle(cnt, p_naive, search_radius=rad) - r)))
+            crb = float(fisher.crb(p_true, r, N))
+            R.add("naive_eps%s_mle_bias_abs_%s_nm" % (et, xt), b, "nm",
+                  "|bias| (vector) of the MLE that ignores a constant pedestal eps=%g (model "
+                  "eps=0) at r=(%g,0); %s" % (eps, x, base))
+            R.add("naive_eps%s_crb_%s_nm" % (et, xt), crb, "nm",
+                  "CRB (N=100) of the true model with constant pedestal eps=%g at r=(%g,0), "
+                  "L=50, SBR=10" % (eps, x))
+            R.add("naive_eps%s_mle_N_bias_eq_crb_%s" % (et, xt), float(N) * (crb / b) ** 2, "",
+                  "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| "
+                  "of the naive MLE, N (CRB_100/|bias|)^2, eps=%g, r=(%g,0)" % (eps, x))
+            R.add("naive_eps%s_lms_extra_bias_x_%s_nm" % (et, xt),
+                  float(estimators.lms_tcp(cnt, L, C.FWHM, sbr=sbr0)[0]
+                        - estimators.lms_tcp(cnt0, L, C.FWHM, sbr=sbr0)[0]), "nm",
+                  "change of the LMS estimate along x caused by an ignored constant pedestal "
+                  "eps=%g at r=(%g,0) (LMS with eps minus LMS without eps; the linearization "
+                  "bias of fig 5 is removed); %s" % (eps, x, base))
+            h = estimators.mle(cnt, p_true, search_radius=rad)
+            honest_max = max(honest_max, float(np.hypot(*(h - r))))
+    for sa in C.NAIVE_SBR_ASSUMED:
+        p_ass = photons.make_model(cen, b0, sbr=None if np.isinf(sa) else sa)
+        st = "inf" if np.isinf(sa) else _tag(sa)
+        for x in C.NAIVE_X:
+            r = np.array([x, 0.0])
+            cnt = float(N) * np.asarray(p_naive(r), float)
+            R.add("naive_sbr%s_mle_bias_abs_x%d_nm" % (st, x),
+                  float(np.hypot(*(estimators.mle(cnt, p_ass, search_radius=rad) - r))), "nm",
+                  "|bias| (vector) of the MLE that assumes SBR=%g when the true SBR is 10 (eps=0) "
+                  "at r=(%g,0); %s" % (sa, x, base))
+    R.add("naive_honest_mle_max_abs_bias_nm", honest_max, "nm",
+          "largest |bias| of the MLE with the correct pedestal model over the eps and x above "
+          "(numerical zero of the noise-free test); " + base)
+
+
+def simuflux_convention_section(R):
+    """Centre CRB of the TCP with the SimuFLUX default donut (fwhm=310, L=75, N=100, no
+    background): point value vs r->0 limit, to compare with their Fig. 2e (~2.8 nm)."""
+    from donutloc import beams, closed_forms, fisher, patterns, photons
+    L, fw, N = 75.0, 310.0, 100
+    p0 = photons.make_model(patterns.tcp_centers(L), beams.make_beam("donut", fwhm=fw))
+    R.add("simuflux_tcp_crb_point_L75_fwhm310_nm", closed_forms.crb_tcp_center_point(L, N, fw),
+          "nm", "TCP centre CRB, point value Eq. S27 (centre exposure excluded), L=75, fwhm=310 "
+          "(SimuFLUX default), N=100, no background")
+    R.add("simuflux_tcp_crb_limit_L75_fwhm310_nm", float(fisher.crb_limit(p0, N)), "nm",
+          "TCP centre CRB, r->0 limit, L=75, fwhm=310, N=100, no background")
+
+
 def compute(quick=False):
     t0 = time.time()
     R = Registry()
@@ -571,7 +706,10 @@ def compute(quick=False):
                      ("adaptive", lambda: adaptive_coverage_section(R, quick)),
                      ("vectorial", lambda: vectorial_section(R)),
                      ("misalignment", lambda: misalignment_section(R, quick)),
-                     ("misalignment_pop", lambda: misalignment_population_section(R, quick))):
+                     ("misalignment_pop", lambda: misalignment_population_section(R, quick)),
+                     ("bgphys", lambda: physical_background_section(R, quick)),
+                     ("misspecified", lambda: misspecified_estimator_section(R)),
+                     ("simuflux", lambda: simuflux_convention_section(R))):
         t = time.time()
         fn()
         print("# section %s done in %.1f s" % (name, time.time() - t), flush=True)

@@ -36,3 +36,12 @@ EPS_TRANSITION = 0.002           # eps of zero_depth_transition_scale_nm (fig 7c
 MIS_POP_N_PATTERNS = 4000
 MIS_POP_DELTAS = (2.0, 5.0, 10.0)
 QUICK_DIRNAME = "quick"          # --quick outputs go to paper/figures/quick, data/quick, ...
+# physical background (constant per exposure, Balzarotti Eq. S28) vs fixed SBR (Eq. S30), matched
+# at the TCP centre (SBR_c = 10); SimuFLUX-style comparison (docs/literature/C_*.md)
+BGPHYS_X = (25.0, 50.0)          # fig 5 x-sweep points compared (x0 = 0 identical by construction)
+BGPHYS_ITER_MATCH_L = (150.0, 25.0)  # iterative: background fixed so that SBR_c = 10 at this L
+# mis-specified estimator (noise-free, expected counts): unmodelled constant pedestal / wrong SBR
+# (eps = 0.05 is not used: the naive MLE then runs to the edge of its search disk)
+NAIVE_EPS = (0.002, 0.01)        # constant pedestal in the data, eps = 0 in the estimator
+NAIVE_SBR_ASSUMED = (20.0, float("inf"))  # estimator SBR when the true SBR is 10 (eps = 0)
+NAIVE_X = (10.0, 20.0)           # true positions (x0, 0), inside the TCP (L = 50)

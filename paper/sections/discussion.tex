@@ -16,7 +16,8 @@ a Gaussian pedestal of $\epsilon=0.05$ multiplies the CRB by
 $L_{\mathrm{opt}}$ for the measured zero depth (Sec.~\ref{sec:nonideal}); polarization control
 of the donut \cite{Lopez2023} comes before any other refinement.
 
-\emph{2. Misalignment with a nominal model.} A displacement $\delta$ of the zeros that is ignored
+\emph{2. Misalignment with a nominal model.} A displacement $\delta$ of the zeros (an error in
+their positions, not a deformed donut) that is ignored
 by the estimator produces a mean bias of
 \pnum{misalignment_naive_bias_over_delta_pop_center_d2}\src{misalignment_naive_bias_over_delta_pop_center_d2}--\pnum{misalignment_naive_bias_over_delta_pop_center_d10}\src{misalignment_naive_bias_over_delta_pop_center_d10}$\,\delta$
 at the centre ($\delta=2$--$10$\,nm, $L=100$\,nm) and larger at $(L/4,0)$
@@ -32,7 +33,15 @@ using it in the likelihood removes it (honest MLE).
 to \pnum{crb_center_sbr10_L50_N100_nm}\src{crb_center_sbr10_L50_N100_nm}\,nm, and the photons
 for $5$\,nm from \pnum{photons_for_5nm_L50_sbrinf}\src{photons_for_5nm_L50_sbrinf} to
 \pnum{photons_for_5nm_L50_sbr10}\src{photons_for_5nm_L50_sbr10}. Background also regularizes the
-model, making the MLE efficient at the centre.
+model, making the MLE efficient at the centre. How the background is modelled matters little
+for a single pattern (a background constant per exposure changes the off-centre biases of
+Sec.~\ref{sec:estimators} by less than $1.3$\,nm and $\sigma/\crb$ by less than $8$\%), but much for iterative MINFLUX: at constant power
+the SBR falls approximately as $L^2$ and the final precision at $N_{\mathrm{tot}}=1000$ degrades to
+\pnum{bgphys_iter_matchL150_sigma_nm}\src{bgphys_iter_matchL150_sigma_nm}\,nm
+(Sec.~\ref{sec:iterative}). An ignored pedestal or a misjudged SBR biases the MLE by an amount
+independent of $N$ (\pnum{naive_eps0p01_mle_bias_abs_x20_nm}\src{naive_eps0p01_mle_bias_abs_x20_nm}\,nm
+at $x_0=20$\,nm for $\epsilon=0.01$), which exceeds the CRB above a few hundred photons for $\epsilon=0.01$ and above
+$\sim10^4$ photons for $\epsilon=0.002$ (Sec.~\ref{sec:nonideal}).
 
 \emph{4. Estimator and protocol.} The MLE is efficient at the centre with background, but not
 uniformly inside the pattern at $N=100$
@@ -46,7 +55,16 @@ outside the next pattern.
 \emph{5. Definitions.} Without background the centre CRB depends on its definition by the factor
 $\rho=\pnum{limit_to_point_ratio_L50}\src{limit_to_point_ratio_L50}$ at $L=50$\,nm; the
 background-free MLE even beats both values. Benchmarks against ``the CRB at the centre'' should
-state which one is used, or include background.
+state which one is used, or include background. Numerical CRBs regularized at the zero, such as
+that of SimuFLUX \cite{MarinRies2026}, return the point value\src{lit_simuflux_crb_point_value}:
+for their default donut ($\fwhm=310$\,nm) and a TCP with $L=75$\,nm, $N=100$, the point value is
+\pnum{simuflux_tcp_crb_point_L75_fwhm310_nm}\src{simuflux_tcp_crb_point_L75_fwhm310_nm}\,nm and
+the limit \pnum{simuflux_tcp_crb_limit_L75_fwhm310_nm}\src{simuflux_tcp_crb_limit_L75_fwhm310_nm}\,nm.
+Two further conventions must be converted before comparing numbers: in the public SimuFLUX
+implementation the donut has the power of a unit-peak Gaussian, so its ring peak is $1/e$ and its
+zero offset corresponds to $\epsilon=e\times$ offset in our normalization (ring peak $1$)\src{conv_eps_normalization};
+and SimuFLUX reports errors along one axis ($x$), whereas our $\sigma$ and rmse average the two
+axes (Eq.~\eqref{eq:crb}), which differ off-centre.
 
 \emph{6. Beam model.} Once the zero is correct, the scalar LG model is adequate if its size
 parameter is chosen to match the curvature of the actual zero: the error in the centre CRB is
@@ -57,7 +75,7 @@ discrepancy grows with $L$, reaching a CRB ratio of
 Iterative MINFLUX reaches an error
 \pnum{iterative_ratio_min}\src{iterative_ratio_min}--\pnum{iterative_ratio_max}\src{iterative_ratio_max}
 times that of the ideal camera for the same photons in our idealized setting; the zero depth,
-the misalignment and (except for one run with $\sbr=10$, which gives
-\pnum{iterative_sbr10_sigma_nm}\,$\pm$\,\pnumse{iterative_sbr10_sigma_nm}\src{iterative_sbr10_sigma_nm}\,nm
-at $N_{\mathrm{tot}}=1000$) the background were absent from that simulation, and they set how
-much of this advantage survives in an experiment.
+the misalignment and, except for single runs at $N_{\mathrm{tot}}=1000$ (with $\sbr=10$,
+\pnum{iterative_sbr10_sigma_nm}\,$\pm$\,\pnumse{iterative_sbr10_sigma_nm}\src{iterative_sbr10_sigma_nm}\,nm,
+and with a background constant per exposure), the background were absent from that simulation;
+they set how much of this advantage survives in an experiment.
