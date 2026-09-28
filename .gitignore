@@ -42,3 +42,7 @@ docs/private/
 paper/figures/quick/
 paper/generated/quick/
 data/quick/
+
+# --quick outputs of the informe scripts
+informe/figures/quick/
+informe/data/quick/

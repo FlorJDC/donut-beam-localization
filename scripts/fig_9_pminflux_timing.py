@@ -247,7 +247,7 @@ def make_figure(fl, ct):
     ax.set_xlabel("repeticiones del patrón r")
     ax.set_ylabel(r"$\sigma_{fl}$ (nm)")
     ax.annotate("p-MINFLUX\n(entrelazado)", (n_int, 2e-3), ha="center", va="bottom", fontsize=6)
-    ax.text(40, 4.6, r"$\sigma_{CRB}$(N = 100)", fontsize=6, va="bottom")
+    ax.text(1.0, 0.72, r"$\sigma_{CRB}$(N = 100) (punteado)", fontsize=6, va="top", ha="right", transform=ax.transAxes)
     ax.legend(fontsize=5.5, loc="lower left")
     ax.set_title("(a) Flickering: secuencial vs entrelazado", fontsize=7.5, loc="left")
     # (b) CRB ratio
@@ -256,17 +256,15 @@ def make_figure(fl, ct):
     for oname, ls in (("A", "-"), ("B", "--")):
         rc = [ct["order%s_tau%g" % (oname, x)]["crb_ratio_centre"] for x in TAUS]
         rd = [ct["order%s_tau%g" % (oname, x)]["crb_ratio_disk_of_means"] for x in TAUS]
-        ax.plot(t, rc, "o" + ls, color=S.CYCLE[0], mfc="none" if oname == "B" else None,
-                label="centro vs límite r→0, orden %s" % oname)
         rp = [ct["order%s_tau%g" % (oname, x)]["crb_ratio_centre_vs_point"] for x in TAUS]
         if oname == "A":
             ax.plot(t, rp, "^:", color=S.CYCLE[1], label="centro vs S27 (valor puntual)")
         ax.plot(t, rd, "s" + ls, color=S.CYCLE[2], mfc="none" if oname == "B" else None,
                 label=r"media $r\leq L/2$, orden %s" % oname)
-    ax.set_xlabel(r"tiempo de vida $\tau$ (ns)  (T = 12.5 ns)")
+    ax.set_xlabel(r"tiempo de vida $\tau$ (ns), T = 12.5 ns")
     ax.set_ylabel("CRB(con M) / CRB(ideal)")
     ax.legend(fontsize=5.5)
-    ax.set_title("(b) Cross-talk entre ventanas: CRB", fontsize=7.5, loc="left")
+    ax.set_title("(b) Cross-talk: pérdida de precisión", fontsize=7.5, loc="left")
     # (c) naive bias
     ax = axs[2]
     for i, tau in enumerate(TAUS):
@@ -283,9 +281,10 @@ def make_figure(fl, ct):
     mb = np.array(d["withM_mc_bias_nm"])
     ax.plot(XS, np.hypot(mb[:, 0], mb[:, 1]), "x", ms=3, color="k",
             label=r"MLE con M ($\tau$=5, A)")
-    ax.set_xlabel("x (nm), y = 0;  línea: sin ruido, o: MC, --: orden B")
+    ax.set_xlabel("posición x (nm), y = 0")
+    ax.text(0.40, 0.97, "línea: sin ruido (orden A)\n--: orden B;  o: MC", transform=ax.transAxes, fontsize=5.5, va="top")
     ax.set_ylabel("|sesgo| del MLE (nm)")
-    ax.legend(fontsize=5.5, ncol=1)
+    ax.legend(fontsize=5.5, ncol=1, loc="upper left")
     ax.set_title("(c) Sesgo del MLE que ignora M (N = 500)", fontsize=7.5, loc="left")
     os.makedirs(FIGDIR, exist_ok=True)
     png = os.path.join(FIGDIR, "fig_pminflux_timing.png")

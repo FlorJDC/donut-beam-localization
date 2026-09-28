@@ -1,0 +1,44 @@
+b(SBR5)=0.0290751 b(SBR20)=0.00726877
+  SBR(x=50)=10.2652
+  SBR(x=50)=41.0609
+SBR5 x= 0 CRBknown=2.0124 CRBfree=2.0124 Fxb=-3.86e-09 Fyb=2.72e-09
+SBR5 x= 5 CRBknown=2.0195 CRBfree=2.0294 Fxb=8.68 Fyb=0.569
+SBR5 x=10 CRBknown=2.0578 CRBfree=2.0843 Fxb=11.3 Fyb=2.19
+SBR5 x=20 CRBknown=2.3144 CRBfree=2.3644 Fxb=2.76 Fyb=7.57
+SBR5 x=50 CRBknown=5.1605 CRBfree=6.1734 Fxb=1.89 Fyb=13.4
+SBR20 x= 0 CRBknown=1.7880 CRBfree=1.7880 Fxb=4.28e-09 Fyb=-1.68e-09
+SBR20 x= 5 CRBknown=1.7450 CRBfree=1.8016 Fxb=58.1 Fyb=0.866
+SBR20 x=10 CRBknown=1.7440 CRBfree=1.8464 Fxb=57 Fyb=3.35
+SBR20 x=20 CRBknown=1.9743 CRBfree=2.0855 Fxb=15.9 Fyb=11.7
+SBR20 x=50 CRBknown=4.5135 CRBfree=5.6905 Fxb=3.86 Fyb=20.9
+
+--- sesgo poblacional (modelo sin fondo) ---
+SBR5 x= 0 best=(-9.046,5.223) nll=635.846511  n_equiv_minima=10 [[-9.05, 5.22], [-0.0, -10.45], [9.05, 5.22], [9.05, 5.22]]
+SBR5 x= 5 best=(6.842,3.524) nll=626.260706  n_equiv_minima=10 [[11.84, 3.52], [11.84, 3.52], [11.84, 3.52], [11.84, 3.52]]
+SBR5 x=10 best=(4.919,2.825) nll=619.368110  n_equiv_minima=10 [[14.92, 2.82], [14.92, 2.82], [14.92, 2.82], [14.92, 2.82]]
+SBR5 x=50 best=(5.247,3.605) nll=596.879447  n_equiv_minima=10 [[55.25, 3.61], [55.25, 3.61], [55.25, 3.61], [55.25, 3.61]]
+SBR5 fondo x0.7: sesgo pobl. max por eje = 1.189 nm
+SBR5 fondo x1.3: sesgo pobl. max por eje = 1.077 nm
+SBR20 x= 0 best=(4.517,2.608) nll=581.937145  n_equiv_minima=10 [[4.52, 2.61], [-0.0, -5.22], [-4.52, 2.61], [0.0, -5.22]]
+SBR20 x= 5 best=(2.688,0.784) nll=578.844971  n_equiv_minima=10 [[7.69, 0.78], [7.69, 0.78], [7.69, 0.78], [7.69, 0.78]]
+SBR20 x=10 best=(1.594,0.612) nll=579.791761  n_equiv_minima=10 [[11.59, 0.61], [11.59, 0.61], [11.59, 0.61], [11.59, 0.61]]
+SBR20 x=50 best=(1.114,1.012) nll=580.212872  n_equiv_minima=10 [[51.11, 1.01], [51.11, 1.01], [51.11, 1.01], [51.11, 1.01]]
+SBR20 fondo x0.7: sesgo pobl. max por eje = 0.470 nm
+SBR20 fondo x1.3: sesgo pobl. max por eje = 0.305 nm
+
+--- Monte Carlo ---
+SBR5 x= 0 sin_fondo    bias=(-0.11±0.21, 0.17±0.20) sigma=7.915 rmse=7.917 CRBk=2.012 sig/CRB=3.933
+SBR5 x= 0 fondo_exacto bias=(-0.05±0.05, 0.01±0.05) sigma=1.951 rmse=1.952 CRBk=2.012 sig/CRB=0.970
+SBR5 x= 0 fondo_libre(600) sigma=1.963 CRBfree=2.012 frac_b0=0.000 bmean=0.0287
+SBR5 x=10 sin_fondo    bias=(4.81±0.05, 2.60±0.07) sigma=2.339 rmse=4.520 CRBk=2.058 sig/CRB=1.137
+SBR5 x=10 fondo_exacto bias=(0.09±0.05, 0.02±0.06) sigma=2.081 rmse=2.082 CRBk=2.058 sig/CRB=1.011
+SBR5 x=10 fondo_libre(600) sigma=2.114 CRBfree=2.084 frac_b0=0.000 bmean=0.0292
+SBR5 x=20 sin_fondo    bias=(2.47±0.05, 2.50±0.06) sigma=2.272 rmse=3.368 CRBk=2.314 sig/CRB=0.982
+SBR5 x=20 fondo_exacto bias=(-0.01±0.06, -0.06±0.06) sigma=2.363 rmse=2.363 CRBk=2.314 sig/CRB=1.021
+SBR5 x=20 fondo_libre(600) sigma=2.402 CRBfree=2.364 frac_b0=0.003 bmean=0.0290
+SBR5 x=50 sin_fondo    bias=(5.43±0.20, 2.86±0.08) sigma=5.827 rmse=7.267 CRBk=5.161 sig/CRB=1.129
+SBR5 x=50 fondo_exacto bias=(0.29±0.17, -0.56±0.08) sigma=5.221 rmse=5.240 CRBk=5.161 sig/CRB=1.012
+SBR20 x= 0 sin_fondo    bias=(-0.30±0.11, -0.06±0.11) sigma=4.248 rmse=4.253 CRBk=1.788 sig/CRB=2.376
+SBR20 x= 0 fondo_exacto bias=(-0.11±0.04, -0.05±0.04) sigma=1.721 rmse=1.723 CRBk=1.788 sig/CRB=0.963
+SBR20 x= 5 sin_fondo    bias=(2.22±0.04, 0.51±0.07) sigma=2.307 rmse=2.815 CRBk=1.745 sig/CRB=1.322
+SBR20 x= 5 fondo_exacto bias=(-0.04±0.04, 0.07±0.05) sigma=1.733 rmse=1.734 CRBk=1.745 sig/CRB=0.993
