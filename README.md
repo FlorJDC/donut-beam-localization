@@ -55,6 +55,17 @@ Regeneration is byte-deterministic: figure PDFs carry no creation or modificatio
 JSON files are written with sorted keys and LF line endings, so rerunning a script on unchanged
 inputs leaves `git status` clean.
 
+## Short report (informe)
+
+`informe/informe.pdf` (5 pages, Spanish) summarizes the project, reviews it against SimuFLUX
+(Marin & Ries, Nat. Commun. 17:246, 2026) and adds two studies for non-iterative pulsed
+interleaved MINFLUX (p-MINFLUX): fluorophore flickering (sequential vs interleaved excitation)
+and lifetime cross-talk between TCSPC windows (`src/donutloc/pminflux.py`,
+`scripts/fig_9_pminflux_timing.py`), and estimator bias from unmodelled background with a fixed
+TCP (`src/donutloc/background.py`, `scripts/fig_10_background_bias.py`). Rebuild the PDF from
+`informe/informe.html` with `node informe/build_pdf.js` (Playwright/Chromium), or print the HTML
+from any browser. The team record of that work is in `equipo/2026-09-28_sintesis-pdf/`.
+
 ## Repository structure
 
 ```
