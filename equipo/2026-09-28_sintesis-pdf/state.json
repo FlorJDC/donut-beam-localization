@@ -1,0 +1,18 @@
+{
+  "id": "2026-09-28_sintesis-pdf",
+  "type": "draft",
+  "status": "running",
+  "round": 1,
+  "rounds_budget": 1,
+  "team": [
+    "worker-A",
+    "worker-B",
+    "worker-C",
+    "verifier",
+    "writer"
+  ],
+  "deliverable": "informe/informe.pdf",
+  "base_commit": "f411211",
+  "claims": [],
+  "history": []
+}
