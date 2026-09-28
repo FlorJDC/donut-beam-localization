@@ -1,7 +1,7 @@
 {
   "id": "2026-09-28_sintesis-pdf",
   "type": "draft",
-  "status": "running",
+  "status": "done",
   "round": 1,
   "rounds_budget": 1,
   "team": [
@@ -13,6 +13,43 @@
   ],
   "deliverable": "informe/informe.pdf",
   "base_commit": "f411211",
-  "claims": [],
-  "history": []
+  "claims": [
+    {
+      "status": "verified",
+      "by": "verifier-C",
+      "text": "Fondo ignorado (TCP fijo, L=100, N=500, SBR0=5): sesgo hacia afuera +4.8 nm (x=10) y +5.4 nm (x=50); RMSE 7.9 nm en x=0 vs CRB 2.01 nm; fondo exacto sigma/CRB 0.97-1.06; fondo libre sigma≈CRB libre hasta x=20; ±30% -> sesgo <=1.6 nm"
+    },
+    {
+      "status": "refuted→corregido",
+      "by": "verifier-C",
+      "text": "sigma/CRB con fondo exacto 1.00-1.04 -> corregido a 0.97-1.06 en el informe"
+    },
+    {
+      "status": "verified",
+      "by": "verifier-B",
+      "text": "Cross-talk M(tau,T): tau=5 ns 0.918/0.0754/0.0062/0.0005; CRB disco tau=2..5: 1.006/1.040/1.104/1.191; sesgo MLE sin M: 3.41 nm (tau=3), 8.45-12.97 nm (tau=5); con M insesgado"
+    },
+    {
+      "status": "verified",
+      "by": "verifier-B",
+      "text": "Flickering: secuencial r=1 ~16 nm, r=25 ~2.2 nm; entrelazado <~0.02-0.03 nm; STD^2=sigma_fl^2+sigma^2, sigma_fl independiente de N"
+    },
+    {
+      "status": "refuted (no citado)",
+      "by": "verifier-B",
+      "text": "Razón CRB disco tau=1 = 1.0004 es artefacto de malla; continuo 1.0000"
+    },
+    {
+      "status": "unclear→redactado",
+      "by": "verifier-B",
+      "text": "sigma_fl entrelazado no convergido en 3a cifra; el informe dice <~0.03 nm"
+    }
+  ],
+  "history": [
+    {
+      "round": 1,
+      "date": "2026-09-28",
+      "summary": "auditoría (A), temporización p-MINFLUX (B), sesgo por fondo (C), verificadores B y C, informe 5 pp."
+    }
+  ]
 }

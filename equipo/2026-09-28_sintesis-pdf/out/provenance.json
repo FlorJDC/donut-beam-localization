@@ -52,7 +52,7 @@
   "fig9": {
     "reproduce": "python scripts/fig_9_pminflux_timing.py",
     "source": "informe/figures/fig_pminflux_timing.png",
-    "status": "see r01-verifier-B.md"
+    "status": "verified (reports/r01-verifier-B.md; tau=1 disk ratio not cited; interleaved sigma_fl reported as <~0.03 nm)"
   },
   "misalignment": {
     "keys": [
@@ -71,7 +71,7 @@
     ],
     "reproduce": "python scripts/fig_9_pminflux_timing.py",
     "source": "informe/data/pminflux_timing.json",
-    "status": "see equipo/2026-09-28_sintesis-pdf/reports/r01-verifier-B.md"
+    "status": "verified (reports/r01-verifier-B.md; tau=1 disk ratio not cited; interleaved sigma_fl reported as <~0.03 nm)"
   },
   "pminflux_flicker": {
     "keys": [
@@ -82,7 +82,7 @@
     ],
     "reproduce": "python scripts/fig_9_pminflux_timing.py",
     "source": "informe/data/pminflux_timing.json",
-    "status": "see equipo/2026-09-28_sintesis-pdf/reports/r01-verifier-B.md"
+    "status": "verified (reports/r01-verifier-B.md; tau=1 disk ratio not cited; interleaved sigma_fl reported as <~0.03 nm)"
   },
   "scaling": {
     "keys": [

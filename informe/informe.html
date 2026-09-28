@@ -158,13 +158,13 @@ suma un error σ<sub>fl</sub> que no depende de <i>N</i>: STD² = σ<sub>fl</sub
 σ<sub>fl</sub> vale 16 nm en el centro y 25 nm a 20 nm del centro con una sola pasada del patrón. Con 25 repeticiones
 baja a 2.2 y 3.5 nm, todavía comparable con σ<sub>CRB</sub> ≈ 3.4 nm (<i>N</i> = 100). Con el entrelazado de p-MINFLUX,
 las 4 exposiciones se alternan cada 12.5 ns y reciben el mismo tiempo "on" con una dispersión relativa de 3·10⁻⁴.
-Así σ<sub>fl</sub> ≤ 0.03 nm, y en el Monte Carlo σ<sub>fl</sub>² es compatible con cero (Fig. 3a).
+Así σ<sub>fl</sub> ≲ 0.03 nm, unas 10³ veces menos que en el secuencial, y en el Monte Carlo σ<sub>fl</sub>² es compatible con cero (Fig. 3a). La referencia sin parpadeo es el MLE simulado y no el CRB: en el cero exacto de la dona central el MLE no es eficiente ni insesgado.
 <span class="src">[src:pminflux_flicker]</span></p>
 <p><b>(b, c) Cruce entre ventanas.</b> Un fotón excitado por un pulso llega con un retardo exponencial de tiempo de
 vida τ. Con probabilidad e<sup>−<i>T</i>/τ</sup> cae en la ventana siguiente. Eso mezcla las probabilidades,
 <i>p</i><sup>obs</sup> = <i>M p</i>, con
 <i>M<sub>ij</sub></i> = (1−<i>q</i>)<i>q</i><sup>(<i>s<sub>i</sub></i>−<i>s<sub>j</sub></i>) mod 4</sup>/(1−<i>q</i>⁴) y
-<i>q</i> = e<sup>−<i>T</i>/τ</sup>. Con τ = 5 ns queda un 91.8 % en la ventana propia y un 7.5 % en la siguiente.</p>
+<i>q</i> = e<sup>−<i>T</i>/τ</sup>. Con τ = 5 ns queda un 91.8 % en la ventana propia y un 7.5 % en la siguiente. El cálculo supone ventanas alineadas con el pulso, sin IRF ni saturación.</p>
 <ul>
 <li><b>Precisión.</b> Si <i>M</i> se incluye en el modelo, la pérdida de precisión es chica. El CRB medio en
 <i>r</i> ≤ <i>L</i>/2 sube 0.6 %, 4 %, 10 % y 19 % para τ = 2, 3, 4 y 5 ns (Fig. 3b).</li>
