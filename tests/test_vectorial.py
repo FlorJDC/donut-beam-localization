@@ -123,7 +123,8 @@ class TestEnergy(unittest.TestCase):
         flux = {}
         for h in (+1, -1):
             I = v.radial_profile(r, handedness=h, n_theta=401)
-            flux[h] = np.trapz(I * 2 * np.pi * r, r)
+            _trapz = getattr(np, "trapezoid", None) or np.trapz  # numpy>=2 renamed trapz
+            flux[h] = _trapz(I * 2 * np.pi * r, r)
         self.assertLess(abs(flux[1] / flux[-1] - 1.0), 1e-3)
         pars = 2 * np.pi / k ** 2 * np.sum(w * a ** 2 * np.sin(th))
         self.assertAlmostEqual(flux[1] / pars, 1.0, delta=0.05)  # truncation tail ~ 1/R
