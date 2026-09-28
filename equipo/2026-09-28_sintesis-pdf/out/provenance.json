@@ -39,16 +39,6 @@
     "source": "informe/figures/fig_background_bias.png",
     "status": "verified"
   },
-  "fig3": {
-    "reproduce": "python scripts/fig_3_crb_maps.py; python informe/export_repo_figures.py",
-    "source": "paper/figures/fig3_crb_maps.pdf -> informe/figures/repo_fig3_crb_maps.png",
-    "status": "verified"
-  },
-  "fig7": {
-    "reproduce": "python scripts/fig_7_zero_depth.py; python informe/export_repo_figures.py",
-    "source": "paper/figures/fig7_zero_depth.pdf -> informe/figures/repo_fig7_zero_depth.png",
-    "status": "verified"
-  },
   "fig9": {
     "reproduce": "python scripts/fig_9_pminflux_timing.py",
     "source": "informe/figures/fig_pminflux_timing.png",

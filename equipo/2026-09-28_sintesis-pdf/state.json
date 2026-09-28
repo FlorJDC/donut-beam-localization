@@ -50,6 +50,11 @@
       "round": 1,
       "date": "2026-09-28",
       "summary": "auditoría (A), temporización p-MINFLUX (B), sesgo por fondo (C), verificadores B y C, informe 5 pp."
+    },
+    {
+      "round": "2 (revisión del orquestador)",
+      "date": "2026-09-28",
+      "summary": "informe reescrito a pedido de la autora: 3 pp., sin redundancias, centrado en qué falta (13 tareas priorizadas con criterio de terminado); sin números nuevos"
     }
   ]
 }
