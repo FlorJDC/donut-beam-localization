@@ -1,0 +1,122 @@
+{
+  "background": {
+    "keys": [
+      "sbr5.sin_fondo.bias_x",
+      "sbr5.sin_fondo.rmse",
+      "sbr5.crb_known_b_nm",
+      "sbr5.crb_free_b_nm",
+      "sbr5.fondo_exacto.sigma",
+      "sbr5.fondo_p30.bias_y",
+      "sbr20.fondo_libre_frac_b_zero"
+    ],
+    "reproduce": "python scripts/fig_10_background_bias.py",
+    "source": "informe/data/background_bias.json",
+    "status": "verified (reports/r01-verifier-C.md; sigma/CRB range corrected to 0.97-1.06)"
+  },
+  "crb_center": {
+    "keys": [
+      "crb_center_lg_L50_N100_nm",
+      "crb_center_point_S27_L50_N100_nm",
+      "limit_to_point_ratio_L50",
+      "limit_to_point_ratio_quadratic",
+      "crb_center_sbr10_L50_N100_nm"
+    ],
+    "reproduce": "python scripts/compute_paper_numbers.py",
+    "source": "data/paper_numbers.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
+  "estimators": {
+    "keys": [
+      "mle_efficiency_center"
+    ],
+    "note": "LMS/mLMS/MLE bias at x0=25 nm from data/fig5_summary.json",
+    "reproduce": "python scripts/fig_5_estimators.py",
+    "source": "data/paper_numbers.json + data/fig5_summary.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
+  "fig10": {
+    "reproduce": "python scripts/fig_10_background_bias.py",
+    "source": "informe/figures/fig_background_bias.png",
+    "status": "verified"
+  },
+  "fig3": {
+    "reproduce": "python scripts/fig_3_crb_maps.py; python informe/export_repo_figures.py",
+    "source": "paper/figures/fig3_crb_maps.pdf -> informe/figures/repo_fig3_crb_maps.png",
+    "status": "verified"
+  },
+  "fig7": {
+    "reproduce": "python scripts/fig_7_zero_depth.py; python informe/export_repo_figures.py",
+    "source": "paper/figures/fig7_zero_depth.pdf -> informe/figures/repo_fig7_zero_depth.png",
+    "status": "verified"
+  },
+  "fig9": {
+    "reproduce": "python scripts/fig_9_pminflux_timing.py",
+    "source": "informe/figures/fig_pminflux_timing.png",
+    "status": "see r01-verifier-B.md"
+  },
+  "misalignment": {
+    "keys": [
+      "misalignment_naive_bias_over_delta_pop_center",
+      "misalignment_naive_bias_abs_center_d10_nm"
+    ],
+    "reproduce": "python scripts/fig_8_misalignment.py",
+    "source": "data/paper_numbers.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
+  "pminflux_crosstalk": {
+    "keys": [
+      "crosstalk.order*_tau*.crb_ratio_disk_of_means",
+      "naive_pop_max_abs_bias_nm",
+      "withM_pop_max_abs_bias_nm"
+    ],
+    "reproduce": "python scripts/fig_9_pminflux_timing.py",
+    "source": "informe/data/pminflux_timing.json",
+    "status": "see equipo/2026-09-28_sintesis-pdf/reports/r01-verifier-B.md"
+  },
+  "pminflux_flicker": {
+    "keys": [
+      "flicker.*.seq_r*.pop_sigma_fl_nm",
+      "flicker.*.interleaved.pop_sigma_fl_nm",
+      "flicker.*.interleaved.fixedN_sigma_fl2_nm2",
+      "weight_rel_std"
+    ],
+    "reproduce": "python scripts/fig_9_pminflux_timing.py",
+    "source": "informe/data/pminflux_timing.json",
+    "status": "see equipo/2026-09-28_sintesis-pdf/reports/r01-verifier-B.md"
+  },
+  "scaling": {
+    "keys": [
+      "crb_exponent_L",
+      "crb_exponent_N",
+      "photons_for_5nm_L50_sbrinf",
+      "photons_for_5nm_L50_sbr10",
+      "camera_ideal_N400_nm"
+    ],
+    "note": "ratio ~26 = 400/15.37 computed in the report",
+    "reproduce": "python scripts/fig_4_scaling.py; python scripts/compute_paper_numbers.py",
+    "source": "data/paper_numbers.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
+  "vectorial": {
+    "keys": [
+      "crb_vec_over_lgcurv_L50_N100",
+      "crb_vec_over_lgcurv_L150_N100",
+      "vectorial_zero_depth_wrong_handedness",
+      "vectorial_zero_depth_linear"
+    ],
+    "reproduce": "python scripts/fig_2_vectorial.py",
+    "source": "data/paper_numbers.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
+  "zero_depth": {
+    "keys": [
+      "L_opt_eps0p002_nm",
+      "L_opt_eps0p01_nm",
+      "L_opt_eps0p05_nm",
+      "L_opt_over_fwhm_sqrt_eps_eps0p15"
+    ],
+    "reproduce": "python scripts/fig_7_zero_depth.py",
+    "source": "data/paper_numbers.json",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  }
+}
