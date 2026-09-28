@@ -9,6 +9,7 @@ Submodules (import them explicitly, e.g. ``from donutloc import photons``):
 - ``patterns``  -- exposure-pattern geometry (TCP, regular polygons, misalignment).
 - ``photons``   -- multiplexed photon model: probabilities with background, sampling.
 - ``fisher``, ``estimators``, ``montecarlo``, ``closed_forms`` -- inference and CRB.
+- ``background`` -- background as a free parameter: (x, y, b) MLE and 3x3 Fisher / marginal CRB.
 """
 
 __version__ = "0.1.0"
