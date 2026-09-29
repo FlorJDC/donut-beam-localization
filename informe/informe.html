@@ -74,6 +74,14 @@ declara abierto. "Terminado" lo define un test de aceptación escrito antes de e
 5 rondas para el paquete y el manuscrito, y 1 ronda para este informe. Todo queda registrado en
 <code>equipo/</code>.</p>
 
+<figure>
+<img src="figures/repo_fig1_schematic.png" alt="Perfil de la dona LG y vectorial y patrón TCP">
+<figcaption><b>Figura 1.</b> Modelo del trabajo. Perfil radial de la dona LG (fwhm = 300 nm), de la LG igualada por
+curvatura y de la dona vectorial (a). Curvatura cerca del cero, <i>I</i>/ρ² (b). Patrón TCP: 3 donas en un círculo de
+diámetro <i>L</i> = 100 nm más una en el centro; el mapa muestra la intensidad de una exposición (c).
+<code>scripts/fig_1_schematic.py</code> <span class="src">[src:fig1]</span></figcaption>
+</figure>
+
 <h2>2. Problemas, cómo se encararon y qué se obtuvo</h2>
 
 <div class="prob"><h3>2.1 ¿Qué modelo de dona usar?</h3><dl>
@@ -123,7 +131,7 @@ fondo, fondo exacto, fondo libre, fondo con error de ±30 %). Código en <code>b
 <dt class="ok">Resultado</dt><dd>Si el MLE ignora el fondo, lee la señal extra de la exposición central como un
 emisor más alejado y sesga la posición hacia afuera: ≈ +5 nm en <i>x</i> y +3 nm en <i>y</i> con SBR = 5, y ≈ +2 nm
 con SBR = 20. Ajustar el fondo como tercer parámetro elimina el sesgo y cuesta poco: el CRB sube 0–4 % hasta 20 nm
-del centro y 20–26 % en <i>r</i> = <i>L</i>/2. Un error de ±30 % en el fondo deja ≤ 1.6 nm (Fig. 2).
+del centro y 20–26 % en <i>r</i> = <i>L</i>/2. Un error de ±30 % en el fondo deja ≤ 1.6 nm (Fig. 3).
 <span class="src">[src:background]</span></dd>
 <dt class="q">Queda</dt><dd>Fondo distinto en cada ventana y cómo medirlo en los datos.</dd></dl></div>
 
@@ -133,7 +141,7 @@ del número de fotones. Simulamos un parpadeo on/off de 100 µs durante 400 µs,
 (secuencial) o alternadas cada 12.5 ns (p-MINFLUX). Código en <code>pminflux.py</code>.</dd>
 <dt class="ok">Resultado</dt><dd>En el modo secuencial, σ<sub>fl</sub> va de 16 nm (1 pasada del patrón) a 2.2 nm
 (25 pasadas), y se cumple STD² = σ<sub>fl</sub>² + σ², como en SimuFLUX. Con el entrelazado, las 4 exposiciones
-ven el mismo tiempo "on" y σ<sub>fl</sub> ≲ 0.03 nm. Es una ventaja concreta de p-MINFLUX (Fig. 1a).
+ven el mismo tiempo "on" y σ<sub>fl</sub> ≲ 0.03 nm. Es una ventaja concreta de p-MINFLUX (Fig. 2a).
 <span class="src">[src:pminflux_flicker]</span></dd>
 <dt class="q">Queda</dt><dd>Parpadeo rápido (de ns a µs) y fotoblanqueo: el entrelazado protege solo si el parpadeo
 es mucho más lento que 50 ns.</dd></dl></div>
@@ -146,21 +154,21 @@ matriz de mezcla <i>p</i><sup>obs</sup> = <i>M p</i>, con
 y <i>q</i> = e<sup>−<i>T</i>/τ</sup>, y la validamos con Monte Carlo de fotones.</dd>
 <dt class="ok">Resultado</dt><dd>Con τ = 5 ns, un 7.5 % de los fotones cae en la ventana siguiente. Si el
 estimador ignora <i>M</i>, el sesgo es de 3.4 nm (τ = 3 ns) y de 8–13 nm (τ = 5 ns, según el orden de los pulsos).
-Si incluye <i>M</i>, el sesgo desaparece y el CRB sube 4–19 % (τ = 3–5 ns) (Fig. 1b–c). <i>M</i> depende solo de τ
+Si incluye <i>M</i>, el sesgo desaparece y el CRB sube 4–19 % (τ = 3–5 ns) (Fig. 2b–c). <i>M</i> depende solo de τ
 y <i>T</i>, así que corregirlo no cuesta nada. <span class="src">[src:pminflux_crosstalk]</span></dd>
 <dt class="q">Queda</dt><dd>Todo lo anterior supone ventanas alineadas con el pulso y sin respuesta del instrumento
 (IRF). Falta obtener <i>M</i> del histograma TCSPC real.</dd></dl></div>
 
 <figure>
 <img src="figures/fig_pminflux_timing.png" alt="Parpadeo y cruce entre ventanas en p-MINFLUX">
-<figcaption><b>Figura 1.</b> Temporización de p-MINFLUX (<i>L</i> = 100, fwhm = 300, <i>T</i> = 12.5 ns). Error por
+<figcaption><b>Figura 2.</b> Temporización de p-MINFLUX (<i>L</i> = 100, fwhm = 300, <i>T</i> = 12.5 ns). Error por
 parpadeo: MINFLUX secuencial frente a entrelazado (estrellas) (a). Pérdida de precisión por el cruce entre
 ventanas con <i>M</i> en el modelo (b). Sesgo del MLE que ignora <i>M</i> (<i>N</i> = 500); las × corresponden al MLE
 con <i>M</i> (c). <code>scripts/fig_9_pminflux_timing.py</code> <span class="src">[src:fig9]</span></figcaption>
 </figure>
 <figure>
 <img src="figures/fig_background_bias.png" alt="Sesgo y RMSE del MLE según el tratamiento del fondo">
-<figcaption><b>Figura 2.</b> Fondo igual en las 4 ventanas con TCP fijo (<i>L</i> = 100, <i>N</i> = 500; SBR en el
+<figcaption><b>Figura 3.</b> Fondo igual en las 4 ventanas con TCP fijo (<i>L</i> = 100, <i>N</i> = 500; SBR en el
 centro = 5, trazo lleno, y 20, discontinuo). Sesgo en <i>x</i> del MLE según cómo trata el fondo (a). RMSE frente
 a σ<sub>CRB</sub> (b). <code>scripts/fig_10_background_bias.py</code> <span class="src">[src:fig10]</span></figcaption>
 </figure>

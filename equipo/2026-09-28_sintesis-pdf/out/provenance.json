@@ -34,6 +34,11 @@
     "source": "data/paper_numbers.json + data/fig5_summary.json",
     "status": "verified (equipo/2026-09-26_donut-localization)"
   },
+  "fig1": {
+    "reproduce": "python scripts/fig_1_schematic.py",
+    "source": "paper/figures/fig1_schematic.pdf -> informe/figures/repo_fig1_schematic.png",
+    "status": "verified (equipo/2026-09-26_donut-localization)"
+  },
   "fig10": {
     "reproduce": "python scripts/fig_10_background_bias.py",
     "source": "informe/figures/fig_background_bias.png",
