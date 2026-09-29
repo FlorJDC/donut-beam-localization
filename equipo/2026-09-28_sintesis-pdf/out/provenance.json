@@ -79,6 +79,11 @@
     "source": "informe/data/pminflux_timing.json",
     "status": "verified (reports/r01-verifier-B.md; tau=1 disk ratio not cited; interleaved sigma_fl reported as <~0.03 nm)"
   },
+  "pminflux_simulations": {
+    "reproduce": "in that repo: python scripts/validate_mixing_matrix.py; python scripts/study_misalignment_v2.py; python scripts/sweep_dead_time.py",
+    "source": "github.com/FlorJDC/pminflux-simulations@53e73bc: results/findings.json (16 findings), results/mixing_validation.json (chi2 5.66 vs 1927), results/study_v2.json (max|b| 3.12/0.12/8.58/0.09 nm; RMSE/CRB 1.67/1.00), results/dead_time_sweep.json; README.md \u00a77, \u00a78, \u00a710; HANDOFF.md \u00a71, \u00a74",
+    "status": "verified in that repo (equipo/2026-09-28_review-pminflux-sim: verifier R3); transcribed here, not re-verified"
+  },
   "scaling": {
     "keys": [
       "crb_exponent_L",

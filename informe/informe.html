@@ -58,7 +58,9 @@ cada resultado lo reprodujo un verificador independiente. Después lo contrastam
 (Marin &amp; Ries, 2026) y lo llevamos al caso de interés: <b>p-MINFLUX no iterativo</b>, con láser de 20 MHz, 4
 pulsos entrelazados de igual duración y <i>L</i> fijo. El resultado central es que un estimador de máxima
 verosimilitud (MLE) con el modelo correcto alcanza el límite de Cramér–Rao (CRB). Casi todos los sesgos aparecen
-cuando el modelo omite algo: el fondo, la desalineación del patrón o el cruce entre ventanas temporales.</p></div>
+cuando el modelo omite algo: el fondo, la desalineación del patrón o el cruce entre ventanas temporales. Un
+proyecto complementario, <code>pminflux-simulations</code>, revisó el simulador p-MINFLUX anterior e implementó
+ese modelo completo (§3).</p></div>
 
 <h2>1. Qué se hizo y cómo</h2>
 <p><b>Modelo.</b> Un emisor en <i>r</i> se expone sucesivamente a <i>K</i> = 4 haces con un mínimo de intensidad.
@@ -157,7 +159,8 @@ estimador ignora <i>M</i>, el sesgo es de 3.4 nm (τ = 3 ns) y de 8–13 nm (τ 
 Si incluye <i>M</i>, el sesgo desaparece y el CRB sube 4–19 % (τ = 3–5 ns) (Fig. 2b–c). <i>M</i> depende solo de τ
 y <i>T</i>, así que corregirlo no cuesta nada. <span class="src">[src:pminflux_crosstalk]</span></dd>
 <dt class="q">Queda</dt><dd>Todo lo anterior supone ventanas alineadas con el pulso y sin respuesta del instrumento
-(IRF). Falta obtener <i>M</i> del histograma TCSPC real.</dd></dl></div>
+(IRF). El simulador de §3 ya generaliza <i>M</i> a IRF y ventanas arbitrarias; falta contrastarla con el histograma
+TCSPC medido.</dd></dl></div>
 
 <figure>
 <img src="figures/fig_pminflux_timing.png" alt="Parpadeo y cruce entre ventanas en p-MINFLUX">
@@ -185,30 +188,58 @@ estudió (0.51 nm con 1000 fotones, frente a 3.16 nm de una cámara ideal), pero
 <dt class="q">Queda</dt><dd>Los estudios nuevos (§2.6–2.8) todavía no están en el manuscrito ni en
 <code>reproduce.py</code>. Los tests nuevos no se corrieron en el entorno de referencia (Windows, Python 3.8).</dd></dl></div>
 
-<h2>3. Qué falta y cómo proseguir</h2>
-<p>Cada tarea reúne los "Queda" de la sección 2, en orden de prioridad. Quedan fuera de alcance, por el
+<h2>3. Proyecto complementario: <code>pminflux-simulations</code></h2>
+<p>En paralelo, y con la misma metodología (3 rondas de agentes con verificador y revisor de código), se revisó
+críticamente el simulador de p-MINFLUX que se usaba antes y se escribió una versión nueva, <code>pminflux_sim</code> v2
+(<code>github.com/FlorJDC/pminflux-simulations</code>). Mientras este repositorio responde qué limita la precisión,
+aquel responde si las simulaciones previas modelaban bien el instrumento pulsado.</p>
+<div class="prob"><dl>
+<dt>Qué se revisó</dt><dd>El simulador anterior, en 16 hallazgos con un script que demuestra cada uno. Uno es
+conceptual: el modelo de probabilidades suponía fondo 1/<i>K</i> por ventana y ningún cruce entre pulsos, lo que no
+vale para ventanas más cortas que <i>T</i>/<i>K</i> ni con tiempo de vida finito. Nueve son de implementación: el
+TCSPC se quedaba con el fotón equivocado cuando llegaban varios en un ciclo, las ventanas no se plegaban módulo
+el período, el parpadeo se ignoraba en silencio, el emisor y el MLE quedaban atados a la grilla de la PSF, SBR
+infinito daba NaN, entre otros. Seis son de diseño; el más importante es que los estudios apagaban el tiempo de
+vida (τ ≈ 0), de modo que no podían ver el error del modelo.</dd>
+<dt class="ok">Mejoras</dt><dd>Simulador fotón a fotón en tiempo absoluto, con tiempo de vida, IRF, ventanas
+arbitrarias, TCSPC de un fotón por ciclo, tiempo muerto del detector, fondo y parpadeo. Matriz de mezcla
+<i>C</i> (el <i>M</i> de §2.8, generalizada) con IRF y comienzos de ventana arbitrarios. MLE continuo, sin grilla,
+cuya verosimilitud coincide con ese modelo directo, con fondo libre opcional. CRB con cruce y parámetros de
+molestia. Todo con 75 tests y procedencia (semilla y hash del código en cada resultado).</dd>
+<dt class="ok">Resultados</dt><dd>La matriz de mezcla reproduce las fracciones por ventana del simulador anterior
+(χ² = 5.7, p = 0.13), mientras que el modelo sin cruce queda descartado (χ² = 1927). En datos simulados con cruce
+realista, el estimador anterior tiene un sesgo de hasta 3.1 nm y RMSE/CRB = 1.67; el nuevo, 0.12 nm y 1.00. Con el
+patrón desalineado, el estimador ingenuo llega a 8.6 nm y el nuevo queda en 0.09 nm. Un resultado analítico
+verificado: si el tiempo muerto es un múltiplo entero del período (<i>d</i> = <i>n·T</i>), no sesga las fracciones
+por ventana a ninguna tasa. <span class="src">[src:pminflux_simulations]</span></dd>
+<dt class="q">Queda</dt><dd>Validar el modelo directo con datos reales (histograma TCSPC y cruce medido); medir el
+tiempo muerto y la IRF, que hoy son supuestos; rehacer los estudios con PSF medidas; incluir la distorsión de
+tasa finita, que hoy aporta ≤ 0.03 CRB; calibrar aparte las potencias de los haces, porque estimarlas junto con la
+posición introduce un sesgo que no baja con más datos.</dd></dl></div>
+
+<h2>4. Qué falta y cómo proseguir</h2>
+<p>Cada tarea reúne los "Queda" de las secciones 2 y 3, en orden de prioridad. Quedan fuera de alcance, por el
 experimento: MINFLUX iterativo, dwell central distinto y tracking.</p>
 <table>
 <tr><th style="width:3%">#</th><th style="width:21%">Tarea</th><th>Cómo</th><th style="width:28%">Terminado cuando</th></tr>
-<tr><td colspan="4"><b>Prioridad 1 — un estimador p-MINFLUX completo, necesario para analizar datos sin sesgo</b></td></tr>
-<tr><td class="n">1</td><td>Modelo completo (§2.4–2.8)</td><td>Una sola función de probabilidades en <code>pminflux.py</code> con centros medidos, ε, fondo por ventana y <i>M</i>(τ,<i>T</i>).</td><td>MLE insesgado (&lt; 0.1σ) y σ/CRB = 1 ± 5 % en <i>r</i> ≤ <i>L</i>/2, para τ = 1–5 ns y SBR = 5–20.</td></tr>
-<tr><td class="n">2</td><td><i>M</i> real (§2.8)</td><td>Calcular <i>M</i> desde el histograma TCSPC medido: IRF, retardo, ancho de ventana y canales descartados.</td><td>Con IRF = 0 reproduce la forma cerrada; sesgo por ±0.5 ns de corrimiento cuantificado.</td></tr>
-<tr><td class="n">3</td><td>Calibración y <i>L</i> (§2.4–2.5)</td><td>Simular la medición de los centros y de ε; optimizar <i>L</i> con ε y fondo juntos (<code>experiments.optimal_L</code>).</td><td>Tabla <i>L</i><sub>opt</sub>(ε, SBR) y tolerancia de calibración.</td></tr>
-<tr><td class="n">4</td><td>Fondo en los datos (§2.6)</td><td>Decidir entre medir el fondo o ajustarlo libre; fondo distinto por ventana.</td><td>Error de fondo que se tolera para sesgo &lt; 1 nm.</td></tr>
-<tr><td class="n">5</td><td>Prueba de punta a punta</td><td>Generar datos crudos simulados (tiempos de llegada con TCSPC, <i>N</i> de Poisson) y analizarlos con el estimador de la tarea 1.</td><td>Precisión ≈ CRB y sesgo &lt; 1 nm.</td></tr>
+<tr><td colspan="4"><b>Prioridad 1 — validar el modelo p-MINFLUX con el instrumento real</b></td></tr>
+<tr><td class="n">1</td><td>Modelo directo contra datos (§2.8, §3)</td><td>Contar los microtiempos medidos con <code>pminflux_sim.count_windows</code> y comparar las fracciones por ventana y el cruce con la matriz <i>C</i>.</td><td>χ² compatible, o desvíos explicados.</td></tr>
+<tr><td class="n">2</td><td>Medir tiempo muerto e IRF (§3)</td><td>Histograma de la IRF y del intervalo entre detecciones del detector.</td><td>Valores medidos reemplazan los supuestos; con <i>d</i> = <i>n·T</i> el sesgo se anula.</td></tr>
+<tr><td class="n">3</td><td>Calibración del patrón y <i>L</i> (§2.4–2.5)</td><td>Medir centros, potencias y ε con <i>N</i> alto, y pasarlos como conocidos; optimizar <i>L</i> con ε y fondo (<code>experiments.optimal_L</code>).</td><td>Tabla <i>L</i><sub>opt</sub>(ε, SBR); tolerancia δ ≲ 1.3 nm.</td></tr>
+<tr><td class="n">4</td><td>PSF medidas y fondo (§2.6, §3)</td><td>Rehacer los estudios con las PSF medidas; fondo distinto por ventana.</td><td>Sesgo &lt; 1 nm y RMSE/CRB ≈ 1 con PSF reales.</td></tr>
 <tr><td colspan="4"><b>Prioridad 2 — efectos que pueden cambiar los números</b></td></tr>
-<tr><td class="n">6</td><td>Parpadeo rápido y blanqueo (§2.7)</td><td>Estados oscuros de ns a µs y fotoblanqueo durante la medición.</td><td>σ<sub>fl</sub> en función del tiempo de parpadeo.</td></tr>
-<tr><td class="n">7</td><td>Aberraciones (§2.1)</td><td>Fases de Zernike y máscara de vórtice desalineada en <code>vectorial.py</code>.</td><td>ε y sesgo en función de la amplitud de la aberración.</td></tr>
-<tr><td class="n">8</td><td>Deriva, vibración, dipolo, 3D</td><td>Emisor en movimiento, excitación según la orientación, emisor fuera del foco.</td><td>Error extra frente a la amplitud o el ángulo.</td></tr>
+<tr><td class="n">5</td><td>Parpadeo rápido y blanqueo (§2.7)</td><td>Estados oscuros de ns a µs y fotoblanqueo durante la medición.</td><td>σ<sub>fl</sub> en función del tiempo de parpadeo.</td></tr>
+<tr><td class="n">6</td><td>Aberraciones (§2.1)</td><td>Fases de Zernike y máscara de vórtice desalineada en <code>vectorial.py</code>.</td><td>ε y sesgo en función de la amplitud de la aberración.</td></tr>
+<tr><td class="n">7</td><td>Deriva, vibración, dipolo, 3D</td><td>Emisor en movimiento, excitación según la orientación, emisor fuera del foco.</td><td>Error extra frente a la amplitud o el ángulo.</td></tr>
 <tr><td colspan="4"><b>Prioridad 3 — consolidar el repositorio</b></td></tr>
-<tr><td class="n">9</td><td>Integrar §2.6–2.8</td><td>Llevar las figuras 9–10 a <code>make_all_figures.py</code>, <code>compute_paper_numbers.py</code>, <code>reproduce.py</code> y <code>paper/main.tex</code>.</td><td><code>check_provenance.py</code> y el test de aceptación pasan.</td></tr>
-<tr><td class="n">10</td><td>Validación cruzada (§2.1, §2.6)</td><td>Comparar con SimuFLUX (Python, código abierto) en un TCP estático con fondo, y con PyFocus para el diámetro de la dona.</td><td>Acuerdo, o diferencias explicadas.</td></tr>
-<tr><td class="n">11</td><td>Pendientes (§2.3, §2.9)</td><td>Confirmar SBR = 10 y la normalización del RMSE frente a Masullo et al. 2022; correr los tests en Python 3.8.</td><td>Puntos cerrados en <code>open_points.tex</code>.</td></tr>
+<tr><td class="n">8</td><td>Integrar §2.6–2.8 y unificar</td><td>Usar <code>pminflux_sim</code> como modelo p-MINFLUX de referencia y contrastar su CRB con <code>donutloc</code>. Llevar las figuras 9–10 a <code>make_all_figures.py</code>, <code>compute_paper_numbers.py</code>, <code>reproduce.py</code> y <code>paper/main.tex</code>.</td><td><code>check_provenance.py</code> y el test de aceptación pasan.</td></tr>
+<tr><td class="n">9</td><td>Validación cruzada (§2.1, §2.6)</td><td>Comparar con SimuFLUX (Python, código abierto) en un TCP estático con fondo, y con PyFocus para el diámetro de la dona.</td><td>Acuerdo, o diferencias explicadas.</td></tr>
+<tr><td class="n">10</td><td>Pendientes (§2.3, §2.9)</td><td>Confirmar SBR = 10 y la normalización del RMSE frente a Masullo et al. 2022; correr los tests en Python 3.8.</td><td>Puntos cerrados en <code>open_points.tex</code>.</td></tr>
 </table>
-<p><b>Siguiente paso sugerido.</b> Las tareas 1 y 2 juntas, como un trabajo de equipo <code>feature</code>. El
-criterio de la tarea 1 sirve como test de aceptación, y el resto del plan depende de tener ese estimador.</p>
+<p><b>Siguiente paso sugerido.</b> Las tareas 1 y 2: el estimador ya existe (§3), y lo que falta es comprobar
+con datos que su modelo describe el instrumento. Todo lo demás se apoya en esa validación.</p>
 
-<h2>4. Reproducir y referencias</h2>
+<h2>5. Reproducir y referencias</h2>
 <p><code>python -m unittest discover -s tests</code> (≈ 30 s). Las figuras nuevas se regeneran con
 <code>python scripts/fig_9_pminflux_timing.py</code> y <code>python scripts/fig_10_background_bias.py</code> (≈ 1 min
 cada una, semilla 42), y el manuscrito con <code>python scripts/reproduce.py</code> (≈ 25 min). Este PDF se genera
@@ -217,6 +248,7 @@ con <code>node informe/build_pdf.js</code>. Las etiquetas <span class="src">[src
 <ol class="refs">
 <li>F. Balzarotti et al., <i>Science</i> 355, 606 (2017) — MINFLUX.</li>
 <li>L. A. Masullo et al., <i>Nano Lett.</i> 21, 840 (2021) — Pulsed Interleaved MINFLUX; y <i>Biophys. Rep.</i> 2, 100036 (2022).</li>
+<li>Repositorio complementario: <code>github.com/FlorJDC/pminflux-simulations</code> (reporte en <code>report/index.html</code>).</li>
 <li>Z. Marin, J. Ries, <i>Nat. Commun.</i> 17, 246 (2026) — SimuFLUX; nota en <code>docs/literature/D_simuflux.md</code>.</li>
 </ol>
 
