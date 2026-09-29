@@ -45,3 +45,8 @@ fondo). Puede leer archivos de secuencia de Abberior [Marin2026, pp. 1–2, 4–
 - El sesgo por fondo no modelado se estudia aquí para el TCP fijo con MLE
   (`src/donutloc/background.py`, `scripts/fig_10_background_bias.py`). Es el análogo cualitativo
   de su Fig. 2d, no una reproducción numérica (ellos usan LSQ con 200 + 200 fotones).
+
+## Ver también
+`C_insilico_minflux.md` (resumen detallado de SimuFLUX con claves [MR-*]) y `C_insilico_vs_donutloc.md`
+(comparación numérica y checklist) cubren el mismo paper con más detalle. Esta nota D se centra en su
+relación con p-MINFLUX.
