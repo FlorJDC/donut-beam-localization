@@ -98,6 +98,330 @@
   "statement": "real per-axis error of iteration 0 (L=150, 250 photons, emitters uniform in L0/4)",
   "type": "script"
  },
+ "bgphys_fixed_crb_x25_nm": {
+  "detail": "bgphys_fixed_crb_x25_nm",
+  "number_keys": [
+   "bgphys_fixed_crb_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB at r=(25,0); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_crb_x50_nm": {
+  "detail": "bgphys_fixed_crb_x50_nm",
+  "number_keys": [
+   "bgphys_fixed_crb_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB at r=(50,0); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_lms_bias_x_x25_nm": {
+  "detail": "bgphys_fixed_lms_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_fixed_lms_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms bias along x at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_lms_bias_x_x50_nm": {
+  "detail": "bgphys_fixed_lms_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_fixed_lms_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms bias along x at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_lms_sigma_over_crb_x25": {
+  "detail": "bgphys_fixed_lms_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_fixed_lms_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms sigma/CRB at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_lms_sigma_over_crb_x50": {
+  "detail": "bgphys_fixed_lms_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_fixed_lms_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms sigma/CRB at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mle_bias_x_x25_nm": {
+  "detail": "bgphys_fixed_mle_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_fixed_mle_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle bias along x at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mle_bias_x_x50_nm": {
+  "detail": "bgphys_fixed_mle_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_fixed_mle_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle bias along x at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mle_sigma_over_crb_x25": {
+  "detail": "bgphys_fixed_mle_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_fixed_mle_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle sigma/CRB at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mle_sigma_over_crb_x50": {
+  "detail": "bgphys_fixed_mle_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_fixed_mle_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle sigma/CRB at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mlms_bias_x_x25_nm": {
+  "detail": "bgphys_fixed_mlms_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_fixed_mlms_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms bias along x at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mlms_bias_x_x50_nm": {
+  "detail": "bgphys_fixed_mlms_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_fixed_mlms_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms bias along x at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mlms_sigma_over_crb_x25": {
+  "detail": "bgphys_fixed_mlms_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_fixed_mlms_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms sigma/CRB at r=(25,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_fixed_mlms_sigma_over_crb_x50": {
+  "detail": "bgphys_fixed_mlms_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_fixed_mlms_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms sigma/CRB at r=(50,0), fixed background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_iter_matchL150_sbr_first": {
+  "detail": "bgphys_iter_matchL150_sbr_first",
+  "number_keys": [
+   "bgphys_iter_matchL150_sbr_first"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "centre SBR of the first iteration (L=150); iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=150 pattern",
+  "type": "script"
+ },
+ "bgphys_iter_matchL150_sbr_last": {
+  "detail": "bgphys_iter_matchL150_sbr_last",
+  "number_keys": [
+   "bgphys_iter_matchL150_sbr_last"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "centre SBR of the last iteration (L=25); iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=150 pattern",
+  "type": "script"
+ },
+ "bgphys_iter_matchL150_sigma_nm": {
+  "detail": "bgphys_iter_matchL150_sigma_nm",
+  "number_keys": [
+   "bgphys_iter_matchL150_sigma_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "final sigma; iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=150 pattern",
+  "type": "script"
+ },
+ "bgphys_iter_matchL25_sbr_first": {
+  "detail": "bgphys_iter_matchL25_sbr_first",
+  "number_keys": [
+   "bgphys_iter_matchL25_sbr_first"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "centre SBR of the first iteration (L=150); iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=25 pattern",
+  "type": "script"
+ },
+ "bgphys_iter_matchL25_sbr_last": {
+  "detail": "bgphys_iter_matchL25_sbr_last",
+  "number_keys": [
+   "bgphys_iter_matchL25_sbr_last"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "centre SBR of the last iteration (L=25); iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=25 pattern",
+  "type": "script"
+ },
+ "bgphys_iter_matchL25_sigma_nm": {
+  "detail": "bgphys_iter_matchL25_sigma_nm",
+  "number_keys": [
+   "bgphys_iter_matchL25_sigma_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "final sigma; iterative protocol of fig 6 (4 iterations L=150->25, equal split, re-centring, MLE), N_tot=1000, 10000 reps, seed 42, with a background constant per exposure fixed so that SBR=10 at the centre of the L=25 pattern",
+  "type": "script"
+ },
+ "bgphys_phys_crb_x25_nm": {
+  "detail": "bgphys_phys_crb_x25_nm",
+  "number_keys": [
+   "bgphys_phys_crb_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB at r=(25,0); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_crb_x50_nm": {
+  "detail": "bgphys_phys_crb_x50_nm",
+  "number_keys": [
+   "bgphys_phys_crb_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB at r=(50,0); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_lms_bias_x_x25_nm": {
+  "detail": "bgphys_phys_lms_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_phys_lms_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms bias along x at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_lms_bias_x_x50_nm": {
+  "detail": "bgphys_phys_lms_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_phys_lms_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms bias along x at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_lms_sigma_over_crb_x25": {
+  "detail": "bgphys_phys_lms_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_phys_lms_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms sigma/CRB at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_lms_sigma_over_crb_x50": {
+  "detail": "bgphys_phys_lms_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_phys_lms_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "lms sigma/CRB at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mle_bias_x_x25_nm": {
+  "detail": "bgphys_phys_mle_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_phys_mle_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle bias along x at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mle_bias_x_x50_nm": {
+  "detail": "bgphys_phys_mle_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_phys_mle_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle bias along x at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mle_sigma_over_crb_x25": {
+  "detail": "bgphys_phys_mle_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_phys_mle_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle sigma/CRB at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mle_sigma_over_crb_x50": {
+  "detail": "bgphys_phys_mle_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_phys_mle_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mle sigma/CRB at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mlms_bias_x_x25_nm": {
+  "detail": "bgphys_phys_mlms_bias_x_x25_nm",
+  "number_keys": [
+   "bgphys_phys_mlms_bias_x_x25_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms bias along x at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mlms_bias_x_x50_nm": {
+  "detail": "bgphys_phys_mlms_bias_x_x50_nm",
+  "number_keys": [
+   "bgphys_phys_mlms_bias_x_x50_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms bias along x at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mlms_sigma_over_crb_x25": {
+  "detail": "bgphys_phys_mlms_sigma_over_crb_x25",
+  "number_keys": [
+   "bgphys_phys_mlms_sigma_over_crb_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms sigma/CRB at r=(25,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_phys_mlms_sigma_over_crb_x50": {
+  "detail": "bgphys_phys_mlms_sigma_over_crb_x50",
+  "number_keys": [
+   "bgphys_phys_mlms_sigma_over_crb_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "mlms sigma/CRB at r=(50,0), phys background; L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "type": "script"
+ },
+ "bgphys_sbr_x25": {
+  "detail": "bgphys_sbr_x25",
+  "number_keys": [
+   "bgphys_sbr_x25"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "SBR at r=(25,0) with the physical background matched to SBR=10 at the centre (L=50, fwhm=300)",
+  "type": "script"
+ },
+ "bgphys_sbr_x50": {
+  "detail": "bgphys_sbr_x50",
+  "number_keys": [
+   "bgphys_sbr_x50"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "SBR at r=(50,0) with the physical background matched to SBR=10 at the centre (L=50, fwhm=300)",
+  "type": "script"
+ },
  "camera_ideal_N400_nm": {
   "detail": "camera_ideal_N400_nm",
   "number_keys": [
@@ -184,6 +508,11 @@
   "reproduce": "scripts/verify_crb_closed_forms.py",
   "statement": "The closed forms (S27 point value, r->0 limit, S31, pedestal models, multiphoton, 1D) agree with an independent numerical Fisher computation (89 exact cases, max rel. error ~2e-7)",
   "type": "check"
+ },
+ "conv_eps_normalization": {
+  "reproduce": "public SimuFLUX code PsfDonut2D: I = 4 ln2 (r/fwhm)^2 exp(-4 ln2 r^2/fwhm^2) + zerooffset, whose maximum over r is 1/e; our LG donut (beams.lg_donut) has ring peak 1; docs/literature/C_insilico_minflux.md, Sec. 2",
+  "statement": "SimuFLUX's zero offset relative to a ring peak of 1/e corresponds to eps = e x offset in our normalization",
+  "type": "derivation"
  },
  "crb_1d_quadratic_L50_N100_nm": {
   "detail": "crb_1d_quadratic_L50_N100_nm",
@@ -1062,6 +1391,21 @@
   "statement": "Published MINFLUX centre precision 0.94 / 1.96 / 3.16 nm for L = 50 / 100 / 150 nm (Supplementary Table 1, column 2, 'precision at the center'); the legend states no SBR or N for this column: SBR=5, N=500 and fwhm=360 nm are inferred by us from the other columns",
   "type": "source"
  },
+ "lit_simuflux_crb_point_value": {
+  "reproduce": "Marin & Ries (2026), Fig. 2e and Supplementary Fig. 8 (sigma_CRB ~ 2.8 nm at N=100, ~0.9 nm at N=1000, read from the plots); public code calculateCRBdirect (finite differences, p_i + 1e-4 regularizer); comparison in docs/literature/C_insilico_vs_donutloc.md, Sec. 1a",
+  "statement": "The numerical CRB of SimuFLUX at the pattern centre without background equals the point value (2.76 nm for L=75, fwhm=310, N=100), not the r->0 limit",
+  "type": "source"
+ },
+ "lit_simuflux_mask_misalignment": {
+  "reproduce": "Marin & Ries, Nat. Commun. 17, 246 (2026), main text p. 2 and Supplementary Fig. 1 (docs/literature/C_insilico_minflux.md, Sec. 7)",
+  "statement": "A shift of the vortex phase mask deforms the donut and fills the zero; SimuFLUX finds a z-dependent bias and an rmse up to ~20 times the aligned CRB, not reflected by the CRB",
+  "type": "source"
+ },
+ "lit_simuflux_power_ramp": {
+  "reproduce": "Marin & Ries, Nat. Commun. 17, 246 (2026), public code ries-lab/SimuFLUX, example sequences Tracking_2D / Imaging_2D (pwrFactor 1,1,2,3 and 1,1,2,4,6); docs/literature/C_insilico_minflux.md, Sec. on iterative sequences",
+  "statement": "The example iteration sequences distributed with SimuFLUX raise the excitation power as L decreases",
+  "type": "source"
+ },
  "lms_center_analytic": {
   "detail": "TestLMS; MC value lms_nobg_sigma_over_s27_center in scripts/compute_paper_numbers.py",
   "reproduce": "tests/test_estimators.py",
@@ -1440,6 +1784,195 @@
   "statement": "MLE sigma at the TCP centre, SBR=10; L=50, N=100, fwhm=300, MLE in disk radius L, 10000 reps, seed 42, bootstrap SE",
   "type": "script"
  },
+ "naive_eps0p002_crb_x10_nm": {
+  "detail": "naive_eps0p002_crb_x10_nm",
+  "number_keys": [
+   "naive_eps0p002_crb_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB (N=100) of the true model with constant pedestal eps=0.002 at r=(10,0), L=50, SBR=10",
+  "type": "script"
+ },
+ "naive_eps0p002_crb_x20_nm": {
+  "detail": "naive_eps0p002_crb_x20_nm",
+  "number_keys": [
+   "naive_eps0p002_crb_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB (N=100) of the true model with constant pedestal eps=0.002 at r=(20,0), L=50, SBR=10",
+  "type": "script"
+ },
+ "naive_eps0p002_lms_extra_bias_x_x10_nm": {
+  "detail": "naive_eps0p002_lms_extra_bias_x_x10_nm",
+  "number_keys": [
+   "naive_eps0p002_lms_extra_bias_x_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p002_lms_extra_bias_x_x20_nm": {
+  "detail": "naive_eps0p002_lms_extra_bias_x_x20_nm",
+  "number_keys": [
+   "naive_eps0p002_lms_extra_bias_x_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p002_mle_N_bias_eq_crb_x10": {
+  "detail": "naive_eps0p002_mle_N_bias_eq_crb_x10",
+  "number_keys": [
+   "naive_eps0p002_mle_N_bias_eq_crb_x10"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.002, r=(10,0)",
+  "type": "script"
+ },
+ "naive_eps0p002_mle_N_bias_eq_crb_x20": {
+  "detail": "naive_eps0p002_mle_N_bias_eq_crb_x20",
+  "number_keys": [
+   "naive_eps0p002_mle_N_bias_eq_crb_x20"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.002, r=(20,0)",
+  "type": "script"
+ },
+ "naive_eps0p002_mle_bias_abs_x10_nm": {
+  "detail": "naive_eps0p002_mle_bias_abs_x10_nm",
+  "number_keys": [
+   "naive_eps0p002_mle_bias_abs_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p002_mle_bias_abs_x20_nm": {
+  "detail": "naive_eps0p002_mle_bias_abs_x20_nm",
+  "number_keys": [
+   "naive_eps0p002_mle_bias_abs_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p01_crb_x10_nm": {
+  "detail": "naive_eps0p01_crb_x10_nm",
+  "number_keys": [
+   "naive_eps0p01_crb_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB (N=100) of the true model with constant pedestal eps=0.01 at r=(10,0), L=50, SBR=10",
+  "type": "script"
+ },
+ "naive_eps0p01_crb_x20_nm": {
+  "detail": "naive_eps0p01_crb_x20_nm",
+  "number_keys": [
+   "naive_eps0p01_crb_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "CRB (N=100) of the true model with constant pedestal eps=0.01 at r=(20,0), L=50, SBR=10",
+  "type": "script"
+ },
+ "naive_eps0p01_lms_extra_bias_x_x10_nm": {
+  "detail": "naive_eps0p01_lms_extra_bias_x_x10_nm",
+  "number_keys": [
+   "naive_eps0p01_lms_extra_bias_x_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p01_lms_extra_bias_x_x20_nm": {
+  "detail": "naive_eps0p01_lms_extra_bias_x_x20_nm",
+  "number_keys": [
+   "naive_eps0p01_lms_extra_bias_x_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p01_mle_N_bias_eq_crb_x10": {
+  "detail": "naive_eps0p01_mle_N_bias_eq_crb_x10",
+  "number_keys": [
+   "naive_eps0p01_mle_N_bias_eq_crb_x10"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.01, r=(10,0)",
+  "type": "script"
+ },
+ "naive_eps0p01_mle_N_bias_eq_crb_x20": {
+  "detail": "naive_eps0p01_mle_N_bias_eq_crb_x20",
+  "number_keys": [
+   "naive_eps0p01_mle_N_bias_eq_crb_x20"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.01, r=(20,0)",
+  "type": "script"
+ },
+ "naive_eps0p01_mle_bias_abs_x10_nm": {
+  "detail": "naive_eps0p01_mle_bias_abs_x10_nm",
+  "number_keys": [
+   "naive_eps0p01_mle_bias_abs_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_eps0p01_mle_bias_abs_x20_nm": {
+  "detail": "naive_eps0p01_mle_bias_abs_x20_nm",
+  "number_keys": [
+   "naive_eps0p01_mle_bias_abs_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_honest_mle_max_abs_bias_nm": {
+  "detail": "naive_honest_mle_max_abs_bias_nm",
+  "number_keys": [
+   "naive_honest_mle_max_abs_bias_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "largest |bias| of the MLE with the correct pedestal model over the eps and x above (numerical zero of the noise-free test); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_sbr20_mle_bias_abs_x10_nm": {
+  "detail": "naive_sbr20_mle_bias_abs_x10_nm",
+  "number_keys": [
+   "naive_sbr20_mle_bias_abs_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_sbr20_mle_bias_abs_x20_nm": {
+  "detail": "naive_sbr20_mle_bias_abs_x20_nm",
+  "number_keys": [
+   "naive_sbr20_mle_bias_abs_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_sbrinf_mle_bias_abs_x10_nm": {
+  "detail": "naive_sbrinf_mle_bias_abs_x10_nm",
+  "number_keys": [
+   "naive_sbrinf_mle_bias_abs_x10_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
+ "naive_sbrinf_mle_bias_abs_x20_nm": {
+  "detail": "naive_sbrinf_mle_bias_abs_x20_nm",
+  "number_keys": [
+   "naive_sbrinf_mle_bias_abs_x20_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "type": "script"
+ },
  "photons_for_5nm_L50_limit_nobg": {
   "detail": "photons_for_5nm_L50_limit_nobg",
   "number_keys": [
@@ -1492,6 +2025,24 @@
   ],
   "reproduce": "scripts/compute_paper_numbers.py",
   "statement": "photons for a 5 nm centre CRB (point value, Eq. S31/S27), L=50, fwhm=300, SBR=inf",
+  "type": "script"
+ },
+ "simuflux_tcp_crb_limit_L75_fwhm310_nm": {
+  "detail": "simuflux_tcp_crb_limit_L75_fwhm310_nm",
+  "number_keys": [
+   "simuflux_tcp_crb_limit_L75_fwhm310_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "TCP centre CRB, r->0 limit, L=75, fwhm=310, N=100, no background",
+  "type": "script"
+ },
+ "simuflux_tcp_crb_point_L75_fwhm310_nm": {
+  "detail": "simuflux_tcp_crb_point_L75_fwhm310_nm",
+  "number_keys": [
+   "simuflux_tcp_crb_point_L75_fwhm310_nm"
+  ],
+  "reproduce": "scripts/compute_paper_numbers.py",
+  "statement": "TCP centre CRB, point value Eq. S27 (centre exposure excluded), L=75, fwhm=310 (SimuFLUX default), N=100, no background",
   "type": "script"
  },
  "vectorial_lg_fwhm_curvature_nm": {

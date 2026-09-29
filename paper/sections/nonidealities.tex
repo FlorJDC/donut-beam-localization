@@ -62,6 +62,12 @@ independent of $L$. This is a scale, not the position of the minimum, which depe
 direction and on $L$.
 
 \subsection{Misalignment of the pattern}
+Here ``misalignment'' means an error in the \emph{positions} of the zeros, e.g.\ an imperfect
+calibration of the beam steering, with the shape of each donut unchanged. It is not a
+misalignment of the vortex phase mask, which deforms the donut and fills its zero, and which
+Ref.~\cite{MarinRies2026} finds to bias the estimate strongly, by far more than the CRB of the
+aligned beam\src{lit_simuflux_mask_misalignment}; that effect is outside the scope of this study
+(Sec.~\ref{sec:open}).
 We displace each of the four zeros (including the central one) by $\delta$ in an independent
 random direction and localize with $L=100$\,nm, $N=500$ and $\sbr=10$, using either the
 \emph{naive} MLE, which assumes the nominal pattern, or the \emph{honest} MLE, which uses the
@@ -129,6 +135,46 @@ at $\delta=10$\,nm) and lies slightly above it at $(L/4,0)$
 (\pnum{misalignment_honest_sigma_Lq_d10_nm}\,$\pm$\,\pnumse{misalignment_honest_sigma_Lq_d10_nm}\src{misalignment_honest_sigma_Lq_d10_nm}\,nm
 against \pnum{misalignment_crb_honest_Lq_d10_nm}\src{misalignment_crb_honest_Lq_d10_nm}\,nm).
 
+\subsection{Estimators that ignore the zero depth or misjudge the background}
+The CRB of Table~\ref{tab:eps} assumes that the estimator knows $\epsilon$. If the data carry a
+pedestal that the likelihood ignores, the estimate is biased; Ref.~\cite{MarinRies2026} reports
+the same effect for an imperfect zero not included in the estimator. We quantify it without MC
+noise by applying the estimators to the \emph{expected} counts $Np_i(\rr)$ ($L=50$\,nm,
+$N=100$, true $\sbr=10$ at every position, constant pedestal, MLE in a disk of radius $0.75L$).
+The MLE that uses the correct pedestal recovers the true position to
+\pnum{naive_honest_mle_max_abs_bias_nm}\src{naive_honest_mle_max_abs_bias_nm}\,nm. The MLE that
+assumes $\epsilon=0$ has a $|\text{bias}|$ of
+\pnum{naive_eps0p002_mle_bias_abs_x10_nm}\src{naive_eps0p002_mle_bias_abs_x10_nm} and
+\pnum{naive_eps0p002_mle_bias_abs_x20_nm}\src{naive_eps0p002_mle_bias_abs_x20_nm}\,nm at
+$x_0=10$ and $20$\,nm for $\epsilon=0.002$, and
+\pnum{naive_eps0p01_mle_bias_abs_x10_nm}\src{naive_eps0p01_mle_bias_abs_x10_nm} and
+\pnum{naive_eps0p01_mle_bias_abs_x20_nm}\src{naive_eps0p01_mle_bias_abs_x20_nm}\,nm for
+$\epsilon=0.01$, against CRBs at $N=100$ of
+\pnum{naive_eps0p01_crb_x10_nm}\src{naive_eps0p01_crb_x10_nm} and
+\pnum{naive_eps0p01_crb_x20_nm}\src{naive_eps0p01_crb_x20_nm}\,nm ($\epsilon=0.01$). The bias does
+not decrease with $N$, whereas the CRB falls as $N^{-1/2}$: for $\epsilon=0.01$ the two are equal
+at $N\approx\pnum{naive_eps0p01_mle_N_bias_eq_crb_x10}\src{naive_eps0p01_mle_N_bias_eq_crb_x10}$
+($x_0=10$\,nm) and
+$\pnum{naive_eps0p01_mle_N_bias_eq_crb_x20}\src{naive_eps0p01_mle_N_bias_eq_crb_x20}$
+($x_0=20$\,nm), and for $\epsilon=0.002$ at
+$N\approx\pnum{naive_eps0p002_mle_N_bias_eq_crb_x10}\src{naive_eps0p002_mle_N_bias_eq_crb_x10}$
+and $\pnum{naive_eps0p002_mle_N_bias_eq_crb_x20}\src{naive_eps0p002_mle_N_bias_eq_crb_x20}$;
+above these photon numbers the ignored pedestal, not the photon noise, limits the accuracy.
+For the LMS, the ignored pedestal shifts the estimate along $x$ by
+\pnum{naive_eps0p01_lms_extra_bias_x_x10_nm}\src{naive_eps0p01_lms_extra_bias_x_x10_nm} and
+\pnum{naive_eps0p01_lms_extra_bias_x_x20_nm}\src{naive_eps0p01_lms_extra_bias_x_x20_nm}\,nm for
+$\epsilon=0.01$ (\pnum{naive_eps0p002_lms_extra_bias_x_x10_nm}\src{naive_eps0p002_lms_extra_bias_x_x10_nm}
+and \pnum{naive_eps0p002_lms_extra_bias_x_x20_nm}\src{naive_eps0p002_lms_extra_bias_x_x20_nm}\,nm
+for $\epsilon=0.002$), on top of its linearization bias (Sec.~\ref{sec:estimators}). A misjudged SBR (true $10$, $\epsilon=0$) acts in the same way: an MLE
+that assumes $\sbr=20$ has a $|\text{bias}|$ of
+\pnum{naive_sbr20_mle_bias_abs_x10_nm}\src{naive_sbr20_mle_bias_abs_x10_nm} and
+\pnum{naive_sbr20_mle_bias_abs_x20_nm}\src{naive_sbr20_mle_bias_abs_x20_nm}\,nm at $x_0=10$ and
+$20$\,nm, and one that assumes no background
+\pnum{naive_sbrinf_mle_bias_abs_x10_nm}\src{naive_sbrinf_mle_bias_abs_x10_nm} and
+\pnum{naive_sbrinf_mle_bias_abs_x20_nm}\src{naive_sbrinf_mle_bias_abs_x20_nm}\,nm. The zero depth
+and the background therefore have to be measured and put into the likelihood, not only into the
+error budget.
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig7_zero_depth.pdf}
@@ -149,7 +195,8 @@ a scale and not the position of the minimum.}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig8_misalignment.pdf}
-\caption{TCP misalignment ($L=100$\,nm, $N=500$, $\sbr=10$; all four zeros displaced by $\delta$
+\caption{TCP misalignment, i.e.\ an error in the positions of the zeros with the donut shape
+unchanged ($L=100$\,nm, $N=500$, $\sbr=10$; all four zeros displaced by $\delta$
 in random directions; $400$ patterns $\times$ $200$ repetitions; error bars are between-pattern
 SE). (a)~Mean $|\text{bias}|$ of the naive MLE (nominal pattern) and of the honest MLE (true
 pattern) versus $\delta$, at the centre and at $(L/4,0)$, with the MC noise floor (grey band) and
