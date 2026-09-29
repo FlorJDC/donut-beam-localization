@@ -62,8 +62,8 @@ def probabilities_bg(theta, centers, beam):
     if th.shape[-1:] != (3,):
         raise ValueError("theta must have shape (..., 3), got %r" % (th.shape,))
     b = th[..., 2]
-    if np.any(b < 0):
-        raise ValueError("background b must be >= 0")
+    if np.any(~(b >= 0)) or np.any(~np.isfinite(b)):
+        raise ValueError("background b must be finite and >= 0")
     lam = photons.intensities(th[..., :2], centers, beam) + b[..., None]
     with np.errstate(invalid="ignore", divide="ignore"):
         return lam / lam.sum(axis=-1, keepdims=True)

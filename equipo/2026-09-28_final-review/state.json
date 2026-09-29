@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-28_final-review",
+  "type": "feature",
+  "status": "running",
+  "round": 1,
+  "rounds_budget": 1,
+  "team": [
+    "code-reviewer",
+    "worker",
+    "verifier"
+  ],
+  "deliverable": "explore/ + fixes",
+  "base_commit": "e43bbbd",
+  "claims": [],
+  "history": []
+}

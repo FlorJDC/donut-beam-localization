@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del explorador</title>
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --rule:#d5d9de; --accent:#0b5cad; --bg:#ffffff; --box:#f3f6f9; --ok:#1c7c3a; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink:#e6e9ed; --muted:#a7b0ba; --rule:#3a414a; --accent:#6fb1ff; --bg:#15181c; --box:#1f242a; --ok:#5cc47f; }
+  }
+  :root[data-theme="dark"] { --ink:#e6e9ed; --muted:#a7b0ba; --rule:#3a414a; --accent:#6fb1ff; --bg:#15181c; --box:#1f242a; --ok:#5cc47f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; color: var(--accent); margin: 34px 0 8px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+  h3 { font-size: 1.05rem; margin: 18px 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  pre, code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .9em; }
+  pre { background: var(--box); padding: 10px 12px; border-radius: 6px; overflow-x: auto; }
+  code { background: var(--box); padding: 1px 4px; border-radius: 3px; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 14px; font-size: .93rem; }
+  th, td { border-bottom: 1px solid var(--rule); padding: 6px 6px; text-align: left; vertical-align: top; }
+  th { background: var(--box); }
+  .mode { border: 1px solid var(--rule); border-radius: 8px; padding: 4px 16px 10px; margin: 16px 0; }
+  .mode h3 { color: var(--accent); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; background: var(--box); color: var(--muted); margin-left: 6px; }
+  .expect { border-left: 3px solid var(--ok); padding: 2px 10px; background: var(--box); margin: 8px 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc li { margin: 2px 0; }
+  @media (max-width: 600px) { table { font-size: .85rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Explorador de simulaciones MINFLUX / p-MINFLUX</h1>
+<p class="sub">Guía de <code>explore/donut_explorer.py</code>: cómo usarlo, qué hace cada modo, qué salida esperar y qué aprender.</p>
+
+<h2>1. Instalación y ejecución</h2>
+<p>El script es autónomo: agrega <code>src/</code> al <code>sys.path</code> e importa el paquete <code>donutloc</code>
+del repositorio. Solo necesita Python ≥ 3.8 con numpy, scipy y matplotlib (<code>pip install -r requirements.txt</code>).
+Se corre desde cualquier carpeta.</p>
+<pre><code>python explore/donut_explorer.py                  # menú interactivo
+python explore/donut_explorer.py --mode 3         # un modo, con preguntas
+python explore/donut_explorer.py --mode 3 --yes   # un modo con los valores por defecto
+python explore/donut_explorer.py --all --yes --no-show --save salida_explorador
+                                                  # todos los modos, guarda las figuras en PNG</code></pre>
+<table>
+<tr><th>Opción</th><th>Qué hace</th></tr>
+<tr><td><code>--mode N</code></td><td>Corre solo el modo N (1–8).</td></tr>
+<tr><td><code>--all</code></td><td>Corre los 8 modos en orden; con los valores por defecto tarda unos segundos en total.</td></tr>
+<tr><td><code>--yes</code></td><td>No pregunta: usa los valores por defecto (entre corchetes).</td></tr>
+<tr><td><code>--no-show</code></td><td>No abre ventanas de figuras (útil en servidores o para correr todo de una vez).</td></tr>
+<tr><td><code>--save DIR</code></td><td>Guarda cada figura como <code>DIR/modoN_*.png</code>.</td></tr>
+</table>
+<p>En cada modo el script: (1) explica en dos o tres líneas el fenómeno, (2) pide parámetros (Enter = valor por
+defecto), (3) calcula e imprime los números clave, (4) muestra una figura y (5) cierra con "Qué aprender de esto".
+Todas las simulaciones usan semilla 42, así que los resultados se repiten.</p>
+
+<h2>2. Modos</h2>
+<ol class="toc">
+<li><a href="#m1">La dona y el patrón TCP</a></li>
+<li><a href="#m2">Límite de Cramér-Rao: mapa y escalamiento</a></li>
+<li><a href="#m3">MLE frente al CRB</a></li>
+<li><a href="#m4">Cero imperfecto y L óptimo</a></li>
+<li><a href="#m5">Patrón desalineado</a></li>
+<li><a href="#m6">Fondo no modelado</a></li>
+<li><a href="#m7">Parpadeo: secuencial vs entrelazado</a></li>
+<li><a href="#m8">Cruce entre ventanas (tiempo de vida)</a></li>
+</ol>
+
+<div class="mode" id="m1"><h3>Modo 1 · La dona y el patrón TCP <span class="tag">&lt; 1 s</span></h3>
+<p><b>Qué simula.</b> El perfil de la dona Laguerre–Gauss y las fracciones de fotones <i>p<sub>i</sub></i> que ve una
+molécula en cada una de las 4 exposiciones del TCP (3 donas en un círculo de diámetro <i>L</i> y una en el centro).</p>
+<p><b>Parámetros.</b> fwhm (300 nm), <i>L</i> (100 nm), cero residual ε (0).</p>
+<div class="expect"><b>Qué esperar (valores por defecto).</b> Radio del anillo 180.2 nm (0.6006·fwhm).
+En el centro <i>p</i> = [0.333, 0.333, 0.333, 0]; en <i>x</i> = <i>L</i>/4, [0.32, 0.506, 0.105, 0.069].
+Figura: perfil radial y mapas de <i>p</i> de la exposición central y de la exposición 0.</div>
+<p><b>Para probar.</b> Poné ε = 0.01: la exposición central deja de valer 0 en el centro.</p></div>
+
+<div class="mode" id="m2"><h3>Modo 2 · Límite de Cramér-Rao <span class="tag">~ 1 s</span></h3>
+<p><b>Qué simula.</b> El CRB (mejor precisión posible por eje) en todo el campo, y cómo escala con <i>L</i>.</p>
+<p><b>Parámetros.</b> <i>L</i> (50 nm), <i>N</i> (100), SBR (0 = sin fondo), fwhm (300 nm).</p>
+<div class="expect"><b>Qué esperar.</b> CRB en el centro: límite <i>r</i>→0 = 1.605 nm y valor puntual (Balzarotti S27)
+= 1.802 nm; pendiente log–log con <i>L</i> ≈ 1.0. Figura: mapa de log<sub>10</sub>CRB y CRB en el centro frente a <i>L</i>.</div>
+<p><b>Para probar.</b> SBR = 10: la discontinuidad en el centro desaparece (1.96 nm) y a <i>L</i> chico el CRB deja de bajar.</p></div>
+
+<div class="mode" id="m3"><h3>Modo 3 · MLE frente al CRB <span class="tag">~ 1 s</span></h3>
+<p><b>Qué simula.</b> Monte Carlo: muchas localizaciones de una molécula fija, estimadas con máxima verosimilitud.</p>
+<p><b>Parámetros.</b> <i>L</i> (100), <i>N</i> (200), SBR (10), posición <i>x</i> (20 nm), repeticiones (1000).</p>
+<div class="expect"><b>Qué esperar.</b> Sesgo ≈ (−0.06, −0.01) nm, STD por eje 3.33 nm, CRB 3.34 nm: STD/CRB = 1.00.
+Figura: nube de estimaciones e histograma del error con la gaussiana del CRB.</div>
+<p><b>Para probar.</b> SBR = 0 y <i>x</i> = 0: el MLE da STD por debajo del CRB, pero sesgado hacia el centro (el modelo
+no es regular allí). <i>x</i> = 70: aparecen sesgo y colas fuera del TCP.</p></div>
+
+<div class="mode" id="m4"><h3>Modo 4 · Cero imperfecto y L óptimo <span class="tag">&lt; 1 s</span></h3>
+<p><b>Qué simula.</b> CRB en el centro frente a <i>L</i> para varios ceros residuales ε, y el <i>L</i> que lo minimiza.</p>
+<p><b>Parámetros.</b> lista de ε (0.002 0.01 0.05), <i>N</i> (100).</p>
+<div class="expect"><b>Qué esperar.</b> <i>L</i><sub>opt</sub> ≈ 10.5, 23 y 50 nm, cerca de la regla 0.78·fwhm·√ε
+(10.5, 23.4 y 52.3 nm) mientras ε ≲ 0.01. Figura: curvas CRB(<i>L</i>) con una estrella en cada óptimo.</div>
+<p><b>Para qué sirve.</b> En p-MINFLUX con <i>L</i> fijo: medir ε y elegir <i>L</i> cerca del óptimo.</p></div>
+
+<div class="mode" id="m5"><h3>Modo 5 · Patrón desalineado <span class="tag">&lt; 1 s</span></h3>
+<p><b>Qué simula.</b> Cada dona se corre δ en una dirección al azar; se estima con el patrón nominal (ingenuo) y con el
+verdadero, sobre las cuentas esperadas (sin ruido), para aislar el sesgo del modelo.</p>
+<p><b>Parámetros.</b> δ (5 nm), <i>N</i> (500), número de patrones al azar (30).</p>
+<div class="expect"><b>Qué esperar.</b> |sesgo| ingenuo ≈ 4.2 nm (≈ 0.8·δ; el promedio sobre muchos patrones es 0.78·δ);
+con el patrón verdadero, 0. Figura: sesgo 2D de cada patrón.</div>
+<p><b>Para qué sirve.</b> Para sesgo &lt; 1 nm hay que conocer las posiciones de las donas con error ≲ 1.3 nm.</p></div>
+
+<div class="mode" id="m6"><h3>Modo 6 · Fondo no modelado <span class="tag">&lt; 1 s</span></h3>
+<p><b>Qué simula.</b> Fondo igual en las 4 exposiciones; se estima con tres modelos: sin fondo, fondo exacto y fondo
+libre (MLE en <i>x</i>, <i>y</i>, <i>b</i>). Usa cuentas esperadas (sin ruido).</p>
+<p><b>Parámetros.</b> SBR en el centro (5), <i>N</i> total (500).</p>
+<div class="expect"><b>Qué esperar.</b> Una tabla por posición. Sesgo en <i>x</i> sin fondo: +6.8, +4.9, +2.5, +1.6,
++2.7 y +5.3 nm para <i>x</i> = 5–50; con fondo exacto o libre, 0. CRB con <i>b</i> conocido de 2.02 a 5.16 nm y con
+<i>b</i> libre de 2.03 a 6.17 nm. Figura: sesgo y costo en CRB.</div>
+<p><b>Para qué sirve.</b> El estimador tiene que incluir el fondo; ajustarlo libre cuesta poco cerca del centro.</p></div>
+
+<div class="mode" id="m7"><h3>Modo 7 · Parpadeo: secuencial vs entrelazado <span class="tag">~ 1 s</span></h3>
+<p><b>Qué simula.</b> Una molécula que parpadea (<i>t</i><sub>on</sub>, <i>t</i><sub>off</sub>) durante un patrón de 400 µs.
+Compara MINFLUX secuencial (bloques, <i>r</i> repeticiones) con p-MINFLUX (pulsos alternados cada 12.5 ns) y con una
+molécula sin parpadeo. <i>N</i> = 100, molécula en <i>x</i> = 20 nm.</p>
+<p><b>Parámetros.</b> <i>t</i><sub>on</sub> (100 µs), <i>t</i><sub>off</sub> (100 µs), <i>r</i> (1), localizaciones (1500).</p>
+<div class="expect"><b>Qué esperar.</b> STD por eje ≈ 4.6 nm sin parpadeo, ≈ 30 nm secuencial y ≈ 4.6 nm entrelazado;
+σ<sub>fl</sub> ≈ 30 nm secuencial y ≈ 0 entrelazado. Figura: histogramas del error.</div>
+<p><b>Para probar.</b> <i>r</i> = 25: el error secuencial baja pero no desaparece. <i>t</i><sub>on</sub> = <i>t</i><sub>off</sub> = 0.05 µs:
+el parpadeo ya es comparable al período y el entrelazado deja de proteger.</p></div>
+
+<div class="mode" id="m8"><h3>Modo 8 · Cruce entre ventanas <span class="tag">&lt; 1 s</span></h3>
+<p><b>Qué simula.</b> Láser de 20 MHz con 4 pulsos cada 12.5 ns. Por el tiempo de vida τ, parte de los fotones cae en la
+ventana del pulso siguiente: <i>p</i><sub>obs</sub> = <i>M p</i>. Compara el MLE que ignora <i>M</i> con el que la incluye (SBR = 20).</p>
+<p><b>Parámetros.</b> τ (4 ns), <i>N</i> (500).</p>
+<div class="expect"><b>Qué esperar.</b> Imprime la matriz <i>M</i> (diagonal 0.956 y 4.2 % a la ventana siguiente con τ = 4 ns).
+|sesgo| máximo ignorando <i>M</i> ≈ 3.8 nm; con <i>M</i>, 0; CRB(con <i>M</i>)/CRB(ideal) ≈ 1.07.
+Figura: sesgo frente a <i>x</i> y pérdida de precisión.</div>
+<p><b>Para probar.</b> τ = 1 ns (casi sin cruce) y τ = 5 ns (sesgo mayor).</p></div>
+
+<h2>3. Si algo falla</h2>
+<ul>
+<li><code>ModuleNotFoundError: donutloc</code>: el script tiene que estar en <code>explore/</code> dentro del repositorio (busca <code>../src</code>).</li>
+<li>No se abren las figuras: usá <code>--no-show --save carpeta</code> y abrí los PNG.</li>
+<li>Los números difieren un poco de esta guía si cambiás parámetros o repeticiones: los Monte Carlo tienen error estadístico.</li>
+</ul>
+<p class="sub">Los valores "qué esperar" salen de correr <code>--all --yes</code> con semilla 42; los mismos fenómenos están
+verificados en <code>paper/main.pdf</code> y en <code>informe/informe.pdf</code>.</p>
+</main>
+</body>
+</html>

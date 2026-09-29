@@ -90,10 +90,10 @@ def crosstalk_matrix(tau, T=WINDOW_NS, order=(0, 1, 2, 3)):
     K = o.size
     tau = float(tau)
     T = float(T)
-    if not T > 0:
-        raise ValueError("T must be > 0, got %r" % (T,))
-    if not tau >= 0:
-        raise ValueError("tau must be >= 0, got %r" % (tau,))
+    if not (np.isfinite(T) and T > 0):
+        raise ValueError("T must be finite and > 0, got %r" % (T,))
+    if not (np.isfinite(tau) and tau >= 0):
+        raise ValueError("tau must be finite and >= 0, got %r" % (tau,))
     m = np.arange(K)
     if tau == 0.0:
         c = (m == 0).astype(float)

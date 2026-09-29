@@ -11,7 +11,7 @@ entry saying how to reproduce it. A checker enforces this.
 ## Quick start
 
 Requirements: Python >= 3.8 with numpy, scipy and matplotlib (numba is optional). Tested on
-Windows with Python 3.8, numpy 1.24, scipy 1.10 and matplotlib 3.7.
+Windows with Python 3.8, numpy 1.24, scipy 1.10 and matplotlib 3.7; the unit tests also pass on Linux with Python 3.11, numpy 2.4 and scipy 1.17.
 
 No installation of the package is needed: the tests and every script put `src/` on `sys.path`
 themselves, so numpy, scipy and matplotlib are all you need (`pip install -r requirements.txt`,
@@ -55,6 +55,14 @@ Regeneration is byte-deterministic: figure PDFs carry no creation or modificatio
 JSON files are written with sorted keys and LF line endings, so rerunning a script on unchanged
 inputs leaves `git status` clean.
 
+## Guided explorer
+
+`python explore/donut_explorer.py` opens a menu with 8 modes (donut and TCP, CRB, MLE vs CRB, imperfect
+zero and optimal L, misalignment, background, flickering, lifetime cross-talk). Each mode explains the
+effect, asks for parameters (Enter keeps the default), prints the key numbers, draws a figure and ends
+with what to learn from it. `--mode N`, `--all`, `--yes`, `--no-show` and `--save DIR` run it
+non-interactively (all modes take a few seconds). The guide is `explore/guia_explorador.html` (Spanish).
+
 ## Short report (informe)
 
 `informe/informe.pdf` (5 pages, Spanish) summarizes the project, reviews it against SimuFLUX
@@ -81,10 +89,14 @@ src/donutloc/          the Python package (units: nm)
   montecarlo.py          Monte Carlo driver, bootstrap standard errors
   camera.py              camera CRB (ideal and pixelated, background conventions)
   experiments.py         drivers: iterative MINFLUX, eps x L sweeps, misalignment studies
+  pminflux.py            p-MINFLUX timing: lifetime cross-talk matrix M, flickering (sequential vs interleaved)
+  background.py          background as a free parameter: (x, y, b) MLE, 3x3 Fisher / marginal CRB
 scripts/
   _paperconfig.py        every shared parameter (seed 42, fwhm 300 nm, L, N, MC sizes, ...)
   _paperstyle.py         figure style, parameter-hashed Monte Carlo cache, quick-mode routing
   fig_<n>_<name>.py      one script per figure -> paper/figures/fig<n>_<name>.pdf + data/fig<n>_summary.json
+                         (fig_9 and fig_10 are the report's figures -> informe/figures/, informe/data/;
+                         make_all_figures.py skips them: run them directly)
   make_all_figures.py    runs every figure script and reports script -> pdf -> status
   run_iterative_sweep.py iterative MINFLUX vs photon budget -> data/iterative_sweep.json
   compute_paper_numbers.py  the ONLY writer of data/paper_numbers.json and paper/generated/numbers.tex
@@ -98,6 +110,10 @@ paper/                 main.pdf (the compiled manuscript: start here), main.tex 
                        sections/, references.bib, provenance.json, generated/numbers.tex, figures/
 docs/derivations/      derivation of the centre CRB of the TCP
 docs/literature/       notes extracted from the published literature (equations and page numbers)
+informe/               the short report (informe.pdf, 5 pages, Spanish), its HTML source, figures, data,
+                       and build_pdf.js
+explore/               donut_explorer.py: guided, standalone explorer of the simulations (8 modes),
+                       and guia_explorador.html: how to use it and what each mode shows
 papers/README.md       the reference list (the PDFs are not redistributed)
 OBJECTIVE.md           the author's statement of the study: questions R1-R5 and the deliverable
 OBJECTIVE.template.md  the blank template OBJECTIVE.md was written from
@@ -105,6 +121,7 @@ pyproject.toml, requirements.txt, environment.yml   package metadata and depende
 LICENSE, CITATION.cff  MIT licence and citation metadata
 equipo/2026-09-26_donut-localization/   the audit trail of how the study was produced (see below):
                        intent.md, state.json (ledger), inbox.jsonl, reports/, work/
+equipo/2026-09-28_sintesis-pdf/, equipo/2026-09-28_final-review/   the report job and the final review
 job.cmd, job.sh        launchers of the agent-team `job` CLI (Windows / POSIX); jobs/ holds its
                        local, git-ignored job data
 agent-team/, AGENTS.md, CLAUDE.md, .claude/, .agent-team/   the agent-team methodology and tooling
