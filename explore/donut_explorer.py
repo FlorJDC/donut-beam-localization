@@ -164,8 +164,8 @@ def mode_crb():
     lesson(["La precisión es mejor dentro del TCP y empeora rápido fuera: el campo útil es ~L.",
             "Sin fondo el CRB escala ~ L/sqrt(N): achicar L mejora linealmente. Con fondo (SBR > 0) ese "
             "beneficio se satura a L chico.",
-            "Sin fondo, el valor puntual en el centro (S27) es mayor que el límite r->0 (razón ~2/sqrt(5)): "
-            "el CRB es discontinuo allí."])
+            "Sin fondo, el valor puntual en el centro (S27) es mayor que el límite r->0 (límite/S27 ~ 2/sqrt(5) "
+            "= 0.89): el CRB es discontinuo allí."])
     finish(fig, "modo2_crb")
 
 
@@ -306,7 +306,8 @@ def mode_background():
     ax[1].set(xlabel="x (nm)", ylabel="CRB (nm)", title="costo de ajustar el fondo")
     ax[1].legend()
     lesson(["Ignorar el fondo sesga hacia afuera: la señal extra en la exposición central se interpreta "
-            "como un emisor más lejos del centro (≈ +5 nm con SBR = 5).",
+            "como un emisor más lejos del centro (entre +1.6 y +6.8 nm con SBR = 5, según la posición; "
+            "también hay sesgo en y).",
             "Ajustar el fondo como parámetro libre elimina el sesgo y cuesta poco cerca del centro.",
             "En x = 0 el modelo sin fondo tiene 3 soluciones simétricas: por eso no se muestra ese punto."])
     finish(fig, "modo6_fondo")
@@ -387,8 +388,8 @@ def mode_crosstalk():
     ax[1].set(xlabel="x (nm)", ylabel="CRB(con M) / CRB(ideal)", title="pérdida de precisión")
     lesson(["La fracción que cae en la ventana siguiente es ~exp(-12.5/tau): crece rápido con tau.",
             "Ignorar M produce un sesgo sistemático de varios nm para tau >~ 3 ns.",
-            "Incluir M en el modelo elimina el sesgo; el costo en precisión es moderado (CRB +4–19 % "
-            "para tau = 3–5 ns). M se mide del histograma TCSPC."])
+            "Incluir M en el modelo elimina el sesgo; el costo en precisión es moderado (aquí, sobre x = 0–50 "
+            "con SBR = 20: +3 %, +7 % y +14 % para tau = 3, 4 y 5 ns). M se mide del histograma TCSPC."])
     finish(fig, "modo8_cruce")
 
 
@@ -410,7 +411,10 @@ def menu():
         for i, (name, _) in enumerate(MODES, 1):
             print("  %d. %s" % (i, name))
         print("  0. salir")
-        choice = ask("elegí un modo", 0, int) if not OPTS["yes"] else 0
+        if OPTS["yes"] or not sys.stdin.isatty():
+            print("  (sin terminal interactiva: usá --mode N o --all para correr modos)")
+            return
+        choice = ask("elegí un modo", 0, int)
         if choice == 0:
             return
         if 1 <= choice <= len(MODES):

@@ -1,7 +1,7 @@
 {
   "id": "2026-09-28_final-review",
   "type": "feature",
-  "status": "running",
+  "status": "done",
   "round": 1,
   "rounds_budget": 1,
   "team": [
@@ -11,6 +11,53 @@
   ],
   "deliverable": "explore/ + fixes",
   "base_commit": "e43bbbd",
-  "claims": [],
-  "history": []
+  "claims": [
+    {
+      "status": "refuted→corregido",
+      "by": "code-reviewer",
+      "text": "reproduce.py fallaba con fig_9/fig_10 (escriben en informe/): make_all_figures ahora los excluye"
+    },
+    {
+      "status": "refuted→corregido",
+      "by": "code-reviewer",
+      "text": "salidas quick/ versionadas: retiradas del índice"
+    },
+    {
+      "status": "refuted→corregido",
+      "by": "code-reviewer",
+      "text": "README desactualizado (módulos nuevos, informe/, equipo/): corregido"
+    },
+    {
+      "status": "refuted→corregido",
+      "by": "code-reviewer",
+      "text": "crosstalk_matrix(inf/nan) y probabilities_bg(b=nan) no validaban: ahora ValueError"
+    },
+    {
+      "status": "verified",
+      "by": "verifier",
+      "text": "todos los números 'Qué esperar' de la guía coinciden con la salida; CRB, L_opt, sesgo por fondo y M reproducidos independientemente"
+    },
+    {
+      "status": "refuted→corregido",
+      "by": "verifier",
+      "text": "lecciones de los modos 2 (razón invertida) y 8 (rango de otra métrica) y 6 (impreciso): corregidas"
+    },
+    {
+      "status": "unclear",
+      "by": "verifier",
+      "text": "números Monte Carlo de los modos 3, 5, 7 solo contrastados con la guía"
+    },
+    {
+      "status": "abierto",
+      "by": "code-reviewer",
+      "text": "menores sin corregir: crosstalk_mc(T=0), memoria de telegraph_on_intervals y mle_free_bg con lotes enormes, fisher_matrix_bg con b=0 en un cero exacto"
+    }
+  ],
+  "history": [
+    {
+      "round": 1,
+      "date": "2026-09-28",
+      "summary": "revisión final (code-reviewer), explorador + guía, arreglos, verificación"
+    }
+  ]
 }
