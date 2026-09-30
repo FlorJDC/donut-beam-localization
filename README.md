@@ -86,7 +86,9 @@ structure/             claims.json (claim -> numbers -> status) and figures.json
 paper/                 main.pdf (the compiled manuscript: start here), main.tex (revtex4-2),
                        sections/, references.bib, provenance.json, generated/numbers.tex, figures/
 docs/derivations/      derivation of the centre CRB of the TCP
-docs/literature/       notes extracted from the published literature (equations and page numbers)
+docs/literature/       notes extracted from the published literature (equations and page numbers):
+                       A_minflux_theory.md, B_donut_optics.md, C_insilico_minflux.md (SimuFLUX),
+                       C_insilico_vs_donutloc.md (SimuFLUX vs donutloc)
 papers/README.md       the reference list (the PDFs are not redistributed)
 OBJECTIVE.md           the author's statement of the study: questions R1-R5 and the deliverable
 OBJECTIVE.template.md  the blank template OBJECTIVE.md was written from
@@ -131,6 +133,12 @@ The questions (from `OBJECTIVE.md`): R1 beam model (scalar LG vs vectorial donut
 Cramer-Rao bound (maps, closed forms, scaling, camera comparison), R3 estimators (MLE vs
 LMS/mLMS), R4 iterative MINFLUX vs camera, R5 non-idealities (zero depth, background,
 misalignment). The captions are in `structure/figures.json`.
+
+The manuscript also compares the model with SimuFLUX (Marin & Ries, Nat. Commun. 2026): a
+background constant per exposure instead of a fixed SBR (Secs. on estimators and iterative
+MINFLUX), estimators that ignore the zero pedestal or misjudge the SBR, and the conversion of
+conventions (Discussion). Fig. 8 models an error in the positions of the zeros, not a
+misalignment of the vortex phase mask, which is outside the scope of the study.
 
 ## `data/` and the number registry
 

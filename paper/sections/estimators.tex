@@ -58,8 +58,28 @@ holds $\sbr=10$ at every position. With a background constant per exposure (Balz
 Eq.~S28), chosen to give $\sbr=10$ at the centre, the SBR grows off-centre to
 \pnum{bgphys_sbr_x25}\src{bgphys_sbr_x25} at $x_0=25$\,nm and
 \pnum{bgphys_sbr_x50}\src{bgphys_sbr_x50} at $x_0=50$\,nm, but the numbers of
-Fig.~\ref{fig:estimators}(a,b) change little: the biases by less than $1.3$\,nm and
-$\sigma/\crb$ by less than $8$\% at the points compared (same seed and repetitions, the LMS and mLMS keeping
+Fig.~\ref{fig:estimators}(a,b) change little at the points compared: the largest change of the
+$x$ component of the biases (the only one compared) is
+$\pnum{bgphys_max_abs_change_bias_x_nm}\pm\pnumse{bgphys_max_abs_change_bias_x_nm}$\src{bgphys_max_abs_change_bias_x_nm}\,nm and that of
+$\sigma/\crb$ is
+$(\pnum{bgphys_max_rel_change_sigma_over_crb_pct}\pm\pnumse{bgphys_max_rel_change_sigma_over_crb_pct})$\src{bgphys_max_rel_change_sigma_over_crb_pct}\%
+over the three estimators%
+\src{bgphys_fixed_lms_sigma_over_crb_x25}%
+\src{bgphys_fixed_lms_sigma_over_crb_x50}%
+\src{bgphys_fixed_mle_bias_x_x25_nm}%
+\src{bgphys_fixed_mle_bias_x_x50_nm}%
+\src{bgphys_fixed_mle_sigma_over_crb_x50}%
+\src{bgphys_fixed_mlms_bias_x_x50_nm}%
+\src{bgphys_fixed_mlms_sigma_over_crb_x25}%
+\src{bgphys_fixed_mlms_sigma_over_crb_x50}%
+\src{bgphys_phys_lms_sigma_over_crb_x25}%
+\src{bgphys_phys_lms_sigma_over_crb_x50}%
+\src{bgphys_phys_mle_bias_x_x25_nm}%
+\src{bgphys_phys_mle_bias_x_x50_nm}%
+\src{bgphys_phys_mle_sigma_over_crb_x50}%
+\src{bgphys_phys_mlms_bias_x_x50_nm}%
+\src{bgphys_phys_mlms_sigma_over_crb_x25}%
+\src{bgphys_phys_mlms_sigma_over_crb_x50} (same seed and repetitions, the LMS and mLMS keeping
 the $1/s$ factor of $\sbr=10$). At $x_0=25$\,nm the CRB goes from
 \pnum{bgphys_fixed_crb_x25_nm}\src{bgphys_fixed_crb_x25_nm} to
 \pnum{bgphys_phys_crb_x25_nm}\src{bgphys_phys_crb_x25_nm}\,nm, the LMS bias from

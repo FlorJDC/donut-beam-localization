@@ -34,12 +34,15 @@ to \pnum{crb_center_sbr10_L50_N100_nm}\src{crb_center_sbr10_L50_N100_nm}\,nm, an
 for $5$\,nm from \pnum{photons_for_5nm_L50_sbrinf}\src{photons_for_5nm_L50_sbrinf} to
 \pnum{photons_for_5nm_L50_sbr10}\src{photons_for_5nm_L50_sbr10}. Background also regularizes the
 model, making the MLE efficient at the centre. How the background is modelled matters little
-for a single pattern (a background constant per exposure changes the off-centre biases of
-Sec.~\ref{sec:estimators} by less than $1.3$\,nm and $\sigma/\crb$ by less than $8$\%), but much for iterative MINFLUX: at constant power
+for a single pattern (at the points compared, $x_0=25$ and $50$\,nm with $L=50$\,nm and
+$N=100$, the largest change caused by a background constant per exposure is
+$\pnum{bgphys_max_abs_change_bias_x_nm}\pm\pnumse{bgphys_max_abs_change_bias_x_nm}$\src{bgphys_max_abs_change_bias_x_nm}\,nm in the $x$ bias of the estimators of Sec.~\ref{sec:estimators} and
+$(\pnum{bgphys_max_rel_change_sigma_over_crb_pct}\pm\pnumse{bgphys_max_rel_change_sigma_over_crb_pct})$\src{bgphys_max_rel_change_sigma_over_crb_pct}\% in their $\sigma/\crb$;
+only the $x$ component of the bias was compared), but much for iterative MINFLUX: at constant power
 the SBR falls approximately as $L^2$ and the final precision at $N_{\mathrm{tot}}=1000$ degrades to
 \pnum{bgphys_iter_matchL150_sigma_nm}\src{bgphys_iter_matchL150_sigma_nm}\,nm
 (Sec.~\ref{sec:iterative}). An ignored pedestal or a misjudged SBR biases the MLE by an amount
-independent of $N$ (\pnum{naive_eps0p01_mle_bias_abs_x20_nm}\src{naive_eps0p01_mle_bias_abs_x20_nm}\,nm
+that does not vanish as $N$ grows (large-$N$ limit \pnum{naive_eps0p01_mle_bias_abs_x20_nm}\src{naive_eps0p01_mle_bias_abs_x20_nm}\,nm
 at $x_0=20$\,nm for $\epsilon=0.01$), which exceeds the CRB above a few hundred photons for $\epsilon=0.01$ and above
 $\sim10^4$ photons for $\epsilon=0.002$ (Sec.~\ref{sec:nonideal}).
 

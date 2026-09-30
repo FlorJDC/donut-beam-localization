@@ -201,6 +201,20 @@
   "unit": "nm",
   "value": 0.6110686850749715
  },
+ "bgphys_max_abs_change_bias_x_nm": {
+  "description": "largest |bias_x(phys) - bias_x(fixed)| over MLE, LMS, mLMS at x0 = 25, 50 nm (only the x component of the bias is compared); SE of the maximizing pair, its two MC SEs combined in quadrature (conservative: both runs use the same seed); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "script": "scripts/compute_paper_numbers.py",
+  "se": 0.04463188489075497,
+  "unit": "nm",
+  "value": 1.2216085929049214
+ },
+ "bgphys_max_rel_change_sigma_over_crb_pct": {
+  "description": "largest |(sigma/CRB)(phys) / (sigma/CRB)(fixed) - 1| in percent over MLE, LMS, mLMS at x0 = 25, 50 nm; SE of the maximizing pair propagated from the two bootstrap SEs (relative SEs in quadrature, conservative: same seed); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
+  "script": "scripts/compute_paper_numbers.py",
+  "se": 0.8064909979508184,
+  "unit": "%",
+  "value": 7.127246916182628
+ },
  "bgphys_phys_crb_x25_nm": {
   "description": "CRB at r=(25,0); L=50, N=100, fwhm=300, 10000 reps, seed 42, bootstrap SE; 'phys' = background constant per exposure with SBR=10 at the centre (Eq. S28), 'fixed' = SBR=10 at every position (Eq. S30, fig 5); MLE with the true model (disk radius 2L), LMS/mLMS with the 1/s factor for SBR=10",
   "script": "scripts/compute_paper_numbers.py",
@@ -1539,40 +1553,40 @@
   "value": 4.460733366831431
  },
  "naive_eps0p002_lms_extra_bias_x_x10_nm": {
-  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
   "value": -0.3410799385379013
  },
  "naive_eps0p002_lms_extra_bias_x_x20_nm": {
-  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.002 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
   "value": -0.3005033212249888
  },
  "naive_eps0p002_mle_N_bias_eq_crb_x10": {
-  "description": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.002, r=(10,0)",
+  "description": "photon number at which the CRB (~N^-1/2) falls to the noise-free |bias| of the naive MLE (its large-N limit; at finite N the mean bias is larger), N (CRB_100/|bias|)^2, eps=0.002, r=(10,0)",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "",
-  "value": 7984.514357576712
+  "value": 7984.873386300084
  },
  "naive_eps0p002_mle_N_bias_eq_crb_x20": {
-  "description": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.002, r=(20,0)",
+  "description": "photon number at which the CRB (~N^-1/2) falls to the noise-free |bias| of the naive MLE (its large-N limit; at finite N the mean bias is larger), N (CRB_100/|bias|)^2, eps=0.002, r=(20,0)",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "",
-  "value": 11173.39294970497
+  "value": 11170.501065721091
  },
  "naive_eps0p002_mle_bias_abs_x10_nm": {
-  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 0.2687176383433908
+  "value": 0.2687115970180941
  },
  "naive_eps0p002_mle_bias_abs_x20_nm": {
-  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.002 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 0.42200124141009954
+  "value": 0.42205586293735164
  },
  "naive_eps0p01_crb_x10_nm": {
   "description": "CRB (N=100) of the true model with constant pedestal eps=0.01 at r=(10,0), L=50, SBR=10",
@@ -1587,70 +1601,70 @@
   "value": 5.200510569872806
  },
  "naive_eps0p01_lms_extra_bias_x_x10_nm": {
-  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(10,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
   "value": -1.4634199945758537
  },
  "naive_eps0p01_lms_extra_bias_x_x20_nm": {
-  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "change of the LMS estimate along x caused by an ignored constant pedestal eps=0.01 at r=(20,0) (LMS with eps minus LMS without eps; the linearization bias of fig 5 is removed); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
   "value": -1.3517441144244629
  },
  "naive_eps0p01_mle_N_bias_eq_crb_x10": {
-  "description": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.01, r=(10,0)",
+  "description": "photon number at which the CRB (~N^-1/2) falls to the noise-free |bias| of the naive MLE (its large-N limit; at finite N the mean bias is larger), N (CRB_100/|bias|)^2, eps=0.01, r=(10,0)",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "",
-  "value": 429.87477699628806
+  "value": 429.8898246417366
  },
  "naive_eps0p01_mle_N_bias_eq_crb_x20": {
-  "description": "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| of the naive MLE, N (CRB_100/|bias|)^2, eps=0.01, r=(20,0)",
+  "description": "photon number at which the CRB (~N^-1/2) falls to the noise-free |bias| of the naive MLE (its large-N limit; at finite N the mean bias is larger), N (CRB_100/|bias|)^2, eps=0.01, r=(20,0)",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "",
-  "value": 515.9976875000262
+  "value": 516.0145878240869
  },
  "naive_eps0p01_mle_bias_abs_x10_nm": {
-  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 1.3887139057821838
+  "value": 1.3886896006507816
  },
  "naive_eps0p01_mle_bias_abs_x20_nm": {
-  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that ignores a constant pedestal eps=0.01 (model eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 2.2894022523860826
+  "value": 2.289364761239813
  },
  "naive_honest_mle_max_abs_bias_nm": {
-  "description": "largest |bias| of the MLE with the correct pedestal model over the eps and x above (numerical zero of the noise-free test); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "largest |bias| of the MLE with the correct pedestal model over the eps and x above: a numerical zero (optimizer resolution), to be quoted only as an upper bound such as < 1e-4 nm, not as a result; noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 3.0517578125e-05
+  "value": 5.695030837788255e-08
  },
  "naive_sbr20_mle_bias_abs_x10_nm": {
-  "description": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 0.3579192231969693
+  "value": 0.3579222526375301
  },
  "naive_sbr20_mle_bias_abs_x20_nm": {
-  "description": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that assumes SBR=20 when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 0.739639199594327
+  "value": 0.7396052628637327
  },
  "naive_sbrinf_mle_bias_abs_x10_nm": {
-  "description": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(10,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 0.9157146847103245
+  "value": 0.9157232825110575
  },
  "naive_sbrinf_mle_bias_abs_x20_nm": {
-  "description": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 with the 1/s factor of the assumed SBR",
+  "description": "|bias| (vector) of the MLE that assumes SBR=inf when the true SBR is 10 (eps=0) at r=(20,0); noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of the assumed SBR",
   "script": "scripts/compute_paper_numbers.py",
   "unit": "nm",
-  "value": 1.6428068786435663
+  "value": 1.642859810595018
  },
  "photons_for_5nm_L50_limit_nobg": {
   "description": "photons for 5 nm with the r->0 limit, no background, L=50",

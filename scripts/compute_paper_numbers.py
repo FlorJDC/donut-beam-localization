@@ -605,6 +605,20 @@ def physical_background_section(R, quick):
                 R.add("bgphys_%s_%s_sigma_over_crb_%s" % (mk, ek, xt), s / crb, "",
                       "%s sigma/CRB at r=(%g,0), %s background; %s" % (ek, x, mk, base),
                       se=se / crb)
+    # summary bounds of the change fixed -> phys over the compared points (all estimators, x0 in
+    # BGPHYS_X): largest |change of the x bias| and largest relative change of sigma/CRB
+    bmax = bgphys_max_changes(R, C.BGPHYS_X)
+    xs = ", ".join("%g" % x for x in C.BGPHYS_X)
+    R.add("bgphys_max_abs_change_bias_x_nm", bmax["bias"][0], "nm",
+          "largest |bias_x(phys) - bias_x(fixed)| over MLE, LMS, mLMS at x0 = %s nm (only the x "
+          "component of the bias is compared); SE of the maximizing pair, its two MC SEs combined "
+          "in quadrature (conservative: both runs use the same seed); %s" % (xs, base),
+          se=bmax["bias"][1])
+    R.add("bgphys_max_rel_change_sigma_over_crb_pct", bmax["sigma"][0], "%",
+          "largest |(sigma/CRB)(phys) / (sigma/CRB)(fixed) - 1| in percent over MLE, LMS, mLMS "
+          "at x0 = %s nm; SE of the maximizing pair propagated from the two bootstrap SEs "
+          "(relative SEs in quadrature, conservative: same seed); %s" % (xs, base),
+          se=bmax["sigma"][1])
     # iterative protocol (fig 6) with a physical background matched at L0 or at L_min
     ireps = 2000 if quick else C.ITER_N_REP
     for Lm in C.BGPHYS_ITER_MATCH_L:
@@ -626,6 +640,95 @@ def physical_background_section(R, quick):
               "centre SBR of the last iteration (L=25); " + ib)
 
 
+POLISH_MAX_COND = 1e10   # _polish_mle: a Hessian with a larger condition number is not trusted
+
+
+def _polish_mle(counts, p_fn, start, center=(0.0, 0.0), radius=np.inf, h=1e-3, tol=1e-8,
+                max_iter=50, return_reason=False):
+    """Newton polish of a single noise-free MLE: maximizes sum_i n_i ln p_i(r) from ``start``
+    (the pattern-search optimum of estimators.mle, whose resolution is its ``tol`` ~ 1e-4 nm)
+    with central-difference gradient and Hessian of the log-likelihood.
+
+    Returns ``start`` unchanged (so the polish can only refine an interior maximum) when:
+    the Hessian is not negative definite (reason ``"not_concave"``); its condition number
+    exceeds ``POLISH_MAX_COND`` (``"ill_conditioned"``, a guard for ``radius=inf``); a step
+    leaves the disk ``|r - center| <= radius`` (``"left_disk"``); the step does not fall below
+    ``tol`` within ``max_iter`` iterations (``"max_iter"``); or the final log-likelihood is lower
+    than at ``start`` (``"ll_decreased"``).  Otherwise returns the polished point
+    (``"converged"``).  With ``return_reason=True`` returns ``(point, reason)``."""
+    from donutloc import estimators
+    c = np.asarray(counts, float)
+    center = np.asarray(center, float)
+    x0 = np.asarray(start, float)
+
+    def ll(r):
+        return -float(estimators.neg_loglike(np.asarray(r, float), c, p_fn))
+
+    def out(pt, reason):
+        return (pt, reason) if return_reason else pt
+
+    x = x0.copy()
+    e = np.eye(2) * h
+    for _ in range(max_iter):
+        g = np.array([(ll(x + e[i]) - ll(x - e[i])) / (2 * h) for i in range(2)])
+        H = np.empty((2, 2))
+        f0 = ll(x)
+        for i in range(2):
+            H[i, i] = (ll(x + e[i]) - 2 * f0 + ll(x - e[i])) / h ** 2
+        H[0, 1] = H[1, 0] = (ll(x + e[0] + e[1]) - ll(x + e[0] - e[1]) - ll(x - e[0] + e[1])
+                             + ll(x - e[0] - e[1])) / (4 * h ** 2)
+        w = np.linalg.eigvalsh(H)
+        if not np.all(w < 0):
+            return out(x0.copy(), "not_concave")
+        if np.max(np.abs(w)) / np.min(np.abs(w)) > POLISH_MAX_COND:
+            return out(x0.copy(), "ill_conditioned")
+        step = -np.linalg.solve(H, g)
+        x = x + step
+        if np.hypot(*(x - center)) > radius:
+            return out(x0.copy(), "left_disk")
+        if np.hypot(*step) < tol:
+            if ll(x) < ll(x0):
+                return out(x0.copy(), "ll_decreased")
+            return out(x, "converged")
+    return out(x0.copy(), "max_iter")
+
+
+def bgphys_max_changes(numbers, xs, estimators_=("mle", "lms", "mlms")):
+    """Largest change fixed -> phys over the compared points, from registry entries
+    ``{"value", "se"}`` (a Registry or the loaded data/paper_numbers.json).
+
+    Returns ``{"bias": (max |d bias_x| in nm, SE), "sigma": (max |ratio - 1| in %, SE),
+    "argmax_bias": key suffix, "argmax_sigma": key suffix}``.  The SE is that of the maximizing
+    pair: sqrt(se_f^2 + se_p^2) for the bias difference and
+    100 (p/f) sqrt((se_p/p)^2 + (se_f/f)^2) for the ratio (independent-error propagation,
+    conservative because both runs use the same seed)."""
+    best_b, best_s = None, None
+    for x in xs:
+        xt = "x%d" % x
+        for ek in estimators_:
+            kb = "bgphys_%%s_%s_bias_x_%s_nm" % (ek, xt)
+            ks = "bgphys_%%s_%s_sigma_over_crb_%s" % (ek, xt)
+            f, p = numbers[kb % "fixed"], numbers[kb % "phys"]
+            d = abs(p["value"] - f["value"])
+            if best_b is None or d > best_b[0]:
+                best_b = (d, float(np.hypot(f["se"], p["se"])), "%s_%s" % (ek, xt))
+            f, p = numbers[ks % "fixed"], numbers[ks % "phys"]
+            q = p["value"] / f["value"]
+            d = abs(q - 1.0)
+            if best_s is None or d > best_s[0]:
+                se = abs(q) * np.hypot(p["se"] / p["value"], f["se"] / f["value"])
+                best_s = (d, float(se), "%s_%s" % (ek, xt))
+    return {"bias": (best_b[0], best_b[1]), "sigma": (100.0 * best_s[0], 100.0 * best_s[1]),
+            "argmax_bias": best_b[2], "argmax_sigma": best_s[2]}
+
+
+def _mle_noisefree(counts, p_fn, radius):
+    """Noise-free MLE: pattern search (estimators.mle) + Newton polish (_polish_mle)."""
+    from donutloc import estimators
+    r0 = estimators.mle(counts, p_fn, search_radius=radius)
+    return _polish_mle(counts, p_fn, r0, radius=radius)
+
+
 def misspecified_estimator_section(R):
     """Noise-free (population) bias of estimators that ignore a constant zero pedestal or
     misjudge the SBR: MLE / LMS applied to the EXPECTED counts N p_true(r) (as in
@@ -637,8 +740,9 @@ def misspecified_estimator_section(R):
     b0 = beams.make_beam("donut", fwhm=C.FWHM)
     p_naive = photons.make_model(cen, b0, sbr=sbr0)
     base = ("noise-free: estimator applied to the expected counts N p_true(r) (no Poisson noise), "
-            "L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L, LMS Eq. S50 "
-            "with the 1/s factor of the assumed SBR")
+            "L=50, fwhm=300, true SBR=10 at every position, MLE disk radius 0.75 L (pattern "
+            "search + Newton polish of the log-likelihood), LMS Eq. S50 with the 1/s factor of "
+            "the assumed SBR")
     honest_max = 0.0
     for eps in C.NAIVE_EPS:
         bt = beams.make_beam("donut", fwhm=C.FWHM, eps=eps, zero_model="constant")
@@ -649,7 +753,7 @@ def misspecified_estimator_section(R):
             cnt = float(N) * np.asarray(p_true(r), float)
             cnt0 = float(N) * np.asarray(p_naive(r), float)
             xt = "x%d" % x
-            b = float(np.hypot(*(estimators.mle(cnt, p_naive, search_radius=rad) - r)))
+            b = float(np.hypot(*(_mle_noisefree(cnt, p_naive, rad) - r)))
             crb = float(fisher.crb(p_true, r, N))
             R.add("naive_eps%s_mle_bias_abs_%s_nm" % (et, xt), b, "nm",
                   "|bias| (vector) of the MLE that ignores a constant pedestal eps=%g (model "
@@ -658,15 +762,16 @@ def misspecified_estimator_section(R):
                   "CRB (N=100) of the true model with constant pedestal eps=%g at r=(%g,0), "
                   "L=50, SBR=10" % (eps, x))
             R.add("naive_eps%s_mle_N_bias_eq_crb_%s" % (et, xt), float(N) * (crb / b) ** 2, "",
-                  "photon number at which the CRB (~N^-1/2) falls to the N-independent |bias| "
-                  "of the naive MLE, N (CRB_100/|bias|)^2, eps=%g, r=(%g,0)" % (eps, x))
+                  "photon number at which the CRB (~N^-1/2) falls to the noise-free |bias| of the "
+                  "naive MLE (its large-N limit; at finite N the mean bias is larger), "
+                  "N (CRB_100/|bias|)^2, eps=%g, r=(%g,0)" % (eps, x))
             R.add("naive_eps%s_lms_extra_bias_x_%s_nm" % (et, xt),
                   float(estimators.lms_tcp(cnt, L, C.FWHM, sbr=sbr0)[0]
                         - estimators.lms_tcp(cnt0, L, C.FWHM, sbr=sbr0)[0]), "nm",
                   "change of the LMS estimate along x caused by an ignored constant pedestal "
                   "eps=%g at r=(%g,0) (LMS with eps minus LMS without eps; the linearization "
                   "bias of fig 5 is removed); %s" % (eps, x, base))
-            h = estimators.mle(cnt, p_true, search_radius=rad)
+            h = _mle_noisefree(cnt, p_true, rad)
             honest_max = max(honest_max, float(np.hypot(*(h - r))))
     for sa in C.NAIVE_SBR_ASSUMED:
         p_ass = photons.make_model(cen, b0, sbr=None if np.isinf(sa) else sa)
@@ -675,12 +780,13 @@ def misspecified_estimator_section(R):
             r = np.array([x, 0.0])
             cnt = float(N) * np.asarray(p_naive(r), float)
             R.add("naive_sbr%s_mle_bias_abs_x%d_nm" % (st, x),
-                  float(np.hypot(*(estimators.mle(cnt, p_ass, search_radius=rad) - r))), "nm",
+                  float(np.hypot(*(_mle_noisefree(cnt, p_ass, rad) - r))), "nm",
                   "|bias| (vector) of the MLE that assumes SBR=%g when the true SBR is 10 (eps=0) "
                   "at r=(%g,0); %s" % (sa, x, base))
     R.add("naive_honest_mle_max_abs_bias_nm", honest_max, "nm",
-          "largest |bias| of the MLE with the correct pedestal model over the eps and x above "
-          "(numerical zero of the noise-free test); " + base)
+          "largest |bias| of the MLE with the correct pedestal model over the eps and x above: "
+          "a numerical zero (optimizer resolution), to be quoted only as an upper bound such as "
+          "< 1e-4 nm, not as a result; " + base)
 
 
 def simuflux_convention_section(R):

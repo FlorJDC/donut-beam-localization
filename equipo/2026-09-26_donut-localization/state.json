@@ -2,7 +2,7 @@
  "id": "2026-09-26_donut-localization",
  "type": "feature+derive",
  "status": "done",
- "round": 5,
+ "round": 6,
  "rounds_budget": 5,
  "worker_count": 3,
  "team": {
@@ -73,55 +73,64 @@
    "status": "refuted",
    "text": "fisher.crb/crb_map con p_min=1e-12 por defecto: crb_map(p, linspace(-2,2,5), [0.0], 100) da [1.619,1.609,1.802,1.609,1.619]; el píxel del origen salta al valor puntual S27 (+12%) para r<=1e-5 nm; trampa para los mapas de R2 (documentado pero sin test ni salvaguarda)",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): crb_map usa zero_policy='limit' por defecto; comprobado 2026-09-30 (r06 consolidación): crb_map(p, linspace(-2,2,5), [0], 100) = [1.6191, 1.6086, 1.6051, 1.6086, 1.6191], sin salto al valor puntual S27."
   },
   {
    "status": "refuted",
    "text": "estimators.mle con tol<=0 se cuelga: _pattern_search divide s hasta 0.0 y s<tol nunca se cumple (mle([10,10,10,1], p, 50., tol=0.0) matado a los 20 s); falta validar tol>0",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): estimators.mle valida tol/grid_step/search_radius > 0; comprobado 2026-09-30 (r06 consolidación): tol=0, tol=-1e-3 y grid_step=0 levantan ValueError."
   },
   {
    "status": "refuted",
    "text": "estimators.mle, memoria: el chunk fijo de 4096 no escala con el tamaño G de la grilla; search_radius=50, grid_step=0.2 -> G=196321 -> 6.4 GB por chunk (grid_step=0.5 -> 1.0 GB)",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): chunk efectivo = min(chunk, floor(mem_budget/(8G))), mem_budget=64 MiB por defecto; comprobado 2026-09-30 (r06 consolidación) en la firma de estimators.mle (mem_budget=67108864). Residual menor declarado en r02-code-reviewer (evaluación del modelo O(G*K) no acotada)."
   },
   {
    "status": "refuted",
    "text": "closed_forms.crb_tcp_center_limit con power no entero 1<c<2 devuelve el valor puntual (el docstring dice c>=2); con c=1.1 la definición numérica del proyecto (r0=1e-3) da 3.4038 frente a 3.4823 de la forma cerrada (-2.3%); menor: declarar o restringir",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): docstring corregido y UserWarning para 1<c<1.5; comprobado 2026-09-30 (r06 consolidación): crb_tcp_center_limit(L=100, N=100, fwhm=300, power=1.1) emite el UserWarning."
   },
   {
    "status": "unclear",
    "text": "Falta en la suite un test de integración photons.make_model -> fisher/estimators/montecarlo -> closed_forms/_crb_center; hoy solo lo ejercitan el script de verificación y el script de revisión (ítem 1 del backlog de R2)",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): tests/test_integration.py existe y pasa dentro de la suite (224 tests OK, comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "montecarlo.rmse usa la normalización por eje sqrt(mean|dr|^2/2); el plan pedía la Eq. 4.2 de Masullo, que nadie verificó (el texto no está en docs/literature)",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "ABIERTO: sigue vigente; declarado en paper/sections/open_points.tex ('rmse normalization') y en backlog."
   },
   {
    "status": "unclear",
    "text": "Probabilidades NaN en campo lejano (haz gaussiano a r=6000 nm: p=[nan]*4) y fisher.crb devuelve inf en silencio; conteos negativos aceptados en silencio por mle; menores",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (df7a97c, R2): comprobado 2026-09-30 (r06 consolidación): haz gaussiano a r=(6000,0) da p=[nan]*4 y fisher.crb = nan con 'point' y 'limit'; conteos negativos en mle levantan ValueError."
   },
   {
    "status": "unclear",
    "text": "El orquestador fijó 'mle_efficiency_center' con SBR=10 en nombre de la autora después de que el caso sin fondo cayó fuera de la banda; el test de aceptación no cambió, pero la autora debería confirmarlo explícitamente",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "ABIERTO (pregunta a la autora): SBR=10 como condición de mle_efficiency_center; listado en open_points.tex y en backlog."
   },
   {
    "status": "unclear",
    "text": "Contra el intent aún faltan (previsto para R2-R5): data/paper_numbers.json, compute_paper_numbers.py, structure/*.json, fig_*.py, check_provenance.py, dona vectorial, MINFLUX iterativo, CRB de cámara, escalamientos, paper/ y README",
    "round": 1,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R3-R5, 61efca2..f411211): todas las piezas existen (data/paper_numbers.json, compute_paper_numbers.py, structure/*.json, fig_*.py, check_provenance.py, dona vectorial, iterativo, cámara, paper/, README)."
   },
   {
    "status": "verified",
@@ -307,49 +316,57 @@
    "status": "refuted",
    "text": "experiments.misalignment_study sigma_se = sigma_mean/(2 sqrt(R P)) ignora la varianza entre patrones: con delta=10 en el centro, 20x200, SE de la fórmula 0.0144/0.0157 contra SE real entre patrones 0.0380/0.0561 (honesto/ingenuo, 2.6x/3.6x); la significancia de 'sigma ingenuo 1.85->1.98' está sobreestimada",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (61efca2, R3): misalignment_study usa el SE entre patrones (sigma_se) y conserva la fórmula intra-patrón como sigma_se_within; test tests/test_experiments.py::test_misalignment_sigma_se_between_patterns pasa (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "fisher.crb con zero_policy='limit' falla cuando N se transmite más allá de r: crb(p,[0,0],np.array([100,400]),zero_policy='limit') -> ValueError 'cannot broadcast a non-scalar to a scalar array', mientras que con 'point' devuelve [1.802,0.901] (barrido de N en un punto, relevante para crb_exponent_N)",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R3, 61efca2): r y N se transmiten juntos; comprobado 2026-09-30 (r06 consolidación): crb(p,[0,0],array([100,400]),zero_policy='limit') = [1.6051, 0.8025] ('point' = [1.8025, 0.9012]); test test_limit_at_peripheral_zero_and_array_N."
   },
   {
    "status": "refuted",
    "text": "Docstring de experiments.l_schedule (adaptivo): 'kappa=6 contiene la verdad con ~99 %' es falso porque sigma_k es el CRB central (3.47) y el error real de la iteración 0 es 4.29 (emisor hasta L0/4 fuera del centro); el 2.65 % de los emisores queda fuera de L_1/2=12.5 nm (L0=150, N_k=250)",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R2/R3): el docstring de experiments.l_schedule ahora dice que sigma_k (CRB central) subestima el error real (3.47 vs 4.26 nm) y que ~97 % (2.65 % fuera) queda dentro del radio siguiente, no 99 % (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "make_vectorial_beam polarization='linear' (bilineal, grid_step=5) no sirve para el CRB y no avisa: con L=50, N=100 el CRB en (7,3) da 66.99 interpolado contra 62.36 exacto (+7.4 %) y crb_limit 58.77 contra 60.77 (-3.3 %); sin test ni warning (compare_crb usa mode='exact' y no está afectado)",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (61efca2, R3): make_vectorial_beam linear usa linear_method='harmonic' por defecto (CRB ~1e-4 de 'exact'); 'cartesian' emite UserWarning y documenta el sesgo; test test_cartesian_warns_and_is_biased (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "SE del iterativo sigma/(2 sqrt R): subestima el bootstrap en ~16 % (0.0057 contra 0.0066, errores heterocedásticos, curtosis 3.3); para el requisito '<2 %' de los números del paper conviene usar el bootstrap",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (61efca2, R3): experiments.error_stats usa SE bootstrap (sigma_se) y deja la fórmula gaussiana como sigma_se_gauss (comprobado 2026-09-30 (r06 consolidación) en src/donutloc/experiments.py)."
   },
   {
    "status": "unclear",
    "text": "iterative_minflux recenter=False: el 8.06 nm de la última iteración está dominado por el truncamiento del disco de búsqueda (radio 0.75 L_k alrededor del origen < r0_spread=37.5 nm para L=25), no por la física; hay que interpretarlo con cuidado en el paper",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R3-R5): el paper trata el caso sin re-centrado como artefacto del disco de búsqueda (clave iterative_no_recenter_sigma_nm_ARTEFACT, iterative.tex y leyenda de la Fig. 6: 'grey cross ... artefact') (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "Pendiente para R3: faltan data/paper_numbers.json, compute_paper_numbers.py, structure/figures.json y claims.json, scripts/check_provenance.py (envoltorio de agent-team/bin/check_provenance.py), fig_*.py, paper y README; crb_exponent_L depende del rango (1.008 en [10..50], 1.074 en [25..150], fuera de ±0.05): fijar L<<fwhm; declarar si camera_sigma_nm es la ideal (3.162) o la pixelada (~3.29); la dona vectorial en mode='exact' es inviable para MLE o mapas (10 s por 2000 puntos): usar interp",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R3-R5): piezas entregadas; crb_exponent_L restringido a L<<fwhm (open_points.tex 'Range dependence of the L exponent'); camera_sigma_nm declarado como cámara ideal (camera.tex); vectorial en modo interp (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "SBR=10 para mle_efficiency_center sigue pendiente de confirmación explícita de la autora (no bloquea)",
    "round": 2,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "ABIERTO (pregunta a la autora): igual que la afirmación del SBR=10 de R1; open_points.tex y backlog."
   },
   {
    "status": "verified",
@@ -415,7 +432,8 @@
    "status": "unclear",
    "text": "W11 — sigma_iter vs N_total slope -0.526 and camera ratio 0.15–0.17 — qualitatively reproduced, not at the stated precision: with 3000–6000 reps I get sigma = 1.180±0.020 (N=250, ratio 0.187), 0.748, 0.509, 0.355, 0.2514±0.0024 (N=4000; worker 0.233), 0.1736 nm, slope -0.545 over the full range (-0.523 for N>=500), ratio 0.155–0.187. N=250 is heavy-tailed (none of 12 blocks of 500 reps reaches 1.094). Needs more reps under the same protocol, or restating as slope ≈ -0.52…-0.55 depending on range, ratio 0.155–0.19.",
    "round": 2,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (R3, W11): el paper cita la pendiente para N_tot>=500 (-0.515 +- 0.003, IC95 que excluye -1/2) y la del rango completo por separado, con la cola pesada a N=250 declarada; el aspecto de la cola pesada queda como punto abierto (open_points.tex, backlog)."
   },
   {
    "status": "verified",
@@ -487,43 +505,50 @@
    "status": "refuted",
    "text": "_paperstyle.cached has no cache invalidation (keyed only by name): observed this round, fig8 npz with n_patterns=50 was reused after _paperconfig.MIS changed to 400, so fig8 disagreed with paper_numbers (naive_sigma_Lq_d10 3.128 vs 3.739, -16%) until a manual --no-cache; same trap for fig2-fig7 on any _paperconfig change",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (c90a402, R4 D1): _paperstyle.cached guarda un hash sha256 de los parámetros de _paperconfig y recalcula si cambia; tests TestCacheInvalidation en tests/test_paper_tooling.py pasan (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "--quick overwrites committed final outputs: fig scripts write the same paper/figures/fig*.pdf and data/fig*_summary.json in quick mode (make_all_figures --quick replaces all 8 and reports OK), and compute_paper_numbers.py --quick overwrites data/paper_numbers.json + numbers.tex with reduced MC and no 'quick' marker, undetectable by acceptance/check_provenance",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (c90a402, R4 D2): --quick escribe solo en paper/figures/quick, data/quick y paper/generated/quick con 'quick': true; check_provenance rechaza un paper_numbers.json quick (verificado en clon limpio por r05-code-reviewer)."
   },
   {
    "status": "refuted",
    "text": "check_provenance.py flatten misses brace-less \\input: '\\input sections/other' whose file contains \\src{nowhere} and \\pnum{zzz} passes (ok=True); and \\pnum{k} without any \\src/provenance entry passes, so a cited number can lack provenance",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (c90a402, R4 D3): check_provenance aplana '\\input name' sin llaves y exige que todo \\pnum esté respaldado por un \\src; tests en tests/test_check_provenance.py pasan (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "numbers.tex fallback for an unknown key breaks compilation instead of showing a marker: \\pnum{no_such_key} -> '! Missing $ inserted' (underscore typeset in \\textbf{??#1??}); fix with \\detokenize{#1}",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (c90a402, R4 D4): numbers.tex usa \\textbf{??\\detokenize{#1}??} como marcador (comprobado 2026-09-30 (r06 consolidación) en scripts/compute_paper_numbers.py)."
   },
   {
    "status": "unclear",
    "text": "Constants duplicated outside _paperconfig (rb=40000 bias reps, MLE search radii L/2L, eps=0.002 literal) in both compute_paper_numbers.py and fig_5_estimators.py; consistent today, but a one-sided edit would desynchronise figure and paper number",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (c90a402, R4): N_REP_BIAS0, MLE_RADIUS_CENTRE_OVER_L, MLE_RADIUS_SWEEP_OVER_L y EPS_TRANSITION viven en scripts/_paperconfig.py y los usan compute_paper_numbers.py y los fig_*.py (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "structure/claims.json: 4 claims with empty numbers, 34 paper_numbers keys referenced by no claim, 15 claims pending-r3-verification; misalignment |bias| (2.1-3.0%), naive_sigma_Lq_d10 (4.3%), mle_nobg_bias (2.2%) exceed 2% SE and must be cited with \\pnumse per the r3 inbox directive",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R4-R6): structure/claims.json tiene 43 afirmaciones, todas con números; check_provenance exige cobertura en ambos sentidos ('claims: 43, numbers: 276', all checks pass, comprobado 2026-09-30 (r06 consolidación)); los números con SE > 2 % se citan con \\pnumse."
   },
   {
    "status": "unclear",
    "text": "Missing vs OBJECTIVE for round 4: paper/sections/*.tex (input commented out), references.bib, provenance.json entries (currently {}), scripts/reproduce.sh, and README.md (still the agent-team template); acceptance provenance test passes only because the manuscript is empty",
    "round": 3,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (R4, c90a402): manuscrito completo, references.bib, provenance.json, reproduce.py/.sh y README; la aceptación ya no es vacía (comprobado 2026-09-30 (r06 consolidación): 242 etiquetas, 242 entradas)."
   },
   {
    "status": "verified",
@@ -619,7 +644,8 @@
    "status": "unclear",
    "text": "X1-misalignment_naive_bias_over_delta_Lq = 0.862+-0.012: two independent 400x200 draws give 0.8135+-0.0123 and 0.836+-0.012, and the noise-free population over 4000 patterns gives 0.794/0.802/0.871 per delta (population ~0.83). The quoted SE understates the spread between pattern draws (heavy-tailed |bias| at delta=10), and the ratio grows with delta (nonlinear). 'Larger than at the centre, ~0.83-0.86' holds; 0.862+-0.012 is not reproduced at its quoted precision. Pool draws or widen the SE",
    "round": 3,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (R4-R5): el 0.862 +- 0.012 queda como afirmación 'superseded' (misalignment_naive_bias_Lq_mc_slope) y no se cita en el paper (0 apariciones en paper/sections); el número principal es la pendiente poblacional."
   },
   {
    "status": "verified",
@@ -643,19 +669,22 @@
    "status": "refuted",
    "text": "X2-fig8 caption (structure/figures.json): says '50 patterns x 200 repetitions' and 'line ~0.75 delta', but the figure and data use 400 patterns and the drawn line is '0.76 delta' (fit over 7 deltas incl. 15); the (L/4,0) slope (~0.86 per the r3 inbox decision) is neither drawn nor mentioned; the caveat of claims.json misalignment_naive_bias still refers to the superseded 0.79",
    "round": 3,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (R4-R5): la leyenda de la Fig. 8 (tex y figures.json) dice 400 patrones x 200 reps, 0.76 delta como ajuste ponderado sobre 7 deltas y la pendiente poblacional como número principal, con el valor en (L/4,0) (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "X2-fig5 caption: describes panels (a)-(c) and puts the r=(2,0) bias (-0.34 nm) in (c), but the figure has 4 panels and that bias is panel (d); the caption also omits the MLE outlier bump (sigma/CRB ~1.5 at x0=10-20 nm) visible in (b)",
    "round": 3,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (R4-R5): la leyenda de la Fig. 5 describe los 4 paneles, el sesgo en (2,0) en el panel (d) y el bump del MLE en (b) (comprobado 2026-09-30 (r06 consolidación); verificado en r05-final-check)."
   },
   {
    "status": "unclear",
    "text": "X2-fig6 and fig7 captions are still worded as a plan ('inset or side panel', 'where shown', 'Optional:') and do not describe fig6 (b) sigma/sigma_camera 0.183->0.158 or (c) sigma per iteration vs L_k; no numerical contradiction (the artefact point is grey and labelled); they need rewriting in R4",
    "round": 3,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (R4): leyendas de Fig. 6 y 7 reescritas; Fig. 6(b) cita sigma/sigma_camera 0.183->0.158 y (c) sigma por iteración vs L_k (comprobado 2026-09-30 (r06 consolidación) en structure/figures.json)."
   },
   {
    "status": "verified",
@@ -673,79 +702,92 @@
    "status": "refuted",
    "text": "X3-check_provenance holes: '\\input sections/hidden' (no braces, valid TeX) is not flattened, so its bad \\pnum and \\src pass (exit 0); '\\src {key}' with a space is not recognized as a tag, so an unresolved key passes; \\pnum inside a user macro gives a false error on '#1' and the real key is not checked. Low risk for plain \\pnum{k}\\src{k} writing, but should be closed (whitespace-tolerant regexes, brace-less \\input)",
    "round": 3,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (c90a402, R4 D3): igual que el hueco de check_provenance de code-reviewer R3 (\\input sin llaves, '\\src {k}' con espacio, parámetros de macro); tests en tests/test_check_provenance.py."
   },
   {
    "status": "claimed:pending",
    "text": "D1: _paperstyle.cached stores a sha256[:16] of all upper-case _paperconfig constants (paths excluded) + caller params + quick flag in each npz and recomputes on mismatch or missing key; tests TestCacheInvalidation (6) incl. changing MIS.n_patterns",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado de hecho: TestCacheInvalidation pasa en la suite (comprobado 2026-09-30 (r06 consolidación)); r05-code-reviewer confirmó la regeneración en clon limpio. Queda como 'claimed:pending' por historial."
   },
   {
    "status": "claimed:pending",
    "text": "D2: --quick writes only paper/figures/quick/, data/quick/ (summaries and paper_numbers.json with top-level quick=true) and paper/generated/quick/numbers.tex; reproduce.py --quick left the sha256 of every paper/figures/*.pdf, data/*.json and numbers.tex unchanged; check_provenance rejects a final paper_numbers.json containing 'quick'",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado por r05-code-reviewer en clon limpio (reproduce.py --quick no cambió ningún archivo versionado; salidas quick en rutas git-ignored)."
   },
   {
    "status": "claimed:pending",
    "text": "D3: check_provenance flattens brace-less '\\input name', tolerates whitespace in '\\src {k}' / '\\pnum {k}', errors on '\\pnum{ k}', skips macro parameters (#1, ##1), and requires every \\pnum/\\pnumse key to be covered by some \\src{e} whose provenance entry has it in number_keys or as detail; 18 new tests in tests/test_check_provenance.py (28 total, all pass)",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado de hecho: tests/test_check_provenance.py pasa en la suite (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "claimed:pending",
    "text": "D3/h: check_provenance fails on a claim with empty numbers or a paper_numbers key in no claim; on the real project: 39 claims, 217 numbers, 178 tags/entries, 'all checks pass', exit 0",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Superado: los conteos cambiaron (R5: 39/217/179; R6: 43 afirmaciones, 276 números, 242 entradas); check_provenance 'all checks pass' con 0 warnings (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "claimed:pending",
    "text": "D4: numbers.tex fallback is \\textbf{??\\detokenize{#1}??}; with Tectonic a document using \\pnum{no_such_key}, \\pnumse{no_such_key} and \\pnum in math compiles (exit 0, no 'Missing $'), while the old macro exits 1",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado de hecho en la compilación: numbers.tex usa \\detokenize; el PDF compila con Tectonic sin '??' (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "claimed:pending",
    "text": "Constants moved to _paperconfig (N_REP_BIAS0=40000, MLE_RADIUS_CENTRE_OVER_L=1, MLE_RADIUS_SWEEP_OVER_L=2, EPS_TRANSITION=0.002) and used by compute_paper_numbers.py, fig_5_estimators.py and fig_7_zero_depth.py; the full --no-cache regeneration changed no value",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado (comprobado 2026-09-30 (r06 consolidación)): las constantes están en scripts/_paperconfig.py y se usan en compute_paper_numbers.py; r05-verifier no encontró cambios de valor."
   },
   {
    "status": "claimed:pending",
    "text": "Population (noise-free) naive-MLE bias, 4000 patterns, seed 42, L=100, SBR=10: |bias|/delta = 0.7471/0.7549/0.7835 (centre) and 0.8023/0.8073/0.8635 (L/4,0) for delta=2/5/10 (SE ~0.005-0.008); unweighted LSQ slope through the origin 0.7768+-0.0050 (centre) and 0.8507+-0.0074 (L/4,0); keys misalignment_naive_bias_over_delta_pop_* and misalignment_pop_n_patterns=4000",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado por r05-verifier (M2-pop y M2-pop-ratios: reproducción independiente con otras semillas)."
   },
   {
    "status": "claimed:pending",
    "text": "With the same first 400 patterns as the 400x200 MC, the noise-free naive |bias| (centre 1.492/3.759/7.760, L/4 1.654/4.158/9.151 nm) matches the MC (1.492/3.731/7.708 and 1.691/4.202/9.304) within 1 MC SE; the (L/4,0) MC slope spread (0.814-0.862) is pattern sampling (population slope 0.896/0.876/0.851 over 400/1000/4000 patterns)",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Parcial: la explicación por muestreo de patrones fue verificada por r05-verifier (M2-pop-convergence); la coincidencia 'mismos 400 patrones' quedó unclear (ver afirmación M2-worker-400 de R5). No se cita en el paper."
   },
   {
    "status": "claimed:pending",
    "text": "New demo keys: lms_sbr10_shrink_factor=0.9090909 (=10/11), eps_constant_pedestal_over_s31_L100_eps0p05=1.0000000000000004, eps_gaussian_pedestal_over_s31_L100_eps0p05=1.00532, eps_constant_pedestal_sbr_eff_L100_eps0p05=2.90751",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado por r05-verifier (M2-demo y M2-lms)."
   },
   {
    "status": "claimed:pending",
    "text": "claims.json: 39 claims (37 verified, 1 pending-r4-verification, 1 superseded), every claim has numbers, all 217 keys covered, 15 pending-r3 set to verified round 3, caveats in English with no non-ASCII",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Superado: claims.json tiene ahora 43 afirmaciones (42 verified, 1 superseded), todas con números, 276 claves cubiertas (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "claimed:pending",
    "text": "Regeneration: make_all_figures --no-cache 8/8 OK (17m48s), all fig*_summary.json identical to the pre-round versions; compute_paper_numbers 217 keys (376 s): 0 of the 204 existing keys changed value/SE/unit, 13 new; 149 shared summary keys match the registry",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Verificado parcialmente por r05-code-reviewer (clon limpio: fig1 y fig7 reproducen los productos versionados; 149 claves compartidas idénticas)."
   },
   {
    "status": "claimed:pending",
    "text": "Checks: unittest discover 218 tests OK (38.0 s, TECTONIC set); tests.test_acceptance 8/8 OK; check_provenance exit 0 'all checks pass'; sha256 tests/test_acceptance.py = 7d198853...2303 unchanged",
    "round": 4,
-   "source": "worker-1"
+   "source": "worker-1",
+   "resolution": "Superado por los chequeos actuales (comprobado 2026-09-30 (r06 consolidación)): unittest 224 OK (1 skip), aceptación 8/8 OK, check_provenance exit 0, sha256 de tests/test_acceptance.py sin cambios."
   },
   {
    "status": "claimed:verified",
@@ -775,13 +817,15 @@
    "status": "claimed:unclear",
    "text": "Captions in the tex and structure/figures.json (W1, 11:28) agree in content by my reading; an independent caption-vs-PDF check (r5 verifier) is still needed, and main.pdf must be recompiled after W1's final figure regeneration",
    "round": 4,
-   "source": "writer"
+   "source": "writer",
+   "resolution": "Resuelto: r05-final-check comparó leyendas con el PDF renderizado y main.pdf se recompiló tras la regeneración final (R5); recompilado de nuevo en esta consolidación (14 pp.)."
   },
   {
    "status": "claimed:unclear",
    "text": "Population misalignment slopes (misalignment_naive_bias_over_delta_pop_*) are cited by key as the main estimate but are pending-r4-verification; the centre value 0.777 (unweighted LSQ) differs from the MC weighted slope 0.755 +- 0.009 by ~2.4 SE",
    "round": 4,
-   "source": "writer"
+   "source": "writer",
+   "resolution": "Resuelto: r05-verifier reprodujo las pendientes poblacionales (claims.json misalignment_naive_bias_population, verified_round 5). La elección de la pendiente poblacional como número principal queda como pregunta abierta a la autora (open_points.tex)."
   },
   {
    "status": "verified",
@@ -823,49 +867,57 @@
    "status": "refuted",
    "text": "README Quick start 'pip install -e .' (README.md:19) fails with the pip 20.2.1 bundled with Python 3.8.6 ('editable mode currently requires a setup.py based build'); works after 'python -m pip install --upgrade pip'. Install is not needed because tests/scripts add src to sys.path. Fix the README or add a setup.py shim",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (6786c81): README Quick start instala solo requirements.txt; la instalación editable se documenta aparte con la actualización de pip (verificado r05-final-check; comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "Fig. 4(d) captions (structure/figures.json fig4; crb_center.tex caption, main.pdf p.7) say triangles mark MINFLUX 13 photons with the S27 point value, but scripts/fig_4_scaling.py:174-175 never plots mf_s27; no such triangle in the figure",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (6786c81): fig_4_scaling.py dibuja el triángulo mf_s27 (etiqueta '13'); verificado en r05-final-check."
   },
   {
    "status": "refuted",
    "text": "Fig. 8 captions (figures.json fig8 'naive sigma changes little, so its loss of accuracy is bias'; nonidealities.tex:159 'the loss of the naive estimator is bias') are false at (L/4,0): naive sigma 2.389 -> 3.74+-0.16 nm at delta=10 (+57%), 5.02 nm at delta=15; restrict to the centre as the body text (nonidealities.tex:112-120) does",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (6786c81): 'la pérdida es sesgo' restringido al centro en nonidealities.tex, la leyenda de la Fig. 8 y figures.json (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "Fig. 5(d) captions (figures.json fig5; estimators.tex:66) say the background-free MLE bias points toward the centre, but the plotted bias changes sign near x0~9 nm (+0.18 nm at x0=12 nm); qualify to x0 <~ 8 nm",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (6786c81): la leyenda de la Fig. 5(d) dice negativo para x0 <~ 8 nm y cambio de signo cerca de 9 nm (comprobado 2026-09-30 (r06 consolidación) en el PDF recompilado, p. 8)."
   },
   {
    "status": "unclear",
    "text": "misalignment_naive_bias_over_delta_pop_center (0.7768) is cited in the abstract and fig8 caption while its claim in structure/claims.json is 'pending-r4-verification'; it needs r5 verifier confirmation before delivery (OBJECTIVE: only verified results in the manuscript); check_provenance/acceptance do not enforce claim status",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto: r05-verifier verificó la pendiente poblacional (verified_round 5 en claims.json)."
   },
   {
    "status": "unclear",
    "text": "state.json not advanced past round 3 (no r4 history, last_acceptance still 'vacuous', 12 r4 claims 'claimed:pending', local uncommitted edit); must be updated before freezing",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Resuelto (f411211): state.json con historial R4 y R5, status done; esta consolidación agrega R6."
   },
   {
    "status": "unclear",
    "text": "Hygiene items (non-blocking): .gitignore lacks *.egg-info/, venv/, build/, dist/; scripts/apply-to-existing.{sh,ps1} are stray template installers; 611 scratch fixture files under equipo/.../work/verify/r03/scratch; README structure omits paper/main.pdf, OBJECTIVE*.md, job.*, environment.yml; \\pnumse prints 4 sig. digits (abstract '0.9912 +- 0.005131'); figure PDFs/JSON not byte-deterministic (CreationDate, CRLF)",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Mayormente resuelto (6786c81): .gitignore incluye *.egg-info/, build/, dist/, venv/ y equipo/*/work/**/scratch/ (0 archivos scratch versionados); apply-to-existing.* eliminados; README lista main.pdf, OBJECTIVE*.md, job.*, environment.yml; \\pnumse formatea el SE a 1-2 cifras. Sigue vigente (menor, aceptado): PDFs/JSON de figuras no deterministas byte a byte (CreationDate)."
   },
   {
    "status": "unclear",
    "text": "Minor caption gaps: figures.json fig2(f) says differences are relative to LG300 though the grey curve is vectorial/LG327.1; fig3(f) dashed fwhm=360 curve not mentioned; fig6(a) annotation abuts legend and '10000' tick clipped; fig4(d) dashed 9x9 no-bkg line indistinguishable from the ideal line. Bib incomplete (no volume/pages for Masullo2022, Caprile2022, Stefani2023, Lopez2023; no DOI for Masullo2022, Caprile2022)",
    "round": 5,
-   "source": "code-reviewer"
+   "source": "code-reviewer",
+   "resolution": "Parcial: leyendas de fig2(f) y fig3(f) corregidas en figures.json y fig6(a)/fig4(d) verificadas en r05-final-check. ABIERTO (menor): references.bib sigue sin pages/doi para Masullo2022 y sin volume/pages/doi para Caprile2022 (comprobado 2026-09-30 (r06 consolidación)); en backlog."
   },
   {
    "status": "verified",
@@ -895,7 +947,8 @@
    "status": "unclear",
    "text": "M2-worker-400: 'with the same first 400 patterns as the 400x200 MC the noise-free naive |bias| matches the MC within 1 MC SE' - not reproduced (requires the worker's seed-42 pattern stream)",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "ABIERTO (sin impacto en el paper): la coincidencia con 'los mismos 400 patrones' no se reprodujo por falta del flujo de patrones del worker; no se cita en el manuscrito."
   },
   {
    "status": "verified",
@@ -931,37 +984,43 @@
    "status": "refuted",
    "text": "M1-vectorial.tex:32-33 'wrong hand CRB two orders of magnitude larger, linear more than one order' - Table I gives factors 92/27/16 (opposite) and 38/11.5/6.7 (linear) for L=50/100/150; fix: 'by factors 16-90 and 7-40 (L=150-50 nm)'",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81): vectorial.tex dice 'by a factor that depends on L (Table I)' con los valores de la tabla (verificado r05-final-check; comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "M1-fig5-caption (estimators.tex:66 and figures.json fig5 d) 'bias ... toward the centre' - panel (d) is negative only for x0<~8 nm and +0.18 nm (away from the centre) at x0=12 nm; restrict to x0<~8 nm and note the sign change",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81): igual que la leyenda Fig. 5(d) (negativo para x0 <~ 8 nm, cambio de signo cerca de 9 nm)."
   },
   {
    "status": "refuted",
    "text": "M1-estimators.tex:35-38 'the linearized estimators ... their sigma falls below the CRB' - in Fig. 5(b) the mLMS has sigma/CRB ~1.3 >1 for x0<~12 nm and a small outward bias at 5-15 nm; the plotted LMS/mLMS include the 1/s correction, so 'shrinkage' must not read as the 1/s shrinkage; restrict to x0>~15 nm and say 'linearization compression'",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81, retoque f411211): estimators.tex habla de compresión de la linealización, aclara que las curvas incluyen 1/s y restringe al mLMS la zona x0 <~ 12 nm (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "M1-methods.tex:9-11 'enough repetitions for a statistical error below 2 %' except misalignment - mle_nobg_bias_x_r2_nm (2.2 %) and adaptive_frac_outside_next_radius (6 %) exceed 2 % and are not misalignment keys (they are correctly quoted with \\pnumse); reword",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81): methods.tex dice 'central results below 2%; the others are quoted with their SE' y enumera los casos (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "refuted",
    "text": "M1-nonidealities.tex:97-101 the MC-vs-population slope difference attributed to weighting 'and the MC noise floor' - the floor would raise the MC slope, which is lower (0.755 vs 0.777); the difference is weighting (0.762 with MC weights) plus 400-pattern sampling",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81): nonidealities.tex atribuye la diferencia a la ponderación por varianza inversa y al muestreo de 400 patrones; el piso de ruido ya no se menciona (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "unclear",
    "text": "M1-wording (not wrong numbers, but overstated or ambiguous; fixes in r05-verifier.md): vectorial:26-28 'few percent at the largest L' (Fig. 2f reaches ~11 % at 250 nm); vectorial:28-31 curvature justification (overall curvature cancels); crb_center:20 'isotropic'; model:50-52 SBR held fixed at every position not stated; nonidealities:103-106 honest centre bias 9 % (3 SE) above floor called 'at the floor'; abstract:23 and discussion:21 'about 0.7768' (ratio 0.747-0.784, LSQ 78 % weighted by delta=10; conditions missing); abstract (iii)/(iv) conditions missing; discussion:56-59 'all absent'; open_points:28-30 now verified; open_points:18-21 overstated (agree ~2 % except F=1); crb_center:67-69, 99-101; SE formatting with 4 significant figures",
    "round": 5,
-   "source": "verifier"
+   "source": "verifier",
+   "resolution": "Resuelto (6786c81): todos los ítems de redacción presentes en el PDF según r05-final-check (ítem 6)."
   },
   {
    "status": "verified",
@@ -992,7 +1051,7 @@
    "text": "estimators.tex 'Closer to the centre this does not hold' (residual, minor) — false for the LMS: at x0=10 nm LMS sigma/CRB=0.81 and bias -1.75 nm; restrict the clause to the mLMS",
    "round": 5,
    "source": "verifier",
-   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+   "resolution": "Resuelto por el orquestador tras el chequeo final (f411211): 'For the LMS this already happens at a few nanometres from the centre; the mLMS behaves differently' (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "verified",
@@ -1017,7 +1076,7 @@
    "text": "structure/figures.json fig8(a) 'At the centre the honest MLE stays at the noise floor' (residual, minor) — tex now says slightly above (3 SE); figures.json not aligned",
    "round": 5,
    "source": "verifier",
-   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+   "resolution": "Resuelto por el orquestador tras el chequeo final (f411211): figures.json fig8(a) dice 'lies close to the noise floor (about 3 SE above it)' (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "verified",
@@ -1048,7 +1107,7 @@
    "text": "README.md:125 fig5 row 'linearized estimators fall below the CRB only beyond x0 ~ 15 nm' (new error introduced this round) — LMS sigma/CRB is already 0.81 at x0=10 nm (0.97 at 5); only the mLMS crosses near 15 nm",
    "round": 5,
    "source": "verifier",
-   "resolution": "fixed by orchestrator after final check (commit following 6786c81)"
+   "resolution": "Resuelto por el orquestador tras el chequeo final (f411211): la fila fig5 del README distingue LMS (pocos nm del centro) y mLMS (x0 ~ 15 nm) (comprobado 2026-09-30 (r06 consolidación))."
   },
   {
    "status": "verified",
@@ -1067,6 +1126,117 @@
    "text": "python scripts/check_provenance.py: 179 tags/179 entries, 0 errors, all checks pass; python -m unittest tests.test_acceptance: 8 OK",
    "round": 5,
    "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "bgphys_estimators_offcentre: SBR 22.5814 (x0=25) / 57.5202 (x0=50) and CRB 5.98543/5.77286, 12.19679/11.38952 reproduced exactly with an independent model (vcore.py); own MC (seed 20260930, 20000 reps) agrees with the 24 published bias/sigma-CRB values within |z|<=1.37; phys-fixed changes <=1.26 nm (bias x) and <=6.3 % (sigma/CRB); fixed values bit-identical to data/mc/fig5_sweep.npz",
+   "round": 6,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "bgphys_iterative: centre SBR [10, 3.417, 1.074, 0.3287] (match at L=150) and 304.18 first (match at L=25) equal the S32 closed form L^2 exp(-ln2 L^2/fwhm^2); own MC sigma 2.228+-0.015 (pub. 2.232+-0.014), 0.609+-0.003 (0.611), fixed SBR 0.613 (0.616), no bkg 0.507 (0.508), all within 0.7 SE",
+   "round": 6,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "naive_misspecified_estimators: noise-free naive MLE |bias| (Newton polish, gradient ~1e-16) eps=0.002 0.268712/0.422056, eps=0.01 1.38869/2.28936, SBR 20 0.35792/0.73961, no bkg 0.91572/1.64286 nm; CRB 2.40116/4.46073/2.87928/5.20051; N_eq 429.9/516.0/7985/11170.5; LMS extra shift -0.3411/-0.3005/-1.4634/-1.3517 (exact); honest MLE 5e-7 nm",
+   "round": 6,
+   "source": "verifier"
+  },
+  {
+   "status": "verified",
+   "text": "simuflux_point_value_convention: fwhm=310, L=75, N=100, no bkg: point value 2.763782 (Fisher without the centre exposure and own closed form), limit 2.448757 (r0=1e-4..1e-2, 3 directions); SimuFLUX-style central difference 2.7648 (N=100) / 0.8743 (N=1000) consistent with ~2.8/~0.9 read from their Fig. 2e / SI Fig. 8 if L=75; eps = e * zerooffset correct given the unit-power donut form",
+   "round": 6,
+   "source": "verifier"
+  },
+  {
+   "status": "unclear",
+   "text": "Printed precision: naive_eps0p002_mle_bias_abs_x20_nm is 0.42200 in the registry vs 0.422056 at machine precision (printed 0.4220, should be 0.4221) and N_eq x20 11173 vs 11170; the MLE tolerance (~3e-5 nm) does not support the 4th digit; the honest-MLE 3.052e-5 nm is the optimizer tolerance, not a result",
+   "round": 6,
+   "source": "verifier",
+   "resolution": "Resolved in r06 consolidation: compute_paper_numbers.py adds a Newton polish (_polish_mle) to every noise-free naive_* MLE; registry now 0.4220559 (printed 0.4221) and N_eq 11170.50 (printed 11171); the honest-MLE key is described as a numerical zero (now 5.7e-8 nm) and the text says 'below 10^-4 nm'. Full list of changed values in reports/r06-consolidation.md."
+  },
+  {
+   "status": "unclear",
+   "text": "nonidealities.tex 'The bias does not decrease with N' holds only for the large-N (noise-free, pseudo-true) bias: own MC (eps=0.01, x0=20, 8000 reps) gives naive mean bias 3.84/3.61/2.67/2.32 nm at N=100/500/2000/20000, tending to 2.29; the conclusion holds and the finite-N effect is larger",
+   "round": 6,
+   "source": "verifier",
+   "resolution": "Resolved in r06 consolidation: nonidealities.tex and discussion.tex now call the noise-free values the large-N limit of the bias, larger at finite N; the MC values are not printed (not in the registry); claims.json statement/caveat and the N_eq key description updated."
+  },
+  {
+   "status": "unclear",
+   "text": "discussion.tex '<1.3 nm / <8 %' omits 'at the points compared (x0=25, 50; L=50, N=100)' and that only the x bias is reported (MLE y bias -1.3..-2.7 nm, its change <0.4 nm in own MC)",
+   "round": 6,
+   "source": "verifier",
+   "resolution": "Resolved in r06 consolidation: discussion.tex and estimators.tex state the points and conditions and that only the x component was compared; the bounds are now registry keys bgphys_max_abs_change_bias_x_nm (1.222 nm) and bgphys_max_rel_change_sigma_over_crb_pct (7.127 %) cited with \\pnum\\src."
+  },
+  {
+   "status": "unclear",
+   "text": "iterative.tex power-ramp sentence: raising the power keeps the SBR only if the background does not scale with power; 1->3 or 1->6 ramps do not compensate a ~30x drop; SimuFLUX pwrFactor values not checkable locally",
+   "round": 6,
+   "source": "verifier",
+   "resolution": "Resolved in r06 consolidation: iterative.tex now calls fixed SBR an idealization, states the background assumption, says a moderate ramp 'only partially compensates' the drop, and softens the SimuFLUX attribution ('according to our reading of its public code, which we have not run'); bgphys_iterative caveat added in claims.json."
+  },
+  {
+   "status": "unclear",
+   "text": "SimuFLUX calculateCRBdirect (p+1e-4 regularization) and PsfDonut2D zerooffset form cannot be checked locally (code not on this machine); the published Methods (central differences x+-eps/2) implies the point value at the exact centre",
+   "round": 6,
+   "source": "verifier",
+   "resolution": "Kept open (source-level, not a number of ours): the manuscript cites these as literature statements with source entries; checking the SimuFLUX code itself is in the backlog. Related claims.json caveat of naive_misspecified_estimators (eps=0.05 edge of disk) restricted to x0=20 nm as the verifier found."
+  },
+  {
+   "status": "verified",
+   "text": "Registry diff vs main: no key removed; only new keys bgphys_max_abs_change_bias_x_nm and bgphys_max_rel_change_sigma_over_crb_pct; exactly 13 naive_* values changed; 4 naive_eps*_lms_extra_bias_x_* keep value, description changed (base mentions the Newton polish); nothing else changed in any field",
+   "round": 6,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "_polish_mle: rerunning misspecified_estimator_section reproduces the 21 keys bit for bit; in the 12 real cases no fallback is used, the shift from the pattern-search optimum is 6e-6..7e-5 nm, ll always increases, |grad ll| ~1e-6 -> ~1e-9; agrees with the verifier's complex-step Newton to 1e-8..3e-8 nm (0.2687115970 / 0.4220558629 nm)",
+   "round": 6,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "bgphys_max_* recomputed from the 24 bgphys_{fixed,phys}_* keys: 1.2216 nm (mLMS x0=50) and 7.127 % (LMS x0=50), equal to the JSON; x bias only, x0=25,50",
+   "round": 6,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "verified",
+   "text": "Text: 'independent of N' / 'does not decrease with N' now 'large-N limit'; discussion states the points compared and the x-only comparison; iterative power ramp 'partially compensates' with the background assumption; no stale numbers (0.4220, 11173, 3.05e-5, '1.3 nm', '8 %') in paper, README or claims; full suite OK",
+   "round": 6,
+   "source": "code-reviewer"
+  },
+  {
+   "status": "unclear",
+   "text": "Fallback tests of _polish_mle misleading: test_step_leaving_disk_returns_start (start (0.5,0)) actually exits through the non-concave-Hessian branch (eigenvalues -0.1436, +0.00062), so the left-disk branch is not exercised; test_no_convergence_returns_start uses max_iter=0 (loop never runs)",
+   "round": 6,
+   "source": "code-reviewer",
+   "resolution": "Resolved (r06 consolidation, third pass): _polish_mle gains return_reason=True (reasons converged / not_concave / ill_conditioned / left_disk / max_iter / ll_decreased; default return unchanged). Tests now assert the branch: left_disk with start=(9.95,0), center=(9.9,0), radius=0.06, and the contrast radius=0.5 converging to (10,0); not_concave at (0.5,0); real max_iter with max_iter=2 from (5,0) (converges with the default); ill_conditioned via POLISH_MAX_COND. The ll_decreased guard (reviewer's remark) was added but has no dedicated test."
+  },
+  {
+   "status": "unclear",
+   "text": "bgphys_max_* printed with 4 figures (1.222 nm, 7.127 %) as if exact bounds, without SE; SE of the determining differences ~0.045 nm and ~0.75 points (independent-sum, conservative); verifier's own MC 1.26 nm and 6.3 %",
+   "round": 6,
+   "source": "code-reviewer",
+   "resolution": "Resolved: both keys now carry an SE from the maximizing pair (bias: SEs in quadrature, 0.0446 nm; ratio: relative SEs propagated, 0.806 points) and are cited with \\pnumse: '1.22 +- 0.04 nm' and '(7.1 +- 0.8) %', worded as 'the largest change ... at the points compared' (estimators.tex, discussion.tex); provenance statements and the claim updated. Full regeneration: only these two keys changed (se added, description), no value changed."
+  },
+  {
+   "status": "unclear",
+   "text": "No unit test for the bgphys_max_* keys (a change in BGPHYS_X or key names could break them silently)",
+   "round": 6,
+   "source": "code-reviewer",
+   "resolution": "Resolved: tests/test_paper_tooling.py::TestBgphysMaxChanges recomputes both values and SEs from the 24 source keys of data/paper_numbers.json, checks the helper bgphys_max_changes and that there are exactly 24 source keys, all with SE."
+  },
+  {
+   "status": "unclear",
+   "text": "_polish_mle default radius=np.inf leaves no safety net for a near-singular Hessian (only called with a finite radius today)",
+   "round": 6,
+   "source": "code-reviewer",
+   "resolution": "Resolved: condition-number guard POLISH_MAX_COND=1e10 (reason ill_conditioned, returns start), tested."
   }
  ],
  "plan": [
@@ -1077,9 +1247,13 @@
   "R5: verificación final independiente del manuscrito y de la entrega; pasada de correcciones; chequeo final"
  ],
  "backlog": [
-  "Confirmación de la autora: SBR=10 como condición de mle_efficiency_center (declarado en el paper como convención)",
+  "PREGUNTA ABIERTA (autora): SBR=10 como condición de mle_efficiency_center (decidido por el orquestador en su nombre; declarado en open_points.tex)",
+  "PREGUNTA ABIERTA (autora): la pendiente poblacional sin ruido como número principal del sesgo por desalineación (decidido por el orquestador en su nombre; open_points.tex)",
+  "PREGUNTA ABIERTA (autora): Fig. 8 presentada como error de posicionamiento del patrón y no como desalineación de la máscara de fase (decidido por el orquestador en su nombre, commit 7d41d4d; open_points.tex)",
   "Open points del paper: normalización rmse vs Masullo Eq. 4.2; Caprile F=1; cola pesada del iterativo a N=250",
-  "Extensiones (LO QUE MÁS SE PODRÍA HACER): dona 3D/top-hat, aberraciones de Zernike como origen de eps, dipolo de absorción, cámara realista, regla óptima de reducción de L, MLE con prior en el iterativo"
+  "Menores abiertos: references.bib sin pages/doi (Masullo2022) ni volume/pages/doi (Caprile2022); coincidencia 'mismos 400 patrones' de R4 no reproducida (no citada); PDFs de figuras no deterministas byte a byte",
+  "Extensiones (LO QUE MÁS SE PODRÍA HACER): dona 3D/top-hat, aberraciones de Zernike como origen de eps, dipolo de absorción, cámara realista, regla óptima de reducción de L, MLE con prior en el iterativo; efectos de instrumento de SimuFLUX (máscara de fase desalineada, parpadeo, tiempos de exposición desiguales)",
+  "r06 verifier: comprobar en el código público de SimuFLUX (no local) calculateCRBdirect (regularización p+1e-4), la forma de zerooffset en PsfDonut2D y los pwrFactor de las secuencias de ejemplo"
  ],
  "history": [
   {
@@ -1136,15 +1310,37 @@
    },
    "checks": "passed",
    "acceptance": "passed"
+  },
+  {
+   "round": 6,
+   "summary": "Ampliación SimuFLUX (commit 7d41d4d, sin rastro previo en equipo/): fondo constante por exposición vs SBR fijo (Fig. 5 y protocolo iterativo), sesgo sin ruido de estimadores que ignoran el pedestal del cero o equivocan el SBR, convenciones valor puntual vs límite para la dona por defecto de SimuFLUX; Fig. 8 aclarada como error de posicionamiento del patrón; 4 afirmaciones nuevas en structure/claims.json (verified_round 6), 276 números, 242 entradas de procedencia. Decisiones tomadas por el orquestador en nombre de la autora; la verificación independiente de r06 se registra en reports/r06-verifier.md (otro agente).",
+   "claims": {
+    "structure_claims_new": 4
+   },
+   "checks": "passed",
+   "acceptance": "passed",
+   "commit": "7d41d4d"
+  },
+  {
+   "round": 6,
+   "summary": "Consolidación r06 (2026-09-30): 20 entradas de procedencia huérfanas ahora citadas con \\src (0 warnings, ningún valor cambiado); preguntas abiertas (ii) pendiente poblacional y (iii) alcance de la Fig. 8 agregadas a open_points.tex; main.pdf recompilado con Tectonic (14 pp., sin '??', sin referencias indefinidas); README actualizado (SimuFLUX, notas C_*); 'resolution' agregado a las 62 afirmaciones refuted/unclear/claimed:pending/claimed:unclear del ledger. Ver reports/r06-consolidation.md. Segunda pasada: correcciones del verificador r06 (4 verified, 5 unclear: 4 resueltas, 1 abierta): pulido Newton de los MLE sin ruido, cotas 1.3 nm / 8 % convertidas en claves del registro, límite de N grande, supuesto de fondo en la rampa de potencia, signos menos, caveat eps=0.05. Tercera pasada: hallazgos del code-reviewer r06 (4 verified, 4 unclear resueltas): ramas de _polish_mle con motivo explícito y tests por rama, guarda de número de condición, SE en las claves bgphys_max_* citadas con \\pnumse, test de las claves bgphys_max_*.",
+   "claims": {
+    "resolved": 55,
+    "open": 4,
+    "partial": 3
+   },
+   "checks": "passed",
+   "acceptance": "passed"
   }
  ],
  "last_checks": {
   "passed": true,
-  "detail": "224 unit tests OK (1 skipped: Tectonic compile test when TECTONIC unset)"
+  "detail": "232 unit tests OK (1 skipped: Tectonic compile test when TECTONIC unset); 2026-09-30, after the r06 code-review fixes"
  },
  "last_acceptance": {
   "passed": true,
-  "detail": "tests.test_acceptance 8/8 OK with the full manuscript (179 provenance tags, 39 claims, 217 numbers); sha256 guard intact"
+  "detail": "tests.test_acceptance 8/8 OK (244 provenance tags/entries, 0 warnings, 43 claims, 278 numbers); sha256 guard intact; 2026-09-30"
  },
- "writer_seen_verified": 0
+ "writer_seen_verified": 0,
+ "status_note": "Cerrado tras la ronda 6 (ampliación SimuFLUX + consolidación). Verificación independiente de r06 en reports/r06-verifier.md: 4 afirmaciones verified, 5 unclear (4 resueltas en la consolidación, 1 abierta: código de SimuFLUX no disponible localmente). Las tres decisiones tomadas en nombre de la autora quedan como preguntas abiertas (backlog, open_points.tex)."
 }

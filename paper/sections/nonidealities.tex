@@ -141,8 +141,8 @@ pedestal that the likelihood ignores, the estimate is biased; Ref.~\cite{MarinRi
 the same effect for an imperfect zero not included in the estimator. We quantify it without MC
 noise by applying the estimators to the \emph{expected} counts $Np_i(\rr)$ ($L=50$\,nm,
 $N=100$, true $\sbr=10$ at every position, constant pedestal, MLE in a disk of radius $0.75L$).
-The MLE that uses the correct pedestal recovers the true position to
-\pnum{naive_honest_mle_max_abs_bias_nm}\src{naive_honest_mle_max_abs_bias_nm}\,nm. The MLE that
+The MLE that uses the correct pedestal recovers the true position to numerical precision
+(below $10^{-4}$\,nm\src{naive_honest_mle_max_abs_bias_nm}). The MLE that
 assumes $\epsilon=0$ has a $|\text{bias}|$ of
 \pnum{naive_eps0p002_mle_bias_abs_x10_nm}\src{naive_eps0p002_mle_bias_abs_x10_nm} and
 \pnum{naive_eps0p002_mle_bias_abs_x20_nm}\src{naive_eps0p002_mle_bias_abs_x20_nm}\,nm at
@@ -151,8 +151,12 @@ $x_0=10$ and $20$\,nm for $\epsilon=0.002$, and
 \pnum{naive_eps0p01_mle_bias_abs_x20_nm}\src{naive_eps0p01_mle_bias_abs_x20_nm}\,nm for
 $\epsilon=0.01$, against CRBs at $N=100$ of
 \pnum{naive_eps0p01_crb_x10_nm}\src{naive_eps0p01_crb_x10_nm} and
-\pnum{naive_eps0p01_crb_x20_nm}\src{naive_eps0p01_crb_x20_nm}\,nm ($\epsilon=0.01$). The bias does
-not decrease with $N$, whereas the CRB falls as $N^{-1/2}$: for $\epsilon=0.01$ the two are equal
+\pnum{naive_eps0p01_crb_x20_nm}\src{naive_eps0p01_crb_x20_nm}\,nm ($\epsilon=0.01$) and
+\pnum{naive_eps0p002_crb_x10_nm}\src{naive_eps0p002_crb_x10_nm} and
+\pnum{naive_eps0p002_crb_x20_nm}\src{naive_eps0p002_crb_x20_nm}\,nm ($\epsilon=0.002$). These noise-free
+values are the large-$N$ limit of the bias of the naive MLE, which does not vanish as $N$ grows
+(at finite $N$ its mean bias is larger), whereas the CRB falls as $N^{-1/2}$: for $\epsilon=0.01$
+the limit and the CRB are equal
 at $N\approx\pnum{naive_eps0p01_mle_N_bias_eq_crb_x10}\src{naive_eps0p01_mle_N_bias_eq_crb_x10}$
 ($x_0=10$\,nm) and
 $\pnum{naive_eps0p01_mle_N_bias_eq_crb_x20}\src{naive_eps0p01_mle_N_bias_eq_crb_x20}$
@@ -161,10 +165,10 @@ $N\approx\pnum{naive_eps0p002_mle_N_bias_eq_crb_x10}\src{naive_eps0p002_mle_N_bi
 and $\pnum{naive_eps0p002_mle_N_bias_eq_crb_x20}\src{naive_eps0p002_mle_N_bias_eq_crb_x20}$;
 above these photon numbers the ignored pedestal, not the photon noise, limits the accuracy.
 For the LMS, the ignored pedestal shifts the estimate along $x$ by
-\pnum{naive_eps0p01_lms_extra_bias_x_x10_nm}\src{naive_eps0p01_lms_extra_bias_x_x10_nm} and
-\pnum{naive_eps0p01_lms_extra_bias_x_x20_nm}\src{naive_eps0p01_lms_extra_bias_x_x20_nm}\,nm for
-$\epsilon=0.01$ (\pnum{naive_eps0p002_lms_extra_bias_x_x10_nm}\src{naive_eps0p002_lms_extra_bias_x_x10_nm}
-and \pnum{naive_eps0p002_lms_extra_bias_x_x20_nm}\src{naive_eps0p002_lms_extra_bias_x_x20_nm}\,nm
+$\pnum{naive_eps0p01_lms_extra_bias_x_x10_nm}$\src{naive_eps0p01_lms_extra_bias_x_x10_nm} and
+$\pnum{naive_eps0p01_lms_extra_bias_x_x20_nm}$\src{naive_eps0p01_lms_extra_bias_x_x20_nm}\,nm for
+$\epsilon=0.01$ ($\pnum{naive_eps0p002_lms_extra_bias_x_x10_nm}$\src{naive_eps0p002_lms_extra_bias_x_x10_nm}
+and $\pnum{naive_eps0p002_lms_extra_bias_x_x20_nm}$\src{naive_eps0p002_lms_extra_bias_x_x20_nm}\,nm
 for $\epsilon=0.002$), on top of its linearization bias (Sec.~\ref{sec:estimators}). A misjudged SBR (true $10$, $\epsilon=0$) acts in the same way: an MLE
 that assumes $\sbr=20$ has a $|\text{bias}|$ of
 \pnum{naive_sbr20_mle_bias_abs_x10_nm}\src{naive_sbr20_mle_bias_abs_x10_nm} and

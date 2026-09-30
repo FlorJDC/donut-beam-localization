@@ -384,5 +384,138 @@ class TestSharedConstants(unittest.TestCase):
         self.assertGreaterEqual(C.MIS_POP_N_PATTERNS, 4000)
 
 
+class TestNoiseFreePolish(unittest.TestCase):
+    """Newton polish of the noise-free MLE (compute_paper_numbers._polish_mle, round 6): the
+    pattern search of estimators.mle stops at ~1e-4 nm, which is not enough for the 4th digit
+    of the naive_* keys."""
+
+    @classmethod
+    def setUpClass(cls):
+        src = os.path.join(ROOT, "src")
+        if src not in sys.path:
+            sys.path.insert(0, src)
+        from donutloc import beams, patterns, photons
+        cls.cen = patterns.tcp_centers(C.L_REF)
+        cls.p_ideal = staticmethod(photons.make_model(cls.cen, beams.make_beam("donut", fwhm=C.FWHM),
+                                         sbr=C.SBR_MLE))
+        bt = beams.make_beam("donut", fwhm=C.FWHM, eps=0.002, zero_model="constant")
+        cls.p_eps = staticmethod(photons.make_model(cls.cen, bt, sbr=C.SBR_MLE))
+        cls.rad = 0.75 * C.L_REF
+
+    def _ll(self, r, c, p):
+        from donutloc import estimators
+        return -float(estimators.neg_loglike(np.asarray(r, float), c, p))
+
+    def test_correct_model_recovers_truth(self):
+        r = np.array([10.0, 0.0])
+        c = C.N_REF * np.asarray(self.p_ideal(r), float)
+        est = cpn._mle_noisefree(c, self.p_ideal, self.rad)
+        self.assertLess(np.hypot(*(est - r)), 1e-6)
+
+    def test_naive_bias_matches_independent_value(self):
+        # r06 verifier (own model, Newton with complex-step gradient): 0.4220555 nm
+        r = np.array([20.0, 0.0])
+        c = C.N_REF * np.asarray(self.p_eps(r), float)
+        est = cpn._mle_noisefree(c, self.p_ideal, self.rad)
+        self.assertAlmostEqual(float(np.hypot(*(est - r))), 0.4220555, delta=2e-6)
+        # the polish never lowers the likelihood of the pattern-search optimum
+        from donutloc import estimators
+        r0 = estimators.mle(c, self.p_ideal, search_radius=self.rad)
+        self.assertGreaterEqual(self._ll(est, c, self.p_ideal), self._ll(r0, c, self.p_ideal) - 1e-9)
+
+    def _counts(self, r=(10.0, 0.0)):
+        return C.N_REF * np.asarray(self.p_ideal(np.asarray(r, float)), float)
+
+    def test_step_leaving_disk_returns_start(self):
+        # the Newton step from (9.95, 0) goes to (10, 0), outside the disk of radius 0.06
+        # around (9.9, 0): the "left_disk" branch returns start
+        c = self._counts()
+        start = np.array([9.95, 0.0])
+        out, why = cpn._polish_mle(c, self.p_ideal, start, center=(9.9, 0.0), radius=0.06,
+                                   return_reason=True)
+        self.assertEqual(why, "left_disk")
+        np.testing.assert_array_equal(out, start)
+        # contrast: with radius 0.5 the same start converges to the truth (10, 0)
+        out, why = cpn._polish_mle(c, self.p_ideal, start, center=(9.9, 0.0), radius=0.5,
+                                   return_reason=True)
+        self.assertEqual(why, "converged")
+        self.assertLess(np.hypot(*(out - np.array([10.0, 0.0]))), 1e-6)
+
+    def test_not_concave_returns_start(self):
+        # at (0.5, 0) the finite-difference Hessian of these counts has a positive eigenvalue
+        c = self._counts()
+        start = np.array([0.5, 0.0])
+        out, why = cpn._polish_mle(c, self.p_ideal, start, radius=1e3, return_reason=True)
+        self.assertEqual(why, "not_concave")
+        np.testing.assert_array_equal(out, start)
+
+    def test_ill_conditioned_returns_start(self):
+        # guard for radius=inf: a Hessian with condition number above POLISH_MAX_COND
+        c = self._counts()
+        start = np.array([9.0, 1.0])
+        old = cpn.POLISH_MAX_COND
+        try:
+            cpn.POLISH_MAX_COND = 1.0 + 1e-12    # any genuinely 2-D Hessian exceeds this
+            out, why = cpn._polish_mle(c, self.p_ideal, start, return_reason=True)
+        finally:
+            cpn.POLISH_MAX_COND = old
+        self.assertEqual(why, "ill_conditioned")
+        np.testing.assert_array_equal(out, start)
+
+    def test_no_convergence_returns_start(self):
+        # from (5, 0) Newton needs more than 2 iterations to reach tol: the loop runs twice
+        # (max_iter=2) and gives up; with the default max_iter it converges
+        c = self._counts()
+        start = np.array([5.0, 0.0])
+        out, why = cpn._polish_mle(c, self.p_ideal, start, radius=1e3, max_iter=2,
+                                   return_reason=True)
+        self.assertEqual(why, "max_iter")
+        np.testing.assert_array_equal(out, start)
+        out, why = cpn._polish_mle(c, self.p_ideal, start, radius=1e3, return_reason=True)
+        self.assertEqual(why, "converged")
+        self.assertLess(np.hypot(*(out - np.array([10.0, 0.0]))), 1e-6)
+
+    def test_default_return_is_point_only(self):
+        c = self._counts()
+        out = cpn._polish_mle(c, self.p_ideal, np.array([9.95, 0.0]), radius=1e3)
+        self.assertEqual(np.shape(out), (2,))
+
+
+class TestBgphysMaxChanges(unittest.TestCase):
+    """bgphys_max_* keys (round 6) recomputed from the 24 bgphys_{fixed,phys}_* keys."""
+
+    def setUp(self):
+        self.n = _json(os.path.join(C.DATA, "paper_numbers.json"))
+
+    def test_values_and_se_from_registry(self):
+        best_b, best_s = None, None
+        for x in C.BGPHYS_X:
+            for ek in ("mle", "lms", "mlms"):
+                kb = "bgphys_%%s_%s_bias_x_x%d_nm" % (ek, x)
+                ks = "bgphys_%%s_%s_sigma_over_crb_x%d" % (ek, x)
+                f, p = self.n[kb % "fixed"], self.n[kb % "phys"]
+                d = abs(p["value"] - f["value"])
+                if best_b is None or d > best_b[0]:
+                    best_b = (d, np.sqrt(f["se"] ** 2 + p["se"] ** 2))
+                f, p = self.n[ks % "fixed"], self.n[ks % "phys"]
+                q = p["value"] / f["value"]
+                if best_s is None or abs(q - 1) > best_s[0] / 100:
+                    se = q * np.sqrt((p["se"] / p["value"]) ** 2 + (f["se"] / f["value"]) ** 2)
+                    best_s = (100 * abs(q - 1), 100 * se)
+        kb, ks = "bgphys_max_abs_change_bias_x_nm", "bgphys_max_rel_change_sigma_over_crb_pct"
+        self.assertAlmostEqual(self.n[kb]["value"], best_b[0], places=12)
+        self.assertAlmostEqual(self.n[kb]["se"], best_b[1], places=12)
+        self.assertAlmostEqual(self.n[ks]["value"], best_s[0], places=10)
+        self.assertAlmostEqual(self.n[ks]["se"], best_s[1], places=10)
+        # the helper used by compute_paper_numbers.py agrees
+        m = cpn.bgphys_max_changes(self.n, C.BGPHYS_X)
+        self.assertAlmostEqual(m["bias"][0], best_b[0], places=12)
+        self.assertAlmostEqual(m["sigma"][1], best_s[1], places=10)
+        # 24 source keys, all with an SE
+        src = [k for k in self.n if k.startswith(("bgphys_fixed_", "bgphys_phys_"))
+               and ("_bias_x_" in k or "_sigma_over_crb_" in k)]
+        self.assertEqual(len(src), 24)
+        self.assertTrue(all("se" in self.n[k] for k in src))
+
 if __name__ == "__main__":
     unittest.main()

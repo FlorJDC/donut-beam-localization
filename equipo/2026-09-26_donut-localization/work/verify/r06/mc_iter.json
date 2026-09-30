@@ -1,0 +1,14 @@
+{
+ "iter_matchL150_sigma": 2.228207772485561,
+ "iter_matchL150_sigma_se": 0.014875196088610487,
+ "iter_matchL150_rmse": 2.2281422665810986,
+ "iter_matchL25_sigma": 0.6091473139833284,
+ "iter_matchL25_sigma_se": 0.0030123969950038645,
+ "iter_matchL25_rmse": 0.6091401052792496,
+ "iter_fixedSBR10_sigma": 0.6133564134635339,
+ "iter_fixedSBR10_sigma_se": 0.0031278631907766265,
+ "iter_fixedSBR10_rmse": 0.613342510611664,
+ "iter_nobg_sigma": 0.506800553908397,
+ "iter_nobg_sigma_se": 0.0026174171690943344,
+ "iter_nobg_rmse": 0.5067940583438103
+}

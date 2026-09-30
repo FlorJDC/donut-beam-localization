@@ -1,0 +1,118 @@
+{
+ "bgphys_sbr_x25": 22.581400454345818,
+ "bgphys_fixed_crb_x25_nm": 5.985431594965574,
+ "bgphys_phys_crb_x25_nm": 5.7728612349269905,
+ "bgphys_sbr_x50": 57.5201924222108,
+ "bgphys_fixed_crb_x50_nm": 12.19678856343793,
+ "bgphys_phys_crb_x50_nm": 11.38952430535017,
+ "iter_L_schedule": [
+  150.0,
+  82.54818122236567,
+  45.42801482080349,
+  25.0
+ ],
+ "bgphys_iter_match_L150_sbr_all": [
+  10.0,
+  3.4174172463997294,
+  1.0735440406149843,
+  0.32874905421419415
+ ],
+ "S32_closed_form_ratio_25_over_150": 0.032874905421419416,
+ "bgphys_iter_match_L25_sbr_all": [
+  304.18338461544505,
+  103.95215446530639,
+  32.65542598080067,
+  10.0
+ ],
+ "sf_point_value_drop_centre": 2.7637821289370135,
+ "sf_limit_r0.01_ang0.00": 2.4487569027246776,
+ "sf_limit_r0.01_ang0.70": 2.448620572941341,
+ "sf_limit_r0.01_ang1.57": 2.4489148648215866,
+ "sf_limit_r0.001_ang0.00": 2.4487566709403863,
+ "sf_limit_r0.001_ang0.70": 2.4487430369357375,
+ "sf_limit_r0.001_ang1.57": 2.4487724657764427,
+ "sf_limit_r0.0001_ang0.00": 2.4487566686225435,
+ "sf_limit_r0.0001_ang0.70": 2.448755305211829,
+ "sf_limit_r0.0001_ang1.57": 2.4487582480923975,
+ "sf_point_value_closed_form": 2.763782128937013,
+ "sf_L_over_sqrt8N": 2.6516504294495533,
+ "sf_hexagon_point_value": 2.7637821289370135,
+ "sf_style_fd_step1_xaxis": 2.764839136270058,
+ "sf_style_fd_step1_N1000_xaxis": 0.8743189034586042,
+ "sf_style_fd_step0.1_xaxis": 2.764203089833334,
+ "sf_style_fd_step0.1_N1000_xaxis": 0.8741177679148359,
+ "sf_point_value_L60": 2.177870876414985,
+ "sf_point_value_L70": 2.565546755493269,
+ "sf_point_value_L75": 2.7637821289370135,
+ "sf_point_value_L80": 2.965311001380725,
+ "sf_point_value_L90": 3.379417708230117,
+ "sf_donut_max": 0.36787944114906884,
+ "one_over_e": 0.36787944117144233,
+ "sf_power_ratio_donut_over_gauss": 1.0000000001116947,
+ "ours_over_sf_ratio": 2.718281828459045,
+ "naive_eps0p002_x10_mle_bias_abs": 0.2687114015650132,
+ "naive_eps0p002_x10_mle_bias_vec": [
+  0.17600001135989096,
+  0.20305125789404027
+ ],
+ "naive_eps0p002_x10_grid_vs_polish": 3.2714093626431865e-07,
+ "naive_eps0p002_x10_crb": 2.401156276584351,
+ "naive_eps0p002_x10_Neq": 7984.884982532301,
+ "naive_eps0p002_x10_lms_extra": -0.34107993853790486,
+ "naive_eps0p002_x20_mle_bias_abs": 0.42205545706674497,
+ "naive_eps0p002_x20_mle_bias_vec": [
+  0.1422095585433354,
+  0.3973754525618419
+ ],
+ "naive_eps0p002_x20_grid_vs_polish": 3.4693667751214436e-07,
+ "naive_eps0p002_x20_crb": 4.460733367595552,
+ "naive_eps0p002_x20_Neq": 11170.52255383481,
+ "naive_eps0p002_x20_lms_extra": -0.30050332122499057,
+ "naive_eps0p01_x10_mle_bias_abs": 1.3886897241666725,
+ "naive_eps0p01_x10_mle_bias_vec": [
+  0.8775663950624502,
+  1.0762603645323026
+ ],
+ "naive_eps0p01_x10_grid_vs_polish": 4.0372172404557003e-07,
+ "naive_eps0p01_x10_crb": 2.879279105416802,
+ "naive_eps0p01_x10_Neq": 429.88974730750806,
+ "naive_eps0p01_x10_lms_extra": -1.4634199945758555,
+ "naive_eps0p01_x20_mle_bias_abs": 2.289364513271418,
+ "naive_eps0p01_x20_mle_bias_vec": [
+  1.2532172873249863,
+  1.9158904732202937
+ ],
+ "naive_eps0p01_x20_grid_vs_polish": 6.938708546806841e-08,
+ "naive_eps0p01_x20_crb": 5.200510571076979,
+ "naive_eps0p01_x20_Neq": 516.0146998454398,
+ "naive_eps0p01_x20_lms_extra": -1.3517441144244629,
+ "naive_honest_max": 5.331201499700045e-07,
+ "naive_sbr20.0_x10_mle_bias_abs": 0.35792200623599796,
+ "naive_sbr20.0_x10_mle_bias_vec": [
+  0.249876275603917,
+  0.2562616035193667
+ ],
+ "naive_sbr20.0_x20_mle_bias_abs": 0.7396050120556473,
+ "naive_sbr20.0_x20_mle_bias_vec": [
+  0.2422780990600586,
+  0.6987967491149902
+ ],
+ "naive_sbrinf_x10_mle_bias_abs": 0.9157232638685109,
+ "naive_sbrinf_x10_mle_bias_vec": [
+  0.653916180244174,
+  0.6410481457775752
+ ],
+ "naive_sbrinf_x20_mle_bias_abs": 1.642859598418322,
+ "naive_sbrinf_x20_mle_bias_vec": [
+  0.6224908414274317,
+  1.5203594352830447
+ ],
+ "naive_eps0p05_x10_est": [
+  14.37460200444087,
+  4.987168112723426
+ ],
+ "naive_eps0p05_x20_est": [
+  36.583577394485474,
+  8.239651918411255
+ ]
+}
